@@ -20,6 +20,27 @@ switch (defects.length) {
         break;
 }
 });
+router.get('/filteredByStatus/:status', (req: Request, res: Response) => {
+    const { status } = req.params;
+    const filteredDefects = defects.filter(defect => defect.status === status);
+    
+    if (filteredDefects.length === 0) {
+        res.status(200).json("No hay defectos con ese estado");
+    } else {
+        res.status(200).json(filteredDefects);
+    }
+});
+router.get('/filteredByLocation/:location', (req: Request, res: Response) => {
+    const { location } = req.params;
+    const filteredDefects = defects.filter(defect => defect.location === location);
+    
+    if (filteredDefects.length === 0) {
+        res.status(200).json("No hay defectos con ese estado");
+    } else {
+        res.status(200).json(filteredDefects);
+    }
+});
+
 
 router.get('/:id', (req: Request, res: Response) => {
   const defect = defects.find(d => d.object === req.params.id);
@@ -31,7 +52,7 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.post('/', (req: Request, res: Response) => {
-  const { object, location, description, detailDescription: detailedDescription, reportingDate, status } = req.body;
+  const { object, location, description, detailedDescription, reportingDate, status } = req.body;
 
   const newDefect = new Defect(object, location, description, detailedDescription, new Date(reportingDate), status);
   defects.push(newDefect);
@@ -53,7 +74,6 @@ router.put('/:id', (req: Request, res: Response) => {
       status
     );
     
-    // Reemplazar el defecto viejo por el nuevo
     defects[index] = updatedDefect; 
     res.json(updatedDefect);
   } else {
@@ -65,8 +85,8 @@ router.put('/:id', (req: Request, res: Response) => {
 router.delete('/:id', (req: Request, res: Response) => {
   const index = defects.findIndex(d => d.object === req.params.id);
   if (index !== -1) {
-    defects.splice(index, 1); // Eliminar el defecto del arreglo
-    res.status(204).send(); // Responder con 204 No Content
+    defects.splice(index, 1); 
+    res.status(204).send();
   } else {
     res.status(404).json({ message: 'Defecto no encontrado' });
   }
