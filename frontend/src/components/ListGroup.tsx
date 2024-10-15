@@ -13,24 +13,28 @@ function ListGroup({ items, heading }: Props) {
   return (
     <>
       <h1>{heading}</h1>
-      {items.length === 0 && <p>No items found :(</p>}
+      {Array.isArray(items) && items.length === 0 && <p>No items found :(</p>}
       <ul className="list-group">
-        {items.map((item, index) => (
-          <li
-            className={
-              selectedIndex === index
-                ? "list-group-item active"
-                : "list-group-item"
-            }
-            style={{cursor: 'pointer'}}
-            key={item.object}
-            onClick={() => {
-              index === selectedIndex ? setSelectedIndex(-1) : setSelectedIndex(index);
-            }}
-          >
-            {<DefectCard {...item}></DefectCard>}
-          </li>
-        ))}
+        {Array.isArray(items) && items.length > 0 ? (
+          items.map((item, index) => (
+            <li
+              className={
+                selectedIndex === index
+                  ? "list-group-item active"
+                  : "list-group-item"
+              }
+              style={{ cursor: "pointer" }}
+              key={item.object} // Asegúrate de que object es único
+              onClick={() => {
+                setSelectedIndex(selectedIndex === index ? -1 : index);
+              }}
+            >
+              <DefectCard {...item} />
+            </li>
+          ))
+        ) : (
+          <p>No items found :(</p>
+        )}
       </ul>
     </>
   );
