@@ -26,6 +26,7 @@ const Header = () => {
     position: 'absolute', // Position the title absolutely
     left: '50%', // Center the title horizontally
     transform: 'translateX(-50%)', // Adjust for center alignment
+    fontFamily: 'Arial'
   };
 
   return (

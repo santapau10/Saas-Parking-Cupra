@@ -1,15 +1,14 @@
 // App.tsx
 import Button from "./components/Button";
-import ToggableAlert from "./components/ToggableAlert";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ListGroup from "./components/ListGroup";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import DefectModal from "./components/DefectModal"; // Importa el nuevo modal
+import DefectModal from "./components/DefectModal";
 import { Defect } from "./types/Defect";
+import background from '../src/assets/background.svg';
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
@@ -77,9 +76,7 @@ export default function App() {
   };
 
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", backgroundImage:`url(${background})`, minHeight: '100vh', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
       <Header />
       {showModal && (
         <DefectModal
@@ -90,27 +87,29 @@ export default function App() {
       <ToastContainer />
 
       <div style={{ display: "flex", gap: "10px" }}>
-        <Button onClick={() => setShowModal(true)} style={{ padding: 10 }}>
+        <Button onClick={() => setShowModal(true)} style={{ padding: 20, margin: 20, fontSize: 20, backgroundColor: 'green' }}>
           Create defect
         </Button>
-
+      </div>
+      <div>
         <input
           type="text"
           placeholder="Filter by location"
           value={locationFilter}
           onChange={(e) => setLocationFilter(e.target.value)}
         />
-        <Button onClick={filterByLocation} style={{ padding: 10 }}>
+        <Button onClick={filterByLocation} style={{ padding: 10, margin: 20, width: 135 }}>
           Filter by Location
         </Button>
-
+      </div>
+      <div>
         <input
           type="text"
           placeholder="Filter by status"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         />
-        <Button onClick={filterByStatus} style={{ padding: 10 }}>
+        <Button onClick={filterByStatus} style={{ padding: 10, margin: 20, width: 135 }}>
           Filter by Status
         </Button>
       </div>

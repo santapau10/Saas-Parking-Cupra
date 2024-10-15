@@ -10,8 +10,7 @@ const Footer: React.FC = () => {
     height: '120px', // Set the height
     marginTop: '30px', // Space above the footer
     width: '100%',
-    position: 'relative', // Position relative for further styling if needed
-    padding: '10px', // Add some padding
+    fontFamily: 'Arial'
   };
 
   const contactStyle: React.CSSProperties = {
@@ -22,7 +21,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer style={{...footerStyle, marginTop: 300}}>
+    <footer style={{...footerStyle, marginTop: 100}}>
       <div style={contactStyle}>
         <strong>Salvador Ramón Espinosa Merino</strong><br />
         Software Engineer<br />

@@ -47,6 +47,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        fontFamily:'Arial'
       }}
     >
       <div style={{ background: "white", padding: 20, borderRadius: 5 }}>

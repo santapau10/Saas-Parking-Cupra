@@ -1,4 +1,3 @@
-import React from "react";
 import { Defect } from "../types/Defect";
 
 // The DefectCard component
@@ -23,7 +22,7 @@ const DefectCard = (defect: Defect) => {
   };
 
   return (
-    <div className="defect-card">
+    <div className="defect-card" style={{fontFamily: 'Arial', backgroundColor: 'rgba(0, 0, 0, 0.05)', padding: 15, borderRadius: 10, marginBottom: 10}}>
       <h2 className="defect-title">{defect._object}</h2>
       <p>
         <strong>Location:</strong> {defect._location}
