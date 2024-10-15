@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { Defect } from "../types/Defect";
+import DefectCard from "./DefectCard";
 
 interface Props {
-  items: string[];
+  items: Defect[];
   heading: string;
-  onSelectItem?: (item: string) => void;
 }
 
-function ListGroup({ items, heading, onSelectItem }: Props) {
+function ListGroup({ items, heading }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   return (
@@ -22,13 +23,12 @@ function ListGroup({ items, heading, onSelectItem }: Props) {
                 : "list-group-item"
             }
             style={{cursor: 'pointer'}}
-            key={item}
+            key={item.object}
             onClick={() => {
               index === selectedIndex ? setSelectedIndex(-1) : setSelectedIndex(index);
-              onSelectItem?.(item)
             }}
           >
-            {item}
+            {<DefectCard {...item}></DefectCard>}
           </li>
         ))}
       </ul>
