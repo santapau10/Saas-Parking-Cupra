@@ -86,7 +86,7 @@ router.delete('/:id', (req: Request, res: Response) => {
   const index = defects.findIndex(d => d.object === req.params.id);
   if (index !== -1) {
     defects.splice(index, 1); 
-    res.status(204).send();
+    res.status(204).json({message: "Defecto eliminado"});
   } else {
     res.status(404).json({ message: 'Defecto no encontrado' });
   }
