@@ -1,8 +1,8 @@
 export interface Defect {
-    object: string;
-    location: string;
-    description: string;
-    detailedDescription: string;
-    reportingDate: Date;
-    status: 'open' | 'inwork' | 'closed' | 'rejected';
+    _object: string;
+    _location: string;
+    _description: string;
+    _detailedDescription: string;
+    _reportingDate: Date;
+    _status: 'open' | 'inwork' | 'closed' | 'rejected';
   }

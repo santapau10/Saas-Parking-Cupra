@@ -52,11 +52,11 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.post('/', (req: Request, res: Response) => {
-  const { object, location, description, detailedDescription, reportingDate, status } = req.body;
+  const { _object, _location, _description, _detailedDescription, _reportingDate, _status } = req.body;
 
-  const newDefect = new Defect(object, location, description, detailedDescription, new Date(reportingDate), status);
+  const newDefect = new Defect(_object, _location, _description, _detailedDescription, new Date(_reportingDate), _status);
   defects.push(newDefect);
-  
+  console.log(newDefect)
   res.status(201).json(newDefect);
 });
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Defect } from "../types/Defect";
+import { Defect } from "../types/Defect"; // Asegúrate de que Defect está bien definido
 import DefectCard from "./DefectCard";
 
 interface Props {
-  items: Defect[];
+  items: Defect[]; // Asegúrate de que esta sea la forma correcta de tu tipo Defect
   heading: string;
 }
 
@@ -24,7 +24,7 @@ function ListGroup({ items, heading }: Props) {
                   : "list-group-item"
               }
               style={{ cursor: "pointer" }}
-              key={item.object} // Asegúrate de que object es único
+              key={item._object}
               onClick={() => {
                 setSelectedIndex(selectedIndex === index ? -1 : index);
               }}
