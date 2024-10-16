@@ -8,9 +8,10 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import DefectModal from "./components/DefectModal";
 import { Defect } from "./types/Defect";
-import background from '../src/assets/background.svg';
+import background from "../src/assets/background.svg";
 
 export default function App() {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const [showModal, setShowModal] = useState(false);
   const [defects, setDefects] = useState<Defect[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,7 @@ export default function App() {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get("http://localhost:3000/defects");
+      const response = await axios.get(`http://${apiUrl}/defects`);
       setDefects(response.data);
     } catch (err: any) {
       setError("Failed to load defects. Please try again later.");
@@ -39,7 +40,7 @@ export default function App() {
   const handleDefectSubmit = async (defect: Defect) => {
     try {
       console.log(defect);
-      await axios.post("http://localhost:3000/defects", defect);
+      await axios.post(`http://${apiUrl}/defects`, defect);
       toast.success("Defect reported successfully!");
       await fetchDefects(); // Actualiza la lista después de agregar un nuevo defecto
     } catch (err: any) {
@@ -51,7 +52,7 @@ export default function App() {
   const filterByLocation = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/defects/filteredByLocation/${locationFilter}`
+        `http://${apiUrl}/defects/filteredByLocation/${locationFilter}`
       );
       setDefects(response.data);
     } catch (err: any) {
@@ -65,7 +66,7 @@ export default function App() {
   const filterByStatus = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/defects/filteredByStatus/${statusFilter}`
+        `http://${apiUrl}/defects/filteredByStatus/${statusFilter}`
       );
       setDefects(response.data);
     } catch (err: any) {
@@ -76,7 +77,17 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", backgroundImage:`url(${background})`, minHeight: '100vh', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundImage: `url(${background})`,
+        minHeight: "100vh",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <Header />
       {showModal && (
         <DefectModal
@@ -87,7 +98,15 @@ export default function App() {
       <ToastContainer />
 
       <div style={{ display: "flex", gap: "10px" }}>
-        <Button onClick={() => setShowModal(true)} style={{ padding: 20, margin: 20, fontSize: 20, backgroundColor: 'green' }}>
+        <Button
+          onClick={() => setShowModal(true)}
+          style={{
+            padding: 20,
+            margin: 20,
+            fontSize: 20,
+            backgroundColor: "green",
+          }}
+        >
           Create defect
         </Button>
       </div>
@@ -98,7 +117,10 @@ export default function App() {
           value={locationFilter}
           onChange={(e) => setLocationFilter(e.target.value)}
         />
-        <Button onClick={filterByLocation} style={{ padding: 10, margin: 20, width: 135 }}>
+        <Button
+          onClick={filterByLocation}
+          style={{ padding: 10, margin: 20, width: 135 }}
+        >
           Filter by Location
         </Button>
       </div>
@@ -109,7 +131,10 @@ export default function App() {
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         />
-        <Button onClick={filterByStatus} style={{ padding: 10, margin: 20, width: 135 }}>
+        <Button
+          onClick={filterByStatus}
+          style={{ padding: 10, margin: 20, width: 135 }}
+        >
           Filter by Status
         </Button>
       </div>
