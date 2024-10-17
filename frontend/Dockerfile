@@ -1,28 +1,35 @@
-# Usa una imagen base de Node.js para construir el frontend
-FROM node:18 AS build
+# Usa una imagen base de Node.js
+FROM node:18-alpine AS build
 
-# Establece el directorio de trabajo en /app
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia el package.json y package-lock.json al contenedor
+# Copia los archivos de package.json y package-lock.json
 COPY package*.json ./
 
 # Instala las dependencias
 RUN npm install
 
-# Copia el resto de la aplicación
+# Copia el resto de los archivos de la aplicación
 COPY . .
 
-# Construye la aplicación de React
+# Construye la aplicación de Vite
 RUN npm run build
 
-# Usa una imagen base de nginx para servir el frontend
-FROM nginx:alpine
+# Usa una imagen base de Node.js para servir la aplicación
+FROM node:18-alpine
 
-# Copia los archivos construidos desde la etapa anterior al directorio de nginx
-COPY --from=build /app/build /usr/share/nginx/html
+# Establece el directorio de trabajo
+WORKDIR /app
 
-# Expone el puerto en el que corre nginx (por defecto, 80)
-EXPOSE 80
+# Instala un servidor estático ligero (serve)
+RUN npm install -g serve
 
-# No es necesario CMD ya que nginx se ejecuta automáticamente
+# Copia los archivos construidos desde la fase anterior
+COPY --from=build /app/dist .
+
+# Expone el puerto 8080 para Google Cloud Run
+EXPOSE 8080
+
+# Inicia el servidor con "serve"
+CMD ["serve", "-s", ".", "-l", "8080"]

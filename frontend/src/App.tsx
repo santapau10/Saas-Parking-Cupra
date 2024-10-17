@@ -23,7 +23,7 @@ export default function App() {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`http://${apiUrl}/defects`);
+      const response = await axios.get(`${apiUrl}/defects`);
       setDefects(response.data);
     } catch (err: any) {
       setError("Failed to load defects. Please try again later.");
@@ -40,7 +40,7 @@ export default function App() {
   const handleDefectSubmit = async (defect: Defect) => {
     try {
       console.log(defect);
-      await axios.post(`http://${apiUrl}/defects`, defect);
+      await axios.post(`${apiUrl}/defects`, defect);
       toast.success("Defect reported successfully!");
       await fetchDefects(); // Actualiza la lista después de agregar un nuevo defecto
     } catch (err: any) {
@@ -52,7 +52,7 @@ export default function App() {
   const filterByLocation = async () => {
     try {
       const response = await axios.get(
-        `http://${apiUrl}/defects/filteredByLocation/${locationFilter}`
+        `${apiUrl}/defects/filteredByLocation/${locationFilter}`
       );
       setDefects(response.data);
     } catch (err: any) {
@@ -66,7 +66,7 @@ export default function App() {
   const filterByStatus = async () => {
     try {
       const response = await axios.get(
-        `http://${apiUrl}/defects/filteredByStatus/${statusFilter}`
+        `${apiUrl}/defects/filteredByStatus/${statusFilter}`
       );
       setDefects(response.data);
     } catch (err: any) {
