@@ -1,6 +1,6 @@
-// DefectModal.tsx
 import React, { useState } from "react";
 import { Defect } from "../types/Defect";
+import defaultImage from "../assets/default_image.svg"; // Import the default image
 
 interface DefectModalProps {
   onClose: () => void;
@@ -17,6 +17,8 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     _status: "open",
   });
 
+  const [selectedImage, setSelectedImage] = useState<string | File>(defaultImage);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -24,10 +26,10 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
   ) => {
     const { name, value } = e.target;
     if (name === "_reportingDate") {
-      // Convertir el valor de la fecha en una instancia de Date
+      // Convert the value of the date to a Date instance
       setDefect((prev) => ({
         ...prev,
-        [name]: new Date(value), // Mantener el valor seleccionado sin borrar
+        [name]: new Date(value),
       }));
     } else {
       setDefect((prev) => ({
@@ -37,11 +39,22 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; // Access the selected file
+    if (file) {
+      setSelectedImage(file); // Set the selected file as the image
+    } else {
+      alert("No image selected.");
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(defect);
     onClose();
   };
+
+  const displayImage = typeof selectedImage === "string" ? selectedImage : URL.createObjectURL(selectedImage);
 
   return (
     <div
@@ -64,11 +77,14 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
           padding: 20,
           borderRadius: 5,
           width: "400px",
+          height: "500px", // Set a fixed height for the modal
+          overflowY: "auto", // Enable vertical scrolling
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
       >
         <h2 style={{ textAlign: "center" }}>Report Defect</h2>
         <form onSubmit={handleSubmit}>
+          {/* Other input fields remain unchanged */}
           <div style={{ marginBottom: "15px" }}>
             <label>
               <strong>Object:</strong>
@@ -125,7 +141,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
               <input
                 type="date"
                 name="_reportingDate"
-                value={defect._reportingDate.toISOString().split("T")[0]} // Muestra la fecha en formato correcto
+                value={defect._reportingDate.toISOString().split("T")[0]}
                 onChange={handleChange}
                 required
                 style={{ width: "100%", padding: "8px", marginTop: "5px" }}
@@ -148,6 +164,29 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
               </select>
             </label>
           </div>
+
+          {/* Image Selection */}
+          <div style={{ marginBottom: "15px" }}>
+            <label>
+              <strong>Image:</strong>
+              <input
+                type="file"
+                accept="image/*" // Accept any image format
+                onChange={handleImageChange}
+                style={{ display: "block", marginTop: "5px" }}
+              />
+            </label>
+          </div>
+
+          {/* Display the image */}
+          <div style={{ marginBottom: "15px", textAlign: "center" }}>
+            <img
+              src={displayImage}
+              alt="Selected"
+              style={{ maxWidth: "50%", height: "auto", border: "1px solid #ccc", padding: "5px" }}
+            />
+          </div>
+
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <button
               type="submit"

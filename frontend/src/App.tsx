@@ -9,6 +9,7 @@ import axios from "axios";
 import DefectModal from "./components/DefectModal";
 import { Defect } from "./types/Defect";
 import background from "../src/assets/background.svg";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
@@ -41,10 +42,28 @@ export default function App() {
     try {
       console.log(defect);
       await axios.post(`${apiUrl}/defects`, defect);
-      toast.success("Defect reported successfully!");
+      toast.success("Defect reported successfully!", {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored"
+      });
       await fetchDefects(); // Actualiza la lista después de agregar un nuevo defecto
     } catch (err: any) {
-      toast.error("Failed to report defect. Please try again later.");
+      toast.error("Failed to report defect. Please try again later.", {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored"
+      });
     }
   };
 
