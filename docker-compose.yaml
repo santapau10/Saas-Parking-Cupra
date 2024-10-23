@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Cambia el puerto según sea necesario
+    volumes:
+      - ./backend:/app # Montar el código fuente si es necesario
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Cambia el puerto según sea necesario
+    environment:
+      - NODE_ENV=production # Cambia esto según tu entorno
+    volumes:
+      - ./frontend:/app # Montar el código fuente si es necesario
+    depends_on:
+      - backend # Asegúrate de que el backend esté disponible
+
