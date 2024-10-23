@@ -27,7 +27,7 @@ COPY --from=build /app/dist ./dist
 COPY package*.json ./
 
 # Instala solo las dependencias de producción
-RUN npm install --only=production
+RUN npm install
 
 # Expone el puerto en el que corre tu aplicación (por defecto, 3000)
 EXPOSE 3000
