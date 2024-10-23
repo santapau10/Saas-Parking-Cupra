@@ -50,6 +50,12 @@ export default function App() {
 
   // Función para filtrar por ubicación
   const filterByLocation = async () => {
+    if (!locationFilter) {
+      // Si el campo de ubicación está vacío, cargar todos los defectos
+      await fetchDefects();
+      return;
+    }
+
     try {
       const response = await axios.get(
         `${apiUrl}/defects/filteredByLocation/${locationFilter}`
@@ -64,6 +70,12 @@ export default function App() {
 
   // Función para filtrar por estado
   const filterByStatus = async () => {
+    if (!statusFilter) {
+      // Si el campo de estado está vacío, cargar todos los defectos
+      await fetchDefects();
+      return;
+    }
+
     try {
       const response = await axios.get(
         `${apiUrl}/defects/filteredByStatus/${statusFilter}`

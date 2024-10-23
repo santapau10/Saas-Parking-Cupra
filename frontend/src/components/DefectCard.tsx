@@ -1,11 +1,18 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMapMarkerAlt,
+  faClipboard,
+  faInfoCircle,
+  faCalendarAlt,
+  faFlag,
+} from "@fortawesome/free-solid-svg-icons";
 import { Defect } from "../types/Defect";
 
-// The DefectCard component
 const DefectCard = (defect: Defect) => {
-  // Format the date for display
+  // Formatear la fecha
   const formattedDate = new Date(defect._reportingDate).toLocaleDateString();
 
-  // Function to return color based on status
+  // Función para retornar el color basado en el estado
   const getStatusColor = (status: string) => {
     switch (status) {
       case "open":
@@ -22,22 +29,36 @@ const DefectCard = (defect: Defect) => {
   };
 
   return (
-    <div className="defect-card" style={{fontFamily: 'Arial', backgroundColor: 'rgba(0, 0, 0, 0.05)', padding: 15, borderRadius: 10, marginBottom: 10}}>
+    <div
+      className="defect-card"
+      style={{
+        fontFamily: "Arial",
+        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 10,
+      }}
+    >
       <h2 className="defect-title">{defect._object}</h2>
       <p>
-        <strong>Location:</strong> {defect._location}
+        <FontAwesomeIcon icon={faMapMarkerAlt} /> {/* Icono de ubicación */}
+        <strong> Location:</strong> {defect._location}
       </p>
       <p>
-        <strong>Description:</strong> {defect._description}
+        <FontAwesomeIcon icon={faClipboard} /> {/* Icono de descripción */}
+        <strong> Description:</strong> {defect._description}
       </p>
       <p>
-        <strong>Details:</strong> {defect._detailedDescription}
+        <FontAwesomeIcon icon={faInfoCircle} /> {/* Icono de detalles */}
+        <strong> Details:</strong> {defect._detailedDescription}
       </p>
       <p>
-        <strong>Reported On:</strong> {formattedDate}
+        <FontAwesomeIcon icon={faCalendarAlt} /> {/* Icono de fecha */}
+        <strong> Reported On:</strong> {formattedDate}
       </p>
       <p>
-        <strong>Status:</strong>
+        <FontAwesomeIcon icon={faFlag} /> {/* Icono de estado */}
+        <strong> Status:</strong>
         <span
           style={{ color: getStatusColor(defect._status), fontWeight: "bold" }}
         >

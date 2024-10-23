@@ -1,0 +1,37 @@
+.list-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    /* Ajusta la separación */
+    gap: 20px;
+    /* Espacio entre las tarjetas */
+    list-style: none;
+    /* Eliminar los puntos de las listas */
+    padding: 0;
+    /* Eliminar el padding por defecto */
+    margin: 0;
+    /* Eliminar el margen por defecto */
+}
+
+.list-group div {
+    flex: 1 1 calc(33.333% - 20px);
+    /* Tres tarjetas por fila */
+    box-sizing: border-box;
+    /* Asegura que el padding se incluya en el tamaño total */
+    margin-bottom: 20px;
+    /* Espacio debajo de las tarjetas */
+}
+
+@media (max-width: 768px) {
+    .list-group div {
+        flex: 1 1 calc(50% - 20px);
+        /* Dos tarjetas por fila en pantallas medianas */
+    }
+}
+
+@media (max-width: 480px) {
+    .list-group div {
+        flex: 1 1 100%;
+        /* Una tarjeta por fila en pantallas pequeñas */
+    }
+}

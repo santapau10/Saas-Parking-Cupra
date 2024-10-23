@@ -1,22 +1,33 @@
 import { useState } from "react";
-import { Defect } from "../types/Defect"; // Asegúrate de que Defect está bien definido
+import { Defect } from "../types/Defect";
 import DefectCard from "./DefectCard";
+import DefectDetail from "./DefectDetail";
+import "../styles/ListGroup.css"; // Asegúrate de tener el CSS necesario
 
 interface Props {
-  items: Defect[]; // Asegúrate de que esta sea la forma correcta de tu tipo Defect
+  items: Defect[];
   heading: string;
 }
 
 function ListGroup({ items, heading }: Props) {
+  const [selectedDefect, setSelectedDefect] = useState<Defect | null>(null);
+
+  const handleDefectClick = (defect: Defect) => {
+    setSelectedDefect(defect); // Abre el modal con el defecto seleccionado
+  };
+
+  const handleCloseModal = () => {
+    setSelectedDefect(null); // Cierra el modal
+  };
 
   return (
     <>
-      <h1 style={{fontFamily: 'Arial'}}>{heading}</h1>
+      <h1 style={{ fontFamily: "Arial" }}>{heading}</h1>
       {Array.isArray(items) && items.length === 0 && <p>No items found :(</p>}
       <ul className="list-group">
         {Array.isArray(items) && items.length > 0 ? (
           items.map((item) => (
-            <div key={item._object}>
+            <div key={item._object} onClick={() => handleDefectClick(item)}>
               <DefectCard {...item} />
             </div>
           ))
@@ -24,6 +35,11 @@ function ListGroup({ items, heading }: Props) {
           <p>No items found :(</p>
         )}
       </ul>
+
+      {/* Modal que aparece cuando se selecciona un defecto */}
+      {selectedDefect && (
+        <DefectDetail defect={selectedDefect} onClose={handleCloseModal} />
+      )}
     </>
   );
 }
