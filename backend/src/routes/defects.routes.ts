@@ -1,95 +1,154 @@
-// src/routes/defects.ts
-
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { Defect } from '../models/defect.model';
+import multer from 'multer';
+import FirestoreService from '../services/firestore.service';
 
 const router = Router();
+const firestore = FirestoreService.getFirestoreInstance();
 
+// Middleware para manejar errores asíncronos
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
 
-const defects: Defect[] = [];
+// Ruta para obtener todos los defectos
+router.get('/', asyncHandler(async (req: Request, res: Response) => {
+  const snapshot = await firestore.collection('defects').get();
+  if (snapshot.empty) {
+    return res.status(200).json("No hay defectos.");
+  }
 
+  const defects = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
 
-router.get('/', (req: Request, res: Response) => {
-switch (defects.length) {
-    case 0:
-        res.status(201).json("No hay");
-        break;
+  res.status(200).json(defects);
+}));
 
-    default:
-        res.status(201).json(defects);
-        break;
-}
-});
-router.get('/filteredByStatus/:status', (req: Request, res: Response) => {
-    const { status } = req.params;
-    const filteredDefects = defects.filter(defect => defect.status === status);
-    
-    if (filteredDefects.length === 0) {
-        res.status(200).json("No hay defectos con ese estado");
-    } else {
-        res.status(200).json(filteredDefects);
+// Ruta para obtener defectos filtrados por estado
+router.get('/filteredByStatus/:status', asyncHandler(async (req: Request, res: Response) => {
+  const { status } = req.params;
+  const snapshot = await firestore.collection('defects').where('status', '==', status).get();
+  if (snapshot.empty) {
+    return res.status(200).json("No hay defectos con ese estado.");
+  }
+
+  const defects = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  res.status(200).json(defects);
+}));
+
+// Ruta para obtener defectos filtrados por ubicación
+router.get('/filteredByLocation/:location', asyncHandler(async (req: Request, res: Response) => {
+  const { location } = req.params;
+  const snapshot = await firestore.collection('defects').where('location', '==', location).get();
+  if (snapshot.empty) {
+    return res.status(200).json("No hay defectos en esa ubicación.");
+  }
+
+  const defects = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  res.status(200).json(defects);
+}));
+
+// Ruta para obtener un defecto por ID
+router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const doc = await firestore.collection('defects').doc(id).get();
+  if (!doc.exists) {
+    return res.status(404).json({ message: 'Defecto no encontrado' });
+  }
+
+  res.status(200).json({ id: doc.id, ...doc.data() });
+}));
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post(
+  '/',
+  upload.single('_image'),
+  asyncHandler(async (req: Request, res: Response) => {
+    const {
+      _object,
+      _location,
+      _description,
+      _detailedDescription,
+      _reportingDate,
+      _status,
+    } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se ha subido ningún archivo.' });
     }
-});
-router.get('/filteredByLocation/:location', (req: Request, res: Response) => {
-    const { location } = req.params;
-    const filteredDefects = defects.filter(defect => defect.location === location);
+    const imageBuffer = req.file.buffer;
+    const imageName = `defects/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
     
-    if (filteredDefects.length === 0) {
-        res.status(200).json("No hay defectos con ese estado");
-    } else {
-        res.status(200).json(filteredDefects);
-    }
-});
+    // Sube la imagen al bucket y obtén la URL pública
+    const imageUrl = await FirestoreService.uploadFile(imageBuffer, imageName, 'image/jpeg');
 
+    // Crea el nuevo documento con la URL de la imagen en lugar del archivo
+    const newDefect = {
+      object: _object,
+      location: _location,
+      description: _description,
+      detailedDescription: _detailedDescription,
+      reportingDate: new Date(_reportingDate),
+      status: _status,
+      image: imageUrl, // URL de la imagen en lugar del archivo
+    };
 
-router.get('/:id', (req: Request, res: Response) => {
-  const defect = defects.find(d => d.object === req.params.id);
-  if (defect) {
-    res.json(defect);
-  } else {
-    res.status(404).json({ message: 'Defecto no encontrado' });
+    // Guarda el documento en Firestore
+    const docRef = await FirestoreService.getFirestoreInstance().collection('defects').add(newDefect);
+
+    // Devuelve la respuesta con el ID del documento y los datos guardados
+    res.status(201).json({ id: docRef.id, ...newDefect });
+  })
+);
+
+// Ruta para actualizar un defecto por ID
+router.put('/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { object, location, description, detailedDescription, reportingDate, status, image } = req.body;
+
+  const defectData = {
+    object,
+    location,
+    description,
+    detailedDescription,
+    reportingDate: new Date(reportingDate),
+    status,
+    image
+  };
+
+  const docRef = firestore.collection('defects').doc(id);
+  const doc = await docRef.get();
+
+  if (!doc.exists) {
+    return res.status(404).json({ message: 'Defecto no encontrado' });
   }
-});
 
-router.post('/', (req: Request, res: Response) => {
-  const { _object, _location, _description, _detailedDescription, _reportingDate, _status } = req.body;
+  await docRef.update(defectData);
 
-  const newDefect = new Defect(_object, _location, _description, _detailedDescription, new Date(_reportingDate), _status);
-  defects.push(newDefect);
-  console.log(newDefect)
-  res.status(201).json(newDefect);
-});
+  res.status(200).json({ id: docRef.id, ...defectData });
+}));
 
-router.put('/:id', (req: Request, res: Response) => {
-  const index = defects.findIndex(d => d.object === req.params.id); 
-  if (index !== -1) {
-    const { object, location, description, detailDescription, reportingDate, status } = req.body;
-    
-    const updatedDefect = new Defect(
-      object,
-      location,
-      description,
-      detailDescription,
-      new Date(reportingDate),
-      status
-    );
-    
-    defects[index] = updatedDefect; 
-    res.json(updatedDefect);
-  } else {
-    res.status(404).json({ message: 'Defecto no encontrado' });
+// Ruta para eliminar un defecto por ID
+router.delete('/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const docRef = firestore.collection('defects').doc(id);
+  const doc = await docRef.get();
+
+  if (!doc.exists) {
+    return res.status(404).json({ message: 'Defecto no encontrado' });
   }
-});
 
+  await docRef.delete();
 
-router.delete('/:id', (req: Request, res: Response) => {
-  const index = defects.findIndex(d => d.object === req.params.id);
-  if (index !== -1) {
-    defects.splice(index, 1); 
-    res.status(204).json({message: "Defecto eliminado"});
-  } else {
-    res.status(404).json({ message: 'Defecto no encontrado' });
-  }
-});
+  res.status(204).json({ message: "Defecto eliminado" });
+}));
 
 export default router;

@@ -7,6 +7,7 @@ export class Defect {
   private _detailedDescription: string;
   private _reportingDate: Date;
   private _status: 'open' | 'inwork' | 'closed' | 'rejected';
+  private _image : string;
 
   constructor(
     object: string, 
@@ -14,7 +15,8 @@ export class Defect {
     description: string, 
     detailedDescription: string, 
     reportingDate: Date,
-    status: 'open' | 'inwork' | 'closed' | 'rejected' = 'open'
+    status: 'open' | 'inwork' | 'closed' | 'rejected' = 'open',
+    image: string
   ) {
     this._object = object;
     this._location = location;
@@ -22,6 +24,7 @@ export class Defect {
     this._detailedDescription = detailedDescription;
     this._reportingDate = reportingDate;
     this._status = status;
+    this._image=image;
   }
 
 
@@ -71,5 +74,12 @@ export class Defect {
 
   public set status(value: 'open' | 'inwork' | 'closed' | 'rejected') {
     this._status = value;
+  }
+  public get image(): string {
+    return this._image;
+  }
+
+  public set image(value: string) {
+    this._image = value;
   }
 }
