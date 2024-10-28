@@ -81,14 +81,16 @@ router.post(
       _reportingDate,
       _status,
     } = req.body;
+    console.log(req.body)
     if (!req.file) {
       return res.status(400).json({ error: 'No se ha subido ningún archivo.' });
     }
-    const imageBuffer = req.file.buffer;
+    const imageBuffer = req.file?.buffer;
     const imageName = `defects/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
     
     // Sube la imagen al bucket y obtén la URL pública
-    const imageUrl = await FirestoreService.uploadFile(imageBuffer, imageName, 'image/jpeg');
+    const imageUrl = await FirestoreService.uploadFile(imageBuffer!, imageName, 'image/jpeg');
+    console.log(imageUrl)
 
     // Crea el nuevo documento con la URL de la imagen en lugar del archivo
     const newDefect = {
@@ -103,6 +105,7 @@ router.post(
 
     // Guarda el documento en Firestore
     const docRef = await FirestoreService.getFirestoreInstance().collection('defects').add(newDefect);
+    console.log(docRef)
 
     // Devuelve la respuesta con el ID del documento y los datos guardados
     res.status(201).json({ id: docRef.id, ...newDefect });

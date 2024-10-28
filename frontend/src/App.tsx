@@ -38,7 +38,7 @@ export default function App() {
     fetchDefects(); // Cargar defectos al montar el componente
   }, []);
 
-  const handleDefectSubmit = async (defect: Defect) => {
+  const handleDefectSubmit = async (defect: FormData) => {
     try {
       console.log(defect);
       await axios.post(`${apiUrl}/defects`, defect);

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Defect } from "../types/Defect";
 import defaultImage from "../assets/default_image.svg"; // Import the default image
 
 interface DefectModalProps {
   onClose: () => void;
-  onSubmit: (defect: Defect) => void;
+  onSubmit: (formData: FormData) => void; // Update type to expect FormData
 }
 
 const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
@@ -17,7 +17,8 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     _status: "open",
   });
 
-  const [_image, set_image] = useState<string | File>(defaultImage);
+  const [_image, set_image] = useState<File | string>(defaultImage);
+  const [displayImage, setDisplayImage] = useState<string>(defaultImage);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -26,7 +27,6 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
   ) => {
     const { name, value } = e.target;
     if (name === "_reportingDate") {
-      // Convert the value of the date to a Date instance
       setDefect((prev) => ({
         ...prev,
         [name]: new Date(value),
@@ -40,28 +40,42 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; // Access the selected file
+    const file = e.target.files?.[0];
     if (file) {
-      set_image(file); // Set the selected file as the image
+      set_image(file);
+      const imageUrl = URL.createObjectURL(file);
+      setDisplayImage(imageUrl);
+
+      // Clean up the object URL after the component re-renders
+      return () => URL.revokeObjectURL(imageUrl);
     } else {
-      alert("No image selected.");
+      set_image(defaultImage); // Revert to default if no file selected
+      setDisplayImage(defaultImage);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Create a copy of the defect object and add the _image
-    const defectWithImage = {
-      ...defect,
-      _image, // Add the selected image to the defect object
-    };
-    // Submit the defect with image
-    onSubmit(defectWithImage);
+
+    const formData = new FormData();
+    formData.append("_object", defect._object);
+    formData.append("_location", defect._location);
+    formData.append("_description", defect._description);
+    formData.append("_detailedDescription", defect._detailedDescription);
+    formData.append("_reportingDate", defect._reportingDate.toISOString());
+    formData.append("_status", defect._status);
+
+    if (_image instanceof File) {
+      formData.append("_image", _image); // Append only if _image is a File object
+    }
+
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }    
+
+    onSubmit(formData); // Pass formData instead of defect object
     onClose();
   };
-  
-
-  const displayImage = typeof _image === "string" ? _image : URL.createObjectURL(_image);
 
   return (
     <div
@@ -84,8 +98,8 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
           padding: 20,
           borderRadius: 5,
           width: "400px",
-          height: "500px", // Set a fixed height for the modal
-          overflowY: "auto", // Enable vertical scrolling
+          height: "500px",
+          overflowY: "auto",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
       >
@@ -178,7 +192,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
               <strong>Image:</strong>
               <input
                 type="file"
-                accept="image/*" // Accept any image format
+                accept="image/*"
                 onChange={handleImageChange}
                 style={{ display: "block", marginTop: "5px" }}
               />
@@ -190,7 +204,12 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
             <img
               src={displayImage}
               alt="Selected"
-              style={{ maxWidth: "50%", height: "auto", border: "1px solid #ccc", padding: "5px" }}
+              style={{
+                maxWidth: "50%",
+                height: "auto",
+                border: "1px solid #ccc",
+                padding: "5px",
+              }}
             />
           </div>
 
