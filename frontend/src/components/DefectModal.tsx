@@ -17,7 +17,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     _status: "open",
   });
 
-  const [selectedImage, setSelectedImage] = useState<string | File>(defaultImage);
+  const [_image, set_image] = useState<string | File>(defaultImage);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -42,7 +42,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; // Access the selected file
     if (file) {
-      setSelectedImage(file); // Set the selected file as the image
+      set_image(file); // Set the selected file as the image
     } else {
       alert("No image selected.");
     }
@@ -50,11 +50,18 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(defect);
+    // Create a copy of the defect object and add the _image
+    const defectWithImage = {
+      ...defect,
+      _image, // Add the selected image to the defect object
+    };
+    // Submit the defect with image
+    onSubmit(defectWithImage);
     onClose();
   };
+  
 
-  const displayImage = typeof selectedImage === "string" ? selectedImage : URL.createObjectURL(selectedImage);
+  const displayImage = typeof _image === "string" ? _image : URL.createObjectURL(_image);
 
   return (
     <div
