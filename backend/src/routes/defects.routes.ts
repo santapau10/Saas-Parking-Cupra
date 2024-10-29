@@ -42,15 +42,23 @@ router.get(
 // Ruta para obtener defectos filtrados por estado
 router.get('/filteredByStatus/:status', asyncHandler(async (req: Request, res: Response) => {
   const { status } = req.params;
-  const snapshot = await firestore.collection('defects').where('status', '==', status).get();
+  const snapshot = await FirestoreService.getFirestoreInstance().collection('defects').where('status', '==', status).get();
   if (snapshot.empty) {
     return res.status(200).json("No hay defectos con ese estado.");
   }
 
-  const defects = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+  const defects = await Promise.all(
+    snapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace('https://storage.googleapis.com/cupra-bucket/', '')) : null;
+
+      return {
+        id: doc.id,
+        ...data,
+        _image: imageUrl, // Attach the signed URL or null if no image
+      };
+    })
+  );
 
   res.status(200).json(defects);
 }));
@@ -58,18 +66,27 @@ router.get('/filteredByStatus/:status', asyncHandler(async (req: Request, res: R
 // Ruta para obtener defectos filtrados por ubicación
 router.get('/filteredByLocation/:location', asyncHandler(async (req: Request, res: Response) => {
   const { location } = req.params;
-  const snapshot = await firestore.collection('defects').where('location', '==', location).get();
+  const snapshot = await FirestoreService.getFirestoreInstance().collection('defects').where('location', '==', location).get();
   if (snapshot.empty) {
     return res.status(200).json("No hay defectos en esa ubicación.");
   }
 
-  const defects = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+  const defects = await Promise.all(
+    snapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace('https://storage.googleapis.com/cupra-bucket/', '')) : null;
+
+      return {
+        id: doc.id,
+        ...data,
+        _image: imageUrl, // Attach the signed URL or null if no image
+      };
+    })
+  );
 
   res.status(200).json(defects);
 }));
+
 
 // Ruta para obtener un defecto por ID
 router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
