@@ -1,6 +1,6 @@
 import admin from 'firebase-admin';
 import { ServiceAccount } from 'firebase-admin';
-import { Storage } from '@google-cloud/storage';
+import { Storage, GetSignedUrlConfig } from '@google-cloud/storage';
 
 const serviceAccount = require('../../keys/cupra-cad-9decce7dcc62.json') as ServiceAccount;
 
@@ -47,4 +47,27 @@ export default class FirestoreService {
 
     return `https://storage.googleapis.com/${FirestoreService.bucketName}/${fileName}`;
   }
+
+  static async generateSignedUrl(fileName: string): Promise<string> {
+    const storage = FirestoreService.getStorageInstance();
+    const options: GetSignedUrlConfig = {
+      version: 'v4',
+      action: 'read',
+      expires: Date.now() + 15 * 60 * 1000, // 15 minutos
+    };
+
+    try {
+      // Asegúrate de usar solo el nombre del archivo, no la URL completa
+      const [url] = await storage
+        .bucket(FirestoreService.bucketName)
+        .file(fileName) // Asegúrate de que 'fileName' sea solo la parte relevante
+        .getSignedUrl(options);
+      console.log("Esto es", url)
+      return url;
+    } catch (error) {
+      console.error('Error generating signed URL:', error);
+      throw new Error('Could not generate signed URL');
+    }
+}
+
 }

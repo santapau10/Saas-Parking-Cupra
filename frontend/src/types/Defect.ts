@@ -5,4 +5,5 @@ export interface Defect {
     _detailedDescription: string;
     _reportingDate: Date;
     _status: 'open' | 'inwork' | 'closed' | 'rejected';
+    _image: string;
   }

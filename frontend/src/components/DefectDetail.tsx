@@ -10,7 +10,7 @@ const DefectDetail = ({ defect, onClose }: ModalProps) => {
   if (!defect) return null;
 
   const formattedDate = new Date(defect._reportingDate).toLocaleDateString();
-
+  console.log(defect);
   return (
     <>
       <div className="modal-overlay" onClick={onClose}></div>
@@ -37,6 +37,11 @@ const DefectDetail = ({ defect, onClose }: ModalProps) => {
               <strong>Status:</strong> {defect._status}
             </p>
           </div>
+          {defect._image && (
+            <div className="modal-image">
+              <img src={defect._image} alt={`Image of ${defect._object}`} />
+            </div>
+          )}
         </div>
       </div>
     </>

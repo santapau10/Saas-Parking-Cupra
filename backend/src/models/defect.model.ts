@@ -52,11 +52,11 @@ export class Defect {
     this._description = value;
   }
 
-  public get detailDescription(): string {
+  public get detailedDescription(): string {
     return this._detailedDescription;
   }
 
-  public set detailDescription(value: string) {
+  public set detailedDescription(value: string) {
     this._detailedDescription = value;
   }
 

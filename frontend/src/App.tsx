@@ -9,7 +9,7 @@ import axios from "axios";
 import DefectModal from "./components/DefectModal";
 import { Defect } from "./types/Defect";
 import background from "../src/assets/background.svg";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
@@ -25,6 +25,7 @@ export default function App() {
       setLoading(true);
       setError(null);
       const response = await axios.get(`${apiUrl}/defects`);
+      console.log(response);
       setDefects(response.data);
     } catch (err: any) {
       setError("Failed to load defects. Please try again later.");
@@ -40,8 +41,11 @@ export default function App() {
 
   const handleDefectSubmit = async (defect: FormData) => {
     try {
-      console.log(defect);
-      await axios.post(`${apiUrl}/defects`, defect);
+      await axios.post(`${apiUrl}/defects`, defect, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Defect reported successfully!", {
         position: "top-right",
         autoClose: 3000, // 3 seconds
@@ -50,10 +54,11 @@ export default function App() {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "colored"
+        theme: "colored",
       });
       await fetchDefects(); // Actualiza la lista después de agregar un nuevo defecto
     } catch (err: any) {
+      console.log(err.response.data);
       toast.error("Failed to report defect. Please try again later.", {
         position: "top-right",
         autoClose: 3000, // 3 seconds
@@ -62,7 +67,7 @@ export default function App() {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "colored"
+        theme: "colored",
       });
     }
   };

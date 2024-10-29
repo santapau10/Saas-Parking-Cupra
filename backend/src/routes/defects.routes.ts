@@ -11,19 +11,33 @@ const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextF
   Promise.resolve(fn(req, res, next)).catch(next);
 
 // Ruta para obtener todos los defectos
-router.get('/', asyncHandler(async (req: Request, res: Response) => {
-  const snapshot = await firestore.collection('defects').get();
-  if (snapshot.empty) {
-    return res.status(200).json("No hay defectos.");
-  }
+router.get(
+  '/',
+  asyncHandler(async (req: Request, res: Response) => {
+    const snapshot = await FirestoreService.getFirestoreInstance().collection('defects').get();
+    if (snapshot.empty) {
+      return res.status(200).json("No hay defectos.");
+    }
 
-  const defects = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+    const defects = await Promise.all(
+      snapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        
+        // Generate signed URL if the defect has an image path
+        const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace('https://storage.googleapis.com/cupra-bucket/', '')) : null;
 
-  res.status(200).json(defects);
-}));
+
+        return {
+          id: doc.id,
+          ...data,
+          _image: imageUrl, // Attach the signed URL or null if no image
+        };
+      })
+    );
+
+    res.status(200).json(defects);
+  })
+);
 
 // Ruta para obtener defectos filtrados por estado
 router.get('/filteredByStatus/:status', asyncHandler(async (req: Request, res: Response) => {
@@ -94,13 +108,13 @@ router.post(
 
     // Crea el nuevo documento con la URL de la imagen en lugar del archivo
     const newDefect = {
-      object: _object,
-      location: _location,
-      description: _description,
-      detailedDescription: _detailedDescription,
-      reportingDate: new Date(_reportingDate),
-      status: _status,
-      image: imageUrl, // URL de la imagen en lugar del archivo
+      _object: _object,
+      _location: _location,
+      _description: _description,
+      _detailedDescription: _detailedDescription,
+      _reportingDate: new Date(_reportingDate),
+      _status: _status,
+      _image: imageUrl, // URL de la imagen en lugar del archivo
     };
 
     // Guarda el documento en Firestore

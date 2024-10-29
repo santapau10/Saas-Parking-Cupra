@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Defect } from "../types/Defect";
-import defaultImage from "../assets/default_image.svg"; // Import the default image
+import defaultImage from "../assets/default_image.jpg"; // Import the default image
 
 interface DefectModalProps {
   onClose: () => void;
-  onSubmit: (formData: FormData) => void; // Update type to expect FormData
+  onSubmit: (formData: FormData) => void;
 }
 
 const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
@@ -15,10 +15,23 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     _detailedDescription: "",
     _reportingDate: new Date(),
     _status: "open",
+    _image: "",
   });
 
-  const [_image, set_image] = useState<File | string>(defaultImage);
+  const [_image, set_image] = useState<File | null>(null);
   const [displayImage, setDisplayImage] = useState<string>(defaultImage);
+
+  useEffect(() => {
+    // Convert the default image to a File and set as initial state for _image
+    const fetchDefaultImage = async () => {
+      const response = await fetch(defaultImage);
+      const blob = await response.blob();
+      const file = new File([blob], "defaultImage.jpg", { type: blob.type });
+      set_image(file);
+    };
+
+    fetchDefaultImage();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -26,17 +39,10 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     >
   ) => {
     const { name, value } = e.target;
-    if (name === "_reportingDate") {
-      setDefect((prev) => ({
-        ...prev,
-        [name]: new Date(value),
-      }));
-    } else {
-      setDefect((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setDefect((prev) => ({
+      ...prev,
+      [name]: name === "_reportingDate" ? new Date(value) : value,
+    }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,9 +54,6 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
 
       // Clean up the object URL after the component re-renders
       return () => URL.revokeObjectURL(imageUrl);
-    } else {
-      set_image(defaultImage); // Revert to default if no file selected
-      setDisplayImage(defaultImage);
     }
   };
 
@@ -65,15 +68,13 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     formData.append("_reportingDate", defect._reportingDate.toISOString());
     formData.append("_status", defect._status);
 
-    if (_image instanceof File) {
-      formData.append("_image", _image); // Append only if _image is a File object
+    if (_image) {
+      formData.append("_image", _image);
+    } else {
+      console.log("No image file selected.");
     }
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }    
-
-    onSubmit(formData); // Pass formData instead of defect object
+    onSubmit(formData);
     onClose();
   };
 
