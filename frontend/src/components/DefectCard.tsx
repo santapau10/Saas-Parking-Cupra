@@ -37,6 +37,7 @@ const DefectCard = (defect: Defect) => {
         padding: 15,
         borderRadius: 10,
         marginBottom: 10,
+        cursor: 'pointer'
       }}
     >
       <h2 className="defect-title">{defect._object}</h2>

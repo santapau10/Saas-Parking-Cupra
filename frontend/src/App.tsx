@@ -176,7 +176,7 @@ export default function App() {
       </div>
 
       {loading ? (
-        <p>Loading defects...</p>
+        <p style={{fontFamily: 'Arial'}}>Loading defects...</p>
       ) : error ? (
         <p>{error}</p>
       ) : (

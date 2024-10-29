@@ -22,7 +22,6 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
   const [displayImage, setDisplayImage] = useState<string>(defaultImage);
 
   useEffect(() => {
-    // Convert the default image to a File and set as initial state for _image
     const fetchDefaultImage = async () => {
       const response = await fetch(defaultImage);
       const blob = await response.blob();
@@ -51,8 +50,6 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
       set_image(file);
       const imageUrl = URL.createObjectURL(file);
       setDisplayImage(imageUrl);
-
-      // Clean up the object URL after the component re-renders
       return () => URL.revokeObjectURL(imageUrl);
     }
   };
@@ -100,13 +97,22 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
           borderRadius: 5,
           width: "400px",
           height: "500px",
-          overflowY: "auto",
+          overflowY: "scroll",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          msOverflowStyle: "none", // IE and Edge
+          scrollbarWidth: "none", // Firefox
         }}
       >
+        <style>
+          {`
+            /* For Chrome, Safari, and Edge */
+            .hide-scrollbar::-webkit-scrollbar {
+              display: none;
+            }
+          `}
+        </style>
         <h2 style={{ textAlign: "center" }}>Report Defect</h2>
         <form onSubmit={handleSubmit}>
-          {/* Other input fields remain unchanged */}
           <div style={{ marginBottom: "15px" }}>
             <label>
               <strong>Object:</strong>
@@ -116,7 +122,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
                 value={defect._object}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
               />
             </label>
           </div>
@@ -129,7 +135,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
                 value={defect._location}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
               />
             </label>
           </div>
@@ -141,7 +147,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
                 value={defect._description}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
               />
             </label>
           </div>
@@ -153,7 +159,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
                 value={defect._detailedDescription}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
               />
             </label>
           </div>
@@ -166,7 +172,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
                 value={defect._reportingDate.toISOString().split("T")[0]}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
               />
             </label>
           </div>
@@ -177,7 +183,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
                 name="_status"
                 value={defect._status}
                 onChange={handleChange}
-                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
               >
                 <option value="open">Open</option>
                 <option value="inwork">In Work</option>
@@ -187,7 +193,6 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
             </label>
           </div>
 
-          {/* Image Selection */}
           <div style={{ marginBottom: "15px" }}>
             <label>
               <strong>Image:</strong>
@@ -200,7 +205,6 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
             </label>
           </div>
 
-          {/* Display the image */}
           <div style={{ marginBottom: "15px", textAlign: "center" }}>
             <img
               src={displayImage}
