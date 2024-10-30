@@ -1,12 +1,13 @@
 import admin from 'firebase-admin';
-import { ServiceAccount } from 'firebase-admin';
+import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { Storage, GetSignedUrlConfig } from '@google-cloud/storage';
+import * as dotenv from 'dotenv';
 
-const serviceAccount = require('../../keys/cupra-cad-9decce7dcc62.json') as ServiceAccount;
+dotenv.config();
 
-// Inicializa Firebase Admin SDK
+// Inicializa Firebase Admin SDK con credenciales predeterminadas de la aplicación
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: applicationDefault(),
 });
 
 // Exporta la instancia de Firestore
@@ -29,8 +30,7 @@ export default class FirestoreService {
   static getStorageInstance(): Storage {
     if (!FirestoreService.storageInstance) {
       FirestoreService.storageInstance = new Storage({
-        projectId: serviceAccount.projectId,
-        keyFilename: '../backend/keys/cupra-cad-9decce7dcc62.json',
+        projectId: process.env.GCP_PROJECT_ID, 
       });
     }
     return FirestoreService.storageInstance;
@@ -48,26 +48,26 @@ export default class FirestoreService {
     return `https://storage.googleapis.com/${FirestoreService.bucketName}/${fileName}`;
   }
 
-  static async generateSignedUrl(fileName: string): Promise<string> {
-    const storage = FirestoreService.getStorageInstance();
-    const options: GetSignedUrlConfig = {
-      version: 'v4',
-      action: 'read',
-      expires: Date.now() + 15 * 60 * 1000, // 15 minutos
-    };
+static async generateSignedUrl(fileName: string): Promise<string> {
+  const storage = FirestoreService.getStorageInstance();
+  console.log(storage)
+  const options: GetSignedUrlConfig = {
+    version: 'v4',
+    action: 'read',
+    expires: Date.now() + 15 * 60 * 1000, // 15 minutos
+  };
 
-    try {
-      // Asegúrate de usar solo el nombre del archivo, no la URL completa
-      const [url] = await storage
-        .bucket(FirestoreService.bucketName)
-        .file(fileName) // Asegúrate de que 'fileName' sea solo la parte relevante
-        .getSignedUrl(options);
-      console.log("Esto es", url)
-      return url;
-    } catch (error) {
-      console.error('Error generating signed URL:', error);
-      throw new Error('Could not generate signed URL');
-    }
+  try {
+    const [url] = await storage
+      .bucket(FirestoreService.bucketName)
+      .file(fileName)
+      .getSignedUrl(options);
+    console.log("Signed URL generated:", url);
+    return url;
+  } catch (error: any) {
+    console.error('Error generating signed URL:', error.message, error.code, error.errors);
+    throw new Error(`Could not generate signed URL: ${error.message}`);
+  }
 }
 
 }
