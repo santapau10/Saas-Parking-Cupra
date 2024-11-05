@@ -1,6 +1,7 @@
 // repositories/FirestoreDefectRepository.ts
 import { IDefectRepository } from './IDefectRepository';
 import FirestoreService from '../services/firestore.service';
+import { Defect } from '../models/defect.model';
 
 class FirestoreDefectRepository implements IDefectRepository {
   private firestore = FirestoreService.getFirestoreInstance();
@@ -52,9 +53,25 @@ class FirestoreDefectRepository implements IDefectRepository {
     return docRef.id;
   }
 
-  async update(id: string, defectData: Partial<any>): Promise<void> {
-    await this.firestore.collection('defects').doc(id).update(defectData);
-  }
+  async update(id: string, defectData: Partial<Defect>): Promise<Defect | null> {
+  const docRef = this.firestore.collection('defects').doc(id);
+  await docRef.update(defectData);
+  
+  // Recupera el documento actualizado para retornarlo
+  const updatedDoc = await docRef.get();
+  return updatedDoc.exists 
+      ? new Defect(
+          updatedDoc.data()!._object,
+          updatedDoc.data()!._location,
+          updatedDoc.data()!._description,
+          updatedDoc.data()!._detailedDescription,
+          new Date(updatedDoc.data()!._reportingDate),
+          updatedDoc.data()!._status,
+          updatedDoc.data()!._image
+        ) 
+      : null;
+}
+
 
   async delete(id: string): Promise<void> {
     await this.firestore.collection('defects').doc(id).delete();
