@@ -50,21 +50,19 @@ export default class FirestoreService {
 
 static async generateSignedUrl(fileName: string): Promise<string> {
   const storage = FirestoreService.getStorageInstance();
-  console.log(storage)
   const options: GetSignedUrlConfig = {
     version: 'v4',
     action: 'read',
     expires: Date.now() + 15 * 60 * 1000, // 15 minutos
   };
-
   try {
     const [url] = await storage
-      .bucket(process.env.BUCKET!)
-      .file(fileName)
-      .getSignedUrl(options);
-    console.log("Signed URL generated:", url);
+    .bucket(process.env.BUCKET!)
+    .file(fileName)
+    .getSignedUrl(options);
     return url;
   } catch (error: any) {
+    console.log(process.env.BUCKET)
     console.error('Error generating signed URL:', error.message, error.code, error.errors);
     throw new Error(`Could not generate signed URL: ${error.message}`);
   }

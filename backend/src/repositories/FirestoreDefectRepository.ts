@@ -12,7 +12,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace('https://storage.googleapis.com/cupra-bucket/', '')) : null;
+      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.BUCKET}/`, '')) : null;
       return { id: doc.id, ...data, _image: imageUrl };
     }));
   }
@@ -23,7 +23,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace('https://storage.googleapis.com/cupra-bucket/', '')) : null;
+      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.BUCKET}/`, '')) : null;
       return { id: doc.id, ...data, _image: imageUrl };
     }));
   }
@@ -34,7 +34,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace('https://storage.googleapis.com/cupra-bucket/', '')) : null;
+      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.BUCKET}/`, '')) : null;
       return { id: doc.id, ...data, _image: imageUrl };
     }));
   }
@@ -44,7 +44,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     if (!doc.exists) return null;
     
     const data = doc.data()!;
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace('https://storage.googleapis.com/cupra-bucket/', '')) : null;
+      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.BUCKET}/`, '')) : null;
     return { id: doc.id, ...data, _image: imageUrl };
   }
 
