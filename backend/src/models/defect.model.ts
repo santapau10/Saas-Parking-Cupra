@@ -24,7 +24,7 @@ export class Defect {
     this._detailedDescription = detailedDescription;
     this._reportingDate = reportingDate;
     this._status = status;
-    this._image=image;
+    this._image=image; 
   }
  
 
