@@ -1,36 +1,35 @@
 # Usa una imagen base de Node.js
-FROM node:18 AS build
+FROM node:18-alpine AS build
 
-# Establece el directorio de trabajo en /app
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia el package.json y package-lock.json al contenedor
+# Copia los archivos de package.json y package-lock.json
 COPY package*.json ./
 
 # Instala las dependencias
 RUN npm install
 
-# Copia el resto de la aplicación
+# Copia el resto de los archivos de la aplicación
 COPY . .
 
-# Compila el código TypeScript
+# Construye la aplicación de Vite
 RUN npm run build
 
-# Crea una imagen de producción
-FROM node:18
+# Usa una imagen base de Node.js para servir la aplicación
+FROM node:18-alpine
 
-# Establece el directorio de trabajo en /app
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia solo los archivos necesarios
-COPY --from=build /app/dist ./dist
-COPY package*.json ./
+# Instala un servidor estático ligero (serve)
+RUN npm install -g serve
 
-# Instala solo las dependencias de producción
-RUN npm install --only=production
+# Copia los archivos construidos desde la fase anterior
+COPY --from=build /app/dist .
 
-# Expone el puerto en el que corre tu aplicación (ahora es 8080)
+# Expone el puerto 8080 para Google Cloud Run
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-CMD ["node", "dist/index.js"]
+# Inicia el servidor con "serve"
+CMD ["serve", "-s", ".", "-l", "8080"]
