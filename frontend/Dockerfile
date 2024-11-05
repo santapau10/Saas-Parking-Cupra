@@ -22,14 +22,17 @@ FROM node:18-alpine
 # Establece el directorio de trabajo
 WORKDIR /app
 
-# Instala un servidor estático ligero (serve)
-RUN npm install -g serve
-
 # Copia los archivos construidos desde la fase anterior
 COPY --from=build /app/dist .
+
+# Copia package.json para poder instalar dependencias de producción
+COPY package*.json ./
+
+# Instala solo las dependencias de producción
+RUN npm install --only=production
 
 # Expone el puerto 8080 para Google Cloud Run
 EXPOSE 8080
 
-# Inicia el servidor con "serve"
-CMD ["serve", "-s", ".", "-l", "8080"]
+# Comando para iniciar la aplicación
+CMD ["npm", "start"]  # Asegúrate de que este script esté definido en package.json
