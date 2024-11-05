@@ -53,4 +53,5 @@ jobs:
             --image europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend \
             --platform managed \
             --region europe-west3 \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --set-env-vars VITE_REACT_APP_API_URL=https://my-backend-965038707682.europe-west3.run.app
