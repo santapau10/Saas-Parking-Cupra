@@ -41,6 +41,7 @@ export default function App() {
 
   const handleDefectSubmit = async (defect: FormData) => {
     try {
+      console.log(apiUrl);
       await axios.post(`${apiUrl}/defects`, defect, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -176,7 +177,7 @@ export default function App() {
       </div>
 
       {loading ? (
-        <p style={{fontFamily: 'Arial'}}>Loading defects...</p>
+        <p style={{ fontFamily: "Arial" }}>Loading defects...</p>
       ) : error ? (
         <p>{error}</p>
       ) : (
