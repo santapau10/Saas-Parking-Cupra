@@ -26,7 +26,7 @@ export class Defect {
     this._status = status;
     this._image=image;
   }
-
+ 
 
   public get object(): string {
     return this._object;
