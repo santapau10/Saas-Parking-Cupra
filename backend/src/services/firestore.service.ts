@@ -16,7 +16,7 @@ const firestore = admin.firestore();
 export default class FirestoreService {
   private static firestoreInstance: FirebaseFirestore.Firestore;
   private static storageInstance: Storage;
-  private static bucketName = process.env.BUCKET; // Reemplaza con el nombre de tu bucket
+  private static bucketName = process.env.GCP_BUCKET; // Reemplaza con el nombre de tu bucket
 
   private constructor() {}
 
@@ -38,14 +38,14 @@ export default class FirestoreService {
 
   static async uploadFile(fileBuffer: Buffer, fileName: string, mimeType: string): Promise<string> {
     const storage = FirestoreService.getStorageInstance();
-    const bucket = storage.bucket(process.env.BUCKET!);
+    const bucket = storage.bucket(process.env.GCP_BUCKET!);
     const file = bucket.file(fileName);
     await file.save(fileBuffer, {
       metadata: { contentType: mimeType },
       resumable: false,
     });
 
-    return `https://storage.googleapis.com/${process.env.BUCKET}/${fileName}`;
+    return `https://storage.googleapis.com/${process.env.GCP_BUCKET}/${fileName}`;
   }
 
 static async generateSignedUrl(fileName: string): Promise<string> {
@@ -57,12 +57,11 @@ static async generateSignedUrl(fileName: string): Promise<string> {
   };
   try {
     const [url] = await storage
-    .bucket(process.env.BUCKET!)
+    .bucket(process.env.GCP_BUCKET!)
     .file(fileName)
     .getSignedUrl(options);
     return url;
   } catch (error: any) {
-    console.log(process.env.BUCKET)
     console.error('Error generating signed URL:', error.message, error.code, error.errors);
     throw new Error(`Could not generate signed URL: ${error.message}`);
   }
