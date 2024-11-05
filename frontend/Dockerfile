@@ -6,7 +6,8 @@ COPY package.json .
 
 RUN npm install
 
-RUN npm i -g serve
+# Asegúrate de instalar serve
+RUN npm install -g serve
 
 COPY . .
 
@@ -14,4 +15,4 @@ RUN npm run build
 
 EXPOSE 8080
 
-CMD [ "serve", "-s", "dist" ]
+CMD ["serve", "-s", "dist"]
