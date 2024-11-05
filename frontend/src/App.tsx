@@ -24,6 +24,7 @@ export default function App() {
     try {
       setLoading(true);
       setError(null);
+      console.log(apiUrl);
       const response = await axios.get(`${apiUrl}/defects`);
       console.log(response);
       setDefects(response.data);
