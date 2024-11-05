@@ -16,18 +16,34 @@ jobs:
     env:
       PORT: 3000
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GOOGLE_APPLICATION_CREDENTIALS: "./keys/service-account.json"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Google Cloud Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
       - name: Configurar Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
+      # Crear el archivo JSON temporalmente
+      - name: Crear archivo service-account.json
+        run: |
+          mkdir -p ./keys
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > ./keys/service-account.json
 
       - name: Authenticate Docker
         run: gcloud auth configure-docker europe-west3-docker.pkg.dev
+
+      - name: Set GCP project
+        run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Build Docker image
         run: |
@@ -44,3 +60,7 @@ jobs:
             --platform managed \
             --region europe-west3 \
             --allow-unauthenticated
+
+      # (Opcional) Eliminar el archivo JSON al finalizar
+      - name: Remove service account JSON
+        run: rm -f ./keys/service-account.json
