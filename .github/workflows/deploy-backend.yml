@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     # Cambia el environment según la rama
-    environment: cupra
+    environment: ${{ github.ref == 'refs/heads/dev' && 'cupra-dev' || 'cupra' }}
     env:
       PORT: 3000
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GOOGLE_APPLICATION_CREDENTIALS: "./keys/service-account.json"
-      BUCKET: ${{ secrets.BUCKET }}
+      BUCKET: ${{ secrets.BUCKET}}
 
     steps:
       - name: Checkout repository

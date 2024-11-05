@@ -57,7 +57,7 @@ static async generateSignedUrl(fileName: string): Promise<string> {
   };
   try {
     const [url] = await storage
-    .bucket(process.env.BUCKET!)
+    .bucket(process.env.BUCKET! )
     .file(fileName)
     .getSignedUrl(options);
     return url;
