@@ -38,6 +38,9 @@ jobs:
       - name: Authenticate Docker
         run: gcloud auth configure-docker europe-west3-docker.pkg.dev
 
+      - name: Set GCP project
+        run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
       - name: Build Docker image
         run: |
           docker build --platform linux/amd64 -t my-backend ./backend
