@@ -3,7 +3,7 @@ name: Deploy Frontend to Google Cloud Run
 on:
   push:
     branches:
-      - main
+      - dev
     paths:
       - "frontend/**"
 
@@ -11,7 +11,7 @@ jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
 
-    environment: cupra
+    environment: cupra-dev
     env:
       VITE_REACT_APP_API_URL: ${{ secrets.VITE_REACT_APP_API_URL }}
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
@@ -40,16 +40,16 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --platform linux/amd64 --build-arg VITE_REACT_APP_API_URL=https://my-backend-965038707682.europe-west3.run.app -t my-frontend ./frontend
-          docker tag my-frontend europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend
+          docker build --platform linux/amd64 --build-arg VITE_REACT_APP_API_URL=https://my-backend-965038707682.europe-west3.run.app -t my-frontend-dev ./frontend
+          docker tag my-frontend europe-west3-docker.pkg.dev/cupra-cad/cupra-dev/my-frontend-dev
 
       - name: Push Docker image to Artifact Registry
-        run: docker push europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend
+        run: docker push europe-west3-docker.pkg.dev/cupra-cad/cupra-dev/my-frontend-dev
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy my-frontend \
-            --image europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend \
+          gcloud run deploy my-frontend-dev \
+            --image europe-west3-docker.pkg.dev/cupra-cad/cupra-dev/my-frontend-dev \
             --platform managed \
             --region europe-west3 \
             --allow-unauthenticated \

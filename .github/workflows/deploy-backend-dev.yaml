@@ -3,7 +3,7 @@ name: Deploy Backend to Google Cloud Run
 on:
   push:
     branches:
-      - main
+      - dev # Cambiar a 'dev' para que escuche los pushes en la rama dev
     paths:
       - "backend/**"
 
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Cambia el environment según la rama
-    environment: cupra
+    environment: cupra-dev # Establecer directamente a 'cupra-dev' para la rama dev
     env:
       PORT: 3000
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
@@ -47,16 +47,16 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --platform linux/amd64 -t my-backend ./backend
-          docker tag my-backend europe-west3-docker.pkg.dev/cupra-cad/cupra/my-backend
+          docker build --platform linux/amd64 -t my-backend-dev ./backend
+          docker tag my-backend europe-west3-docker.pkg.dev/cupra-cad/cupra-dev/my-backend-dev
 
       - name: Push Docker image to Artifact Registry
-        run: docker push europe-west3-docker.pkg.dev/cupra-cad/cupra/my-backend
+        run: docker push europe-west3-docker.pkg.dev/cupra-cad/cupra-dev/my-backend-dev
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy my-backend \
-            --image europe-west3-docker.pkg.dev/cupra-cad/cupra/my-backend \
+            --image europe-west3-docker.pkg.dev/cupra-cad/cupra-dev/my-backend-dev \
             --platform managed \
             --region europe-west3 \
             --allow-unauthenticated
