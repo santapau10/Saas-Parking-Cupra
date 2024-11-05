@@ -33,12 +33,6 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
 
-      # Crear el archivo JSON temporalmente
-      - name: Crear archivo service-account.json
-        run: |
-          mkdir -p ./keys
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > ./keys/service-account.json
-
       - name: Authenticate Docker
         run: gcloud auth configure-docker europe-west3-docker.pkg.dev
 
@@ -60,7 +54,3 @@ jobs:
             --platform managed \
             --region europe-west3 \
             --allow-unauthenticated
-
-      # (Opcional) Eliminar el archivo JSON al finalizar
-      - name: Remove service account JSON
-        run: rm -f ./keys/service-account.json
