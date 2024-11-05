@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Cambia el environment según la rama
-    environment: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+    environment: ${{ github.ref == 'refs/heads/dev' && 'curpa-dev' || 'cupra' }}
     env:
       PORT: 3000
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
