@@ -1,4 +1,4 @@
-name: Deploy to Google Cloud Run
+name: Deploy Backend to Google Cloud Run
 
 on:
   push:
@@ -22,11 +22,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Google Cloud Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
       - name: Configurar Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          # Usa el secreto para la clave JSON de la cuenta de servicio
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
 
       # Crear el archivo JSON temporalmente
