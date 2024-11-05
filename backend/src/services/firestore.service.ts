@@ -16,7 +16,7 @@ const firestore = admin.firestore();
 export default class FirestoreService {
   private static firestoreInstance: FirebaseFirestore.Firestore;
   private static storageInstance: Storage;
-  private static bucketName: string = 'cupra-bucket'; // Reemplaza con el nombre de tu bucket
+  private static bucketName: string = process.env.BUCKET!; // Reemplaza con el nombre de tu bucket
 
   private constructor() {}
 
