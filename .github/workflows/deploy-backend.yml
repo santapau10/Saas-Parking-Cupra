@@ -1,0 +1,60 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - dev
+      - main # Puedes usar 'main' o la rama de producción que prefieras
+    paths:
+      - "backend/**"
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+
+    # Cambia el environment según la rama
+    environment: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+    env:
+      PORT: 3000
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GOOGLE_APPLICATION_CREDENTIALS: "./keys/service-account.json"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configurar Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          # Usa el secreto para la clave JSON de la cuenta de servicio
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
+      # Crear el archivo JSON temporalmente
+      - name: Crear archivo service-account.json
+        run: |
+          mkdir -p ./keys
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > ./keys/service-account.json
+
+      - name: Authenticate Docker
+        run: gcloud auth configure-docker europe-west3-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build --platform linux/amd64 -t my-backend .
+          docker tag my-backend europe-west3-docker.pkg.dev/cupra-cad/cupra/my-backend
+
+      - name: Push Docker image to Artifact Registry
+        run: docker push europe-west3-docker.pkg.dev/cupra-cad/cupra/my-backend
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy my-backend \
+            --image europe-west3-docker.pkg.dev/cupra-cad/cupra/my-backend \
+            --platform managed \
+            --region europe-west3 \
+            --allow-unauthenticated
+
+      # (Opcional) Eliminar el archivo JSON al finalizar
+      - name: Remove service account JSON
+        run: rm -f ./keys/service-account.json
