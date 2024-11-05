@@ -38,14 +38,14 @@ export default class FirestoreService {
 
   static async uploadFile(fileBuffer: Buffer, fileName: string, mimeType: string): Promise<string> {
     const storage = FirestoreService.getStorageInstance();
-    const bucket = storage.bucket(FirestoreService.bucketName);
+    const bucket = storage.bucket(process.env.BUCKET!);
     const file = bucket.file(fileName);
     await file.save(fileBuffer, {
       metadata: { contentType: mimeType },
       resumable: false,
     });
 
-    return `https://storage.googleapis.com/${FirestoreService.bucketName}/${fileName}`;
+    return `https://storage.googleapis.com/${process.env.BUCKET!}/${fileName}`;
   }
 
 static async generateSignedUrl(fileName: string): Promise<string> {
@@ -59,7 +59,7 @@ static async generateSignedUrl(fileName: string): Promise<string> {
 
   try {
     const [url] = await storage
-      .bucket(FirestoreService.bucketName)
+      .bucket(process.env.BUCKET!)
       .file(fileName)
       .getSignedUrl(options);
     console.log("Signed URL generated:", url);
