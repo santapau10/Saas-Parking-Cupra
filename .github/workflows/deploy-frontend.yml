@@ -11,10 +11,8 @@ jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
 
-    # Cambia el environment según la rama
     environment: ${{ github.ref == 'refs/heads/dev' && 'cupra-dev' || 'cupra' }}
     env:
-      VITE_REACT_APP_API_URL: "https://my-backend-965038707682.europe-west3.run.app"
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GOOGLE_APPLICATION_CREDENTIALS: "./keys/service-account.json"
 
@@ -41,6 +39,10 @@ jobs:
 
       - name: Build Docker image
         run: |
+          # Exportar la variable de entorno antes de la construcción
+          echo "VITE_REACT_APP_API_URL=https://my-backend-965038707682.europe-west3.run.app" >> .env
+
+          # Construir la imagen Docker
           docker build --platform linux/amd64 -t my-frontend ./frontend
           docker tag my-frontend europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend
 
@@ -53,4 +55,5 @@ jobs:
             --image europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend \
             --platform managed \
             --region europe-west3 \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --set-env-vars VITE_REACT_APP_API_URL=https://my-backend-965038707682.europe-west3.run.app
