@@ -18,6 +18,7 @@ jobs:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GOOGLE_APPLICATION_CREDENTIALS: "./keys/service-account.json"
       GCP_BUCKET: ${{ secrets.GCP_BUCKET }}
+      GCP_ENV: "dev"
 
     steps:
       - name: Checkout repository

@@ -7,10 +7,9 @@ dotenv.config();
 
 // Inicializa Firebase Admin SDK con credenciales predeterminadas de la aplicación
 admin.initializeApp({
-  credential: applicationDefault(),
+  credential: admin.credential.applicationDefault(),
 });
 
-// Exporta la instancia de Firestore
 const firestore = admin.firestore();
 
 export default class FirestoreService {
