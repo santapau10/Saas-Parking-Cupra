@@ -1,0 +1,46 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - prod
+    paths:
+      - "frontend/**"
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+
+    # Cambia el environment según la rama
+    environment: ${{ github.ref == 'refs/heads/dev' && 'cupra-dev' || 'cupra' }}
+    env:
+      PORT: 3000
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configurar Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Authenticate Docker
+        run: gcloud auth configure-docker europe-west3-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build --platform linux/amd64 -t my-frontend .
+          docker tag my-frontend europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend
+
+      - name: Push Docker image to Artifact Registry
+        run: docker push europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy my-frontend \
+            --image europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend \
+            --platform managed \
+            --region europe-west3 \
+            --allow-unauthenticated
