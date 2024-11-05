@@ -29,8 +29,8 @@ COPY package*.json ./
 # Instala solo las dependencias de producción
 RUN npm install --only=production
 
-# Expone el puerto en el que corre tu aplicación (por defecto, 3000)
-EXPOSE 3000
+# Expone el puerto en el que corre tu aplicación (ahora es 8080)
+EXPOSE 8080
 
 # Comando para ejecutar la aplicación
 CMD ["node", "dist/index.js"]
