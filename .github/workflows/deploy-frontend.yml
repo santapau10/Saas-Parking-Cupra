@@ -39,11 +39,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          # Exportar la variable de entorno antes de la construcción
-          echo "VITE_REACT_APP_API_URL=https://my-backend-965038707682.europe-west3.run.app" >> .env
+          docker build --platform linux/amd64 \
+            --build-arg VITE_REACT_APP_API_URL=https://my-backend-965038707682.europe-west3.run.app \
+            -t my-frontend ./frontend
 
-          # Construir la imagen Docker
-          docker build --platform linux/amd64 -t my-frontend ./frontend
           docker tag my-frontend europe-west3-docker.pkg.dev/cupra-cad/cupra/my-frontend
 
       - name: Push Docker image to Artifact Registry
