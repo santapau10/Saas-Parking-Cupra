@@ -1,16 +1,20 @@
 import React from 'react';
 import logo from '../assets/cupra_logo.svg';
+import profileIcon from '../assets/profile.svg';
 
-const Header = () => {
+type Props = {
+  setFunct: () => void;
+};
+
+const Header: React.FC<Props> = ({setFunct}) => {
   const headerStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-start', // Align items to the start
+    justifyContent: 'space-between', // Align items to the start
     backgroundColor: '#add8e6', // Light blue background
     height: '150px', // Set the height
     marginBottom: '30px', // Ensure this has a unit (px)
-    width: '100%',
-    position: 'relative', // Position relative for further styling if needed
+    width: '100%'
   };
 
   const logoStyle: React.CSSProperties = {
@@ -33,6 +37,17 @@ const Header = () => {
     <header style={headerStyle}>
       <img src={logo} alt="Cupra Logo" style={logoStyle} />
       <h1 style={titleStyle}>Defects</h1>
+      <button
+        onClick={setFunct}
+        style={{
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        <img src={profileIcon} alt="Profile Icon" style={{ width: 40, height: 40, marginRight: 40 }} />
+      </button>
     </header>
   );
 };

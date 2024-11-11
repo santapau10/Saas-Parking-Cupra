@@ -7,7 +7,9 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import DefectModal from "./components/DefectModal";
+import UserModal from "./components/UserModal";
 import { Defect } from "./types/Defect";
+import { User } from "./types/User";
 import background from "../src/assets/background.svg";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -19,7 +21,13 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [locationFilter, setLocationFilter] = useState(""); // Estado para el filtro por ubicación
   const [statusFilter, setStatusFilter] = useState(""); // Estado para el filtro por estado
+  const [showUserModal, setShowUserModal] = useState(false);
 
+  const setShowUserModalToTrue = () => setShowUserModal(true);
+  const initialUser: User = { _username: "", _password: "" };
+  const [user, setUser] = useState<User>(initialUser); // New user state
+
+  
   const fetchDefects = async () => {
     try {
       setLoading(true);
@@ -126,13 +134,22 @@ export default function App() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <Header />
+      <Header setFunct={setShowUserModalToTrue} />
       {showModal && (
         <DefectModal
           onClose={() => setShowModal(false)}
           onSubmit={handleDefectSubmit}
         />
       )}
+      {showUserModal && (
+        <UserModal 
+          user={user}
+          onClose={() => setShowUserModal(false)}
+          onLogin={(newUser) => setUser(newUser)}
+          onLogout={() => setUser(initialUser)}
+        />
+      )}
+
       <ToastContainer />
 
       <div style={{ display: "flex", gap: "10px" }}>
