@@ -36,6 +36,9 @@ const DefectDetail = ({ defect, onClose }: ModalProps) => {
             <p>
               <strong>Status:</strong> {defect._status}
             </p>
+            <p>
+              <strong>Reported by:</strong> {defect._username}
+            </p>
           </div>
           {defect._image && (
             <div className="modal-image">

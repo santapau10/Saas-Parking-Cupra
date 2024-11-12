@@ -12,6 +12,7 @@ import { Defect } from "./types/Defect";
 import { User } from "./types/User";
 import background from "../src/assets/background.svg";
 import "react-toastify/dist/ReactToastify.css";
+import UserRegisterModal from "./components/UserRegisterModal";
 
 export default function App() {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
@@ -22,10 +23,10 @@ export default function App() {
   const [locationFilter, setLocationFilter] = useState(""); // Estado para el filtro por ubicación
   const [statusFilter, setStatusFilter] = useState(""); // Estado para el filtro por estado
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showUserRegisterModal, setShowUserRegisterModal] = useState(false);
 
   const setShowUserModalToTrue = () => setShowUserModal(true);
-  const initialUser: User = { _username: "", _password: "" };
-  const [user, setUser] = useState<User>(initialUser); // New user state
+  const [username, setUsername] = useState(""); // New user state
 
   
   const fetchDefects = async () => {
@@ -47,6 +48,99 @@ export default function App() {
   useEffect(() => {
     fetchDefects(); // Cargar defectos al montar el componente
   }, []);
+
+  const handleLogin = async (userData: User) => {
+    try {
+      await axios.post(`${apiUrl}/users/login`, userData);
+      setShowUserModal(false)
+      toast.success(`Log in successful. Welcome back, ${userData._username}!`, {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setUsername(userData._username)
+    } catch (err: any) {
+      console.log(err.response.data);
+      setShowUserModal(false)
+      toast.error("Failed to login, username or password incorrect.", {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  }
+
+  const handleRegister = async (userData: User) => {
+    try {
+      await axios.post(`${apiUrl}/users/register`, userData);
+      setShowUserRegisterModal(false)
+      toast.success(`Register successful. Welcome, ${userData._username}!`, {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setUsername(userData._username)
+    } catch (err: any) {
+      console.log(err.response.data);
+      setShowUserRegisterModal(false)
+      toast.error("Failed to register, please try again. Make sure the username doesn't already exist.", {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${apiUrl}/users/logout`);
+      setShowUserModal(false)
+      toast.success(`Log out  successful. Bye!`, {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setUsername("")
+    } catch (err: any) {
+      console.log(err.response.data);
+      setShowUserModal(false)
+      toast.error("Failed to log out.", {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  }
 
   const handleDefectSubmit = async (defect: FormData) => {
     try {
@@ -139,20 +233,29 @@ export default function App() {
         <DefectModal
           onClose={() => setShowModal(false)}
           onSubmit={handleDefectSubmit}
+          currentUser={username}
         />
       )}
       {showUserModal && (
         <UserModal 
-          user={user}
+          username={username}
           onClose={() => setShowUserModal(false)}
-          onLogin={(newUser) => setUser(newUser)}
-          onLogout={() => setUser(initialUser)}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+          onRegister={() => {setShowUserModal(false), setShowUserRegisterModal(true)}}
+        />
+      )}
+      {showUserRegisterModal && (
+        <UserRegisterModal 
+          username={username}
+          onClose={() => setShowUserRegisterModal(false)}
+          onRegister={handleRegister}
         />
       )}
 
       <ToastContainer />
 
-      <div style={{ display: "flex", gap: "10px" }}>
+      {username !== "" && <div style={{ display: "flex", gap: "10px" }}>
         <Button
           onClick={() => setShowModal(true)}
           style={{
@@ -164,7 +267,7 @@ export default function App() {
         >
           Create defect
         </Button>
-      </div>
+      </div> }
       <div>
         <input
           type="text"

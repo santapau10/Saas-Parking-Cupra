@@ -12,9 +12,7 @@ class AuthController {
   // Registro de usuario
   static async register(req: Request, res: Response): Promise<void> {
     try {
-      const { username, password } = req.body;
-      const newUser = new User(username, password);
-      console.log("newU¡ser", newUser)
+      const newUser = new User(req.body._username, req.body._password)
       // Crear usuario en Firestore
       const userId = await userRepository.create(newUser);
 
@@ -27,8 +25,8 @@ class AuthController {
   // Inicio de sesión
   static async login(req: Request, res: Response): Promise<void> {
     try {
-      const { username, password } = req.body;
-      const user = new User(username, password);
+      const username = req.body._username // declared for later use (doesnt work otherwise)
+      const user = new User(username, req.body._password);
 
       // Verificar credenciales
       const isValidUser = await userRepository.login(user);

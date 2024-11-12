@@ -71,7 +71,8 @@ class FirestoreDefectRepository implements IDefectRepository {
           updatedDoc.data()!._detailedDescription,
           new Date(updatedDoc.data()!._reportingDate),
           updatedDoc.data()!._status,
-          updatedDoc.data()!._image
+          updatedDoc.data()!._image,
+          updatedDoc.data()!._username
         ) 
       : null;
   }

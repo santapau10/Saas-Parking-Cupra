@@ -88,7 +88,7 @@
 
 .modal-image img {
     max-width: 100%;
-    max-height: 350px; /* Limits image height */
+    max-height: 300px; /* Limits image height */
     object-fit: cover; /* Maintains aspect ratio and crops if necessary */
     border-radius: 8px;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for the image */

@@ -5,9 +5,10 @@ import defaultImage from "../assets/default_image.jpg"; // Import the default im
 interface DefectModalProps {
   onClose: () => void;
   onSubmit: (formData: FormData) => void;
+  currentUser: string;
 }
 
-const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
+const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUser }) => {
   const [defect, setDefect] = useState<Defect>({
     _object: "",
     _location: "",
@@ -16,6 +17,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     _reportingDate: new Date(),
     _status: "open",
     _image: "",
+    _username: "",
   });
 
   const [_image, set_image] = useState<File | null>(null);
@@ -64,6 +66,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit }) => {
     formData.append("_detailedDescription", defect._detailedDescription);
     formData.append("_reportingDate", defect._reportingDate.toISOString());
     formData.append("_status", defect._status);
+    formData.append("_username", currentUser)
 
     if (_image) {
       formData.append("_image", _image);

@@ -34,13 +34,13 @@ class DefectController {
   }
 
   static async create(req: Request, res: Response): Promise<void> {
-    const { _object, _location, _description, _detailedDescription, _reportingDate, _status } = req.body;
+    const { _object, _location, _description, _detailedDescription, _reportingDate, _status, _username } = req.body;
 
     const imageUrl = req.file
       ? await FirestoreService.uploadFile(req.file.buffer, `defects/${Date.now()}.jpg`, 'image/jpeg')
       : null;
 
-    const newDefect = { _object, _location, _description, _detailedDescription, _reportingDate: new Date(_reportingDate), _status, _image: imageUrl };
+    const newDefect = { _object, _location, _description, _detailedDescription, _reportingDate: new Date(_reportingDate), _status, _image: imageUrl, _username };
 
     const defectId = await defectRepository.create(newDefect);
     res.status(201).json({ id: defectId, ...newDefect });

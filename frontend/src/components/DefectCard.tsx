@@ -5,6 +5,7 @@ import {
   faInfoCircle,
   faCalendarAlt,
   faFlag,
+  faUserAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { Defect } from "../types/Defect";
 
@@ -66,6 +67,10 @@ const DefectCard = (defect: Defect) => {
           {" "}
           {defect._status}
         </span>
+      </p>
+      <p>
+      <FontAwesomeIcon icon={faUserAlt} /> {/* Icono de detalles */}
+        <strong> Reported by:</strong> {defect._username || "Anonymous"}
       </p>
     </div>
   );

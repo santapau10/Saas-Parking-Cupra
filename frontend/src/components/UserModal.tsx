@@ -2,21 +2,22 @@ import React from "react";
 import { User } from "../types/User";
 
 type UserModalProps = {
-  user: User;
+  username: String;
   onClose: () => void;
   onLogin: (user:User) => void;
+  onRegister: () => void;
   onLogout: () => void;
 };
 
-const UserModal: React.FC<UserModalProps> = ({ user, onClose, onLogin, onLogout }) => {
-  const isLoggedIn = user._username !== "" && user._password !== "";
+const UserModal: React.FC<UserModalProps> = ({ username, onClose, onLogin, onRegister, onLogout }) => {
+  const isLoggedIn = username !== ""
 
   return (
     <div style={modalStyle}>
       {isLoggedIn ? (
         // Logged-in view
         <div style={contentStyle}>
-          <h2>Welcome, {user._username}!</h2>
+          <h2>Welcome, {username}!</h2>
           <button onClick={onLogout} style={buttonStyle}>Log Out</button>
           <button onClick={onClose} style={buttonStyle}>Close</button>
         </div>
@@ -41,6 +42,16 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose, onLogin, onLogout 
               Password:
               <input type="password" name="password" required />
             </label>
+            <p>Do you not have an account yet?  
+              <button 
+                type="button"
+                style={clickableTextStyle} 
+                onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = 'darkblue'} 
+                onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = 'blue'}
+                onClick={onRegister}>  
+                Register
+              </button>
+            </p>
             <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
             <button type="submit" style={buttonStyle}>Login</button>
             <button type="button" onClick={onClose} style={buttonStyle}>Close</button>
@@ -65,6 +76,16 @@ const modalStyle: React.CSSProperties = {
   backgroundColor: "rgba(0, 0, 0, 0.5)",
   fontFamily: 'Arial'
 };
+
+const clickableTextStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: 'blue',
+  textDecoration: 'underline',
+  cursor: 'pointer',
+  padding: 0,
+  marginLeft: 10
+}
 
 const contentStyle: React.CSSProperties = {
     backgroundColor: "white",
