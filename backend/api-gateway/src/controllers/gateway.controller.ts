@@ -3,7 +3,7 @@ import axios from 'axios';
 import { services } from '../models/microservices';
 
 export const handleServiceRequest = async (req: Request, res: Response): Promise<void> => {
-  const { service, path } = req.params;
+  const { tenantPrefix, service, path } = req.params;
   const serviceUrl = services[service];
 
   if (!serviceUrl) {
@@ -14,7 +14,7 @@ export const handleServiceRequest = async (req: Request, res: Response): Promise
   try {
     const response = await axios({
       method: req.method,
-      url: `${serviceUrl}/${path}`,
+      url: `${serviceUrl}/${tenantPrefix}/${path}`,
       data: req.body,
     });
 

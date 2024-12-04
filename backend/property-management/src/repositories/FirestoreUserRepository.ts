@@ -1,50 +1,41 @@
 import { IUserRepository } from './IUserRepository';
 import FirestoreService from '../services/firestore.service';
 import { User } from '../models/user.model';
-import bcrypt from 'bcrypt';
-
+import admin from 'firebase-admin';
 class FirestoreUserRepository implements IUserRepository {
   private firestore = FirestoreService.getFirestoreInstance();
-  private collectionName = process.env.GCP_ENV === 'dev' ? 'users-dev' : 'users';
 
-  // Create a user with an encrypted password, only if username is unique
-  async create(userData: User): Promise<string> {
-    // Check if a user with the same username already exists
-    const existingUserQuery = await this.firestore.collection(this.collectionName)
-      .where('username', '==', userData.username)
-      .get();
-
-    if (!existingUserQuery.empty) {
+  async create(userData: User, isAdmin: boolean): Promise<string> {
+    const tenantAuth = admin.auth().tenantManager().authForTenant(userData.tenant_id);
+      const existingUser = await tenantAuth.getUserByEmail(userData.email).catch((error) => {
+        if (error.code !== 'auth/user-not-found') {
+          throw error; 
+        }
+        return null;
+      });
+    if (existingUser) {
       throw new Error('Username already exists'); // Throw an error if the username is taken
     }
-
-    // Encrypt the password and create the user if username is unique
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
-    const docRef = await this.firestore.collection(this.collectionName).add({
-      username: userData.username,
-      password: hashedPassword,
-    });
-
-    return docRef.id; // Return the new user document ID
+     const userRecord = await tenantAuth.createUser({
+      email: userData.email,
+      password: userData.password,
+      displayName: userData.username,
+    })
+    const customClaims = { role: isAdmin ? 'admin':'user', tenantId: userData.tenant_id };
+      await tenantAuth.setCustomUserClaims(userRecord.uid, customClaims);
+      const token = await admin.auth().createCustomToken(userRecord.uid, customClaims);
+      return token ;
   }
-
-  // Login with encrypted password verification
-  async login(userData: User): Promise<boolean> {
-    const querySnapshot = await this.firestore.collection(this.collectionName)
-      .where('username', '==', userData.username)
-      .get();
-
-    if (querySnapshot.empty) {
-      return false; // User not found
+  async login(token: string): Promise<{userId:string, role: string}> {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      return {
+        userId: decodedToken.uid,
+        role: decodedToken.role || 'user', 
+      };
+    } catch (error) {
+      throw new Error('Token inválido o sesión no válida');
     }
-
-    const userDoc = querySnapshot.docs[0];
-    const storedPassword = userDoc.data().password;
-
-    // Compare the password with bcrypt
-    const isPasswordMatch = await bcrypt.compare(userData.password, storedPassword);
-    return isPasswordMatch;
   }
 }
 

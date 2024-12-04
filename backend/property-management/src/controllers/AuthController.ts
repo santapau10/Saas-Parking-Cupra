@@ -2,46 +2,55 @@
 
 import { Request, Response } from 'express';
 import FirestoreUserRepository from '../repositories/FirestoreUserRepository';
+import FirebaseTenantRepository from '../repositories/FirestoreTenantRepository';
 import { User } from '../models/user.model';
-import jwt from 'jsonwebtoken';
 
 const userRepository = new FirestoreUserRepository();
-const jwtSecret = process.env.JWT_SECRET || 'your_jwt_secret';
+const tenantRepository = new FirebaseTenantRepository();
 
 class AuthController {
-  static async register(req: Request, res: Response): Promise<void> {
+  static async registerUser(req: Request, res: Response): Promise<void> {
     try {
-      const newUser = new User(req.body._username, req.body._password)
-      const userId = await userRepository.create(newUser);
+      const newUser = new User(req.body.username, req.body.password, req.body.tenant_id, req.body.email)
+      const userId = await userRepository.create(newUser, false);
 
       res.status(201).json({ message: 'User registered successfully', userId });
     } catch (error) {
       res.status(500).json({ message: 'Registration failed', error: error });
     }
   }
-
-  // Inicio de sesión
-  static async login(req: Request, res: Response): Promise<void> {
+  static async registerTenant(req: Request, res: Response): Promise<void> {
     try {
-      const username = req.body._username // declared for later use (doesnt work otherwise)
-      const user = new User(username, req.body._password);
-
-      // Verificar credenciales
-      const isValidUser = await userRepository.login(user);
-      if (!isValidUser) {
-        res.status(401).json({ message: 'Invalid username or password' });
-        return;
-      }
-
-      // Generar token JWT
-      const token = jwt.sign({ username }, jwtSecret, { expiresIn: '1h' });
-      res.status(200).json({ message: 'Login successful', token });
+      const tenant = await tenantRepository.create(req.body.name, req.body.plan);
+      const newUser = new User(req.body.name, req.body.password, tenant, req.body.email)
+      const userId = await userRepository.create(newUser, true);
+      res.status(201).json({ message: 'Tenant registered successfully', userId });
     } catch (error) {
-      res.status(500).json({ message: 'Login failed', error: error });
+      res.status(500).json({ message: 'Registration failed', error: error });
     }
   }
-
-  // Cierre de sesión
+  static async login(req: Request, res: Response): Promise<void> {
+      try {
+        if (!req.body.token) {
+          res.status(400).json({ message: 'El token es requerido' });
+          return;
+        }
+        const userInfo = await userRepository.login(req.body.token);
+        res.status(200).json({
+          message: 'Login exitoso',
+          user: {
+            userId: userInfo.userId,
+            role: userInfo.role,
+          },
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(401).json({ message: error.message });
+        } else {
+          res.status(500).json({ message: 'Error inesperado al iniciar sesión', error: String(error) });
+        }
+      }
+    }
   static async logout(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).json({ message: 'Logout successful' });

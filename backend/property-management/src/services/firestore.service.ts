@@ -47,23 +47,22 @@ export default class FirestoreService {
     return `https://storage.googleapis.com/${process.env.GCP_BUCKET}/${fileName}`;
   }
 
-static async generateSignedUrl(fileName: string): Promise<string> {
-  const storage = FirestoreService.getStorageInstance();
-  const options: GetSignedUrlConfig = {
-    version: 'v4',
-    action: 'read',
-    expires: Date.now() + 15 * 60 * 1000, // 15 minutos
-  };
-  try {
-    const [url] = await storage
-    .bucket(process.env.GCP_BUCKET!)
-    .file(fileName)
-    .getSignedUrl(options);
-    return url;
-  } catch (error: any) {
-    console.error('Error generating signed URL:', error.message, error.code, error.errors);
-    throw new Error(`Could not generate signed URL: ${error.message}`);
+  static async generateSignedUrl(fileName: string): Promise<string> {
+    const storage = FirestoreService.getStorageInstance();
+    const options: GetSignedUrlConfig = {
+      version: 'v4',
+      action: 'read',
+      expires: Date.now() + 15 * 60 * 1000, // 15 minutos
+    };
+    try {
+      const [url] = await storage
+      .bucket(process.env.GCP_BUCKET!)
+      .file(fileName)
+      .getSignedUrl(options);
+      return url;
+    } catch (error: any) {
+      console.error('Error generating signed URL:', error.message, error.code, error.errors);
+      throw new Error(`Could not generate signed URL: ${error.message}`);
+    }
   }
-}
-
 }

@@ -1,9 +1,9 @@
 // controllers/DefectController.ts
 import { Request, Response } from 'express';
-import DefectRepositoryFactory from '../repositories/DefectRepositoryFactory';
+import FirestoreDefectRepository from '../repositories/FirestoreDefectRepository';
 import FirestoreService from '../services/firestore.service';
 
-const defectRepository = DefectRepositoryFactory.createRepository();
+const defectRepository = new FirestoreDefectRepository();
 
 class DefectController {
   static async getAll(req: Request, res: Response): Promise<void> {

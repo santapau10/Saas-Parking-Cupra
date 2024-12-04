@@ -2,7 +2,6 @@
 
 import express, { Application } from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import defectsRouter from './routes/defects.routes';
 import usersRouter from './routes/auth.route'
