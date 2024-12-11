@@ -1,4 +1,5 @@
 import React from 'react';
+import "../styles/Footer.css"
 
 const Footer: React.FC = () => {
   // Inline styles for the footer
@@ -8,7 +9,6 @@ const Footer: React.FC = () => {
     justifyContent: 'center',
     backgroundColor: '#add8e6', // Light blue background
     height: '120px', // Set the height
-    marginTop: '30px', // Space above the footer
     width: '100%',
     fontFamily: 'Arial'
   };
@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer style={{...footerStyle, marginTop: 100}}>
+    <footer style={{...footerStyle}}>
       <div style={contactStyle}>
         <strong>Salvador Ramón Espinosa Merino</strong><br />
         Software Engineer<br />
