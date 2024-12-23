@@ -3,13 +3,15 @@ import logo from '../assets/cupra_logo.svg';
 import profileIcon from '../assets/profile.svg';
 import "../styles/GlobalReset.css"; 
 import { useNavigate } from 'react-router-dom';
+import colors from "../assets/colors.json";
 
 type Props = {
   headerText: string;
   setFunct: () => void;
+  theme: number;
 };
 
-const Header: React.FC<Props> = ({setFunct, headerText}) => {
+const Header: React.FC<Props> = ({setFunct, headerText, theme}) => {
 
   const navigate = useNavigate();
 
@@ -17,13 +19,13 @@ const Header: React.FC<Props> = ({setFunct, headerText}) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between', // Align items to the start
-    backgroundColor: '#add8e6', // Light blue background
+    backgroundColor: colors[theme as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 ], // Light blue background
     height: '150px', // Set the height
     width: '100%'
   };
 
   const titleStyle: React.CSSProperties = {
-    color: 'white', // White text color
+    color: theme < 5? 'black': 'white',
     fontSize: '250%', // Adjust font size as needed
     margin: 0, // Remove default margin
     position: 'absolute', // Position the title absolutely
@@ -55,7 +57,7 @@ const Header: React.FC<Props> = ({setFunct, headerText}) => {
           padding: 0,
         }}
       >
-        <img src={profileIcon} alt="Profile Icon" style={{ width: 40, height: 40, marginRight: 40 }} />
+        <img src={profileIcon} alt="Profile Icon" style={{ width: 40, height: 40, marginRight: 40, filter: theme < 5 ? 'none' : "invert(1)" }} />
       </button>
     </header>
   );

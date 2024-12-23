@@ -1,10 +1,10 @@
  import { Outlet, useLocation } from 'react-router-dom';
  import Header from '../components/Header';
  import Footer from '../components/Footer';
- import React, { useState } from 'react';
- import background from "../assets/background.svg";
+ import React, { useState, useEffect } from 'react';
  import UserModal from "../components/UserModal";
  import UserRegisterModal from "../components/UserRegisterModal";
+ import defaultBackground from "../assets/backgrounds/background1.svg"
  import axios from "axios";
  import { ToastContainer, toast } from "react-toastify";
  import "react-toastify/dist/ReactToastify.css";
@@ -18,8 +18,29 @@ const Layout: React.FC = () => {
     const [showUserRegisterModal, setShowUserRegisterModal] = useState(false);
     const [username, setUsername] = useState(""); // New user state
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+    const user = {
+      name: "defaultUser",
+      tenancyType: "Enterprise",
+      theme: 9
+    };
 
     const location = useLocation();
+
+    const [backgroundImage, setBackgroundImage] = useState(null);
+
+    useEffect(() => {
+      const loadBackground = async () => {
+        try {
+          const theme = user?.theme || 1; 
+          const background = await import(`../assets/backgrounds/background${theme}.svg`);
+          setBackgroundImage(background.default);
+        } catch (error) {
+          console.error("Error loading background:", error);
+        }
+      };
+  
+      loadBackground();
+    }, [user]);
 
     const getHeaderText = () => {
         switch (location.pathname) {
@@ -27,6 +48,8 @@ const Layout: React.FC = () => {
             return 'Home Page';
           case '/defects':
             return 'Defects';
+            case '/financial':
+              return 'Financial';
           default:
             return '404';
         }
@@ -131,7 +154,7 @@ const Layout: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            backgroundImage: `url(${background})`,
+            backgroundImage: backgroundImage? `url(${backgroundImage})`  : `url(${defaultBackground})`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
           }}
@@ -153,15 +176,15 @@ const Layout: React.FC = () => {
             />
           )}
           {/* Shared Header */}
-          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()}/>
+          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?.theme || 1}/>
     
           {/* Main Content */}
-          <main style={{minHeight: "100vh"}}>
+          <main style={{minHeight: "100vh", color: user?.theme < 5? 'black': 'white',}}>
             <Outlet />
           </main>
     
           {/* Shared Footer */}
-          <Footer />
+          <Footer theme={user?.theme || 1}/>
         </div>
       );
     };
