@@ -19,8 +19,16 @@ app.use(bodyParser.json());
 
 app.use('/defects', defectsRouter);
 app.use('/users', usersRouter)
+// Ruta /health para verificar el estado del servidor
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'UP',
+        message: 'Server is healthy',
+        timestamp: new Date().toISOString()
+    });
+});
 
 
 app.listen(process.env.PORT, () => {
-    console.log(`El parking esta activado 🚀`);
+    console.log(`El servicio de parking esta activado 🚀`);
 });

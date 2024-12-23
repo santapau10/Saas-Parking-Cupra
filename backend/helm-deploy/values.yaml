@@ -1,0 +1,37 @@
+apiGateway:
+  image: "gcr.io/my-project/api-gateway:latest"
+  replicas: 3
+  env:
+    - name: TENANT_ID
+      value: "{{ .Values.namespace }}"  
+  ports:
+    - containerPort: 8080
+
+propertyManagement:
+  image: "gcr.io/my-project/property-management:latest"
+  replicas: 3
+  env:
+    - name: TENANT_ID
+      value: "{{ .Values.namespace }}"  
+  ports:
+    - containerPort: 8080
+
+# Configuración para parking-management
+parkingManagement:
+  image: "gcr.io/my-project/parking-management:latest"
+  replicas: 3
+  env:
+    - name: TENANT_ID
+      value: "{{ .Values.namespace }}"
+  ports:
+    - containerPort: 8080
+
+# Configuración para financial-management
+financialManagement:
+  image: "gcr.io/my-project/financial-management:latest"
+  replicas: 3
+  env:
+    - name: TENANT_ID
+      value: "{{ .Values.namespace }}"  # Inyecta el namespace como Tenant ID
+  ports:
+    - containerPort: 8080

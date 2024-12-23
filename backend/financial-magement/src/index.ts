@@ -2,10 +2,10 @@
 
 import express, { Application } from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import defectsRouter from './routes/defects.routes';
 import usersRouter from './routes/auth.route'
-import parkingsRouter from './routes/parkings.route'
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -19,8 +19,8 @@ app.use(bodyParser.json());
 
 app.use('/defects', defectsRouter);
 app.use('/users', usersRouter)
-app.use('/parkings', parkingsRouter)
 
+// Ruta /health para verificar el estado del servidor
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'UP',
@@ -30,5 +30,5 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(process.env.PORT, () => {
-    console.log(`El service de property esta activado 🚀`);
+    console.log(`El parking esta activado 🚀`);
 });

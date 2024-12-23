@@ -49,6 +49,47 @@ class FirestoreParkingRepository implements IParkingRepository {
     const docRef = await this.firestore.collection(this.collectionName).add(parking);
     return docRef.id;
   }
+  async getParkingById(id: string): Promise<Parking> {
+    const doc = await this.firestore.collection(this.collectionName).doc(id).get();
+
+    if (!doc.exists) {
+      throw new Error(`Parking with ID ${id} not found`);
+    }
+
+    const data = doc.data();
+    if (!data) {
+      throw new Error(`Invalid data for Parking with ID ${id}`);
+    }
+    return new Parking(
+      data.name,
+      data.location,
+      data.barriers,
+      data.tenant_id,
+      data.capacity,
+      data.floors,
+      data.picture
+    );
+  }
+  async updateParkingCapacity(parkingId: string, newCapacity: number): Promise<void> {
+    const parkingRef = this.firestore.collection(this.collectionName).doc(parkingId);
+
+    const doc = await parkingRef.get();
+    if (!doc.exists) {
+      throw new Error(`Parking with ID ${parkingId} not found`);
+    }
+
+    await parkingRef.update({ capacity: newCapacity });
+  }
+  async updateParkingBarriers(parkingId: string, newBarriers: number): Promise<void> {
+    const parkingRef = this.firestore.collection(this.collectionName).doc(parkingId);
+
+    const doc = await parkingRef.get();
+    if (!doc.exists) {
+      throw new Error(`Parking with ID ${parkingId} not found`);
+    }
+
+    await parkingRef.update({ capacity: newBarriers });
+  }
 }
 
 export default FirestoreParkingRepository;
