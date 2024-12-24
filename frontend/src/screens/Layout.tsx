@@ -81,67 +81,6 @@ const Layout: React.FC = () => {
             return '404';
         }
       };
-
-    /*const handleLogin = async (userData: User) => {
-        try {
-          await axios.post(`${apiUrl}/users/login`, userData);
-          setShowUserModal(false)
-          toast.success(`Log in successful. Welcome back, ${userData._username}!`, {
-            position: "top-right",
-            autoClose: 3000, // 3 seconds
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-          setUsername(userData._username)
-        } catch (err: any) {
-          console.log(err.response.data);
-          setShowUserModal(false)
-          toast.error("Failed to login, username or password incorrect.", {
-            position: "top-right",
-            autoClose: 3000, // 3 seconds
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-        }
-      }*/
-
-      const handleSignIn = async (userData: User) => {
-        try {
-          setShowUserModal(false)
-          toast.success(`Log in successful. Welcome back, ${userData._username}!`, {
-            position: "top-right",
-            autoClose: 3000, // 3 seconds
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-          setUser(userData)
-        } catch (err: any) {
-          console.log(err.response.data);
-          setShowUserModal(false)
-          toast.error("Failed to login, username or password incorrect.", {
-            position: "top-right",
-            autoClose: 3000, // 3 seconds
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-        }
-      }
     
       const handleRegister = async (userData: User) => {
         try {
@@ -244,6 +183,18 @@ const Layout: React.FC = () => {
     
           {/* Shared Footer */}
           <Footer theme={user?._theme || 1}/>
+
+          <ToastContainer 
+            position="top-right" 
+            autoClose={5000} // Adjust auto close duration
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </div>
       );
     };
