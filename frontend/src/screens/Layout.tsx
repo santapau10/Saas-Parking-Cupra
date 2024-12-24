@@ -10,6 +10,8 @@
  import "react-toastify/dist/ReactToastify.css";
  import "../styles/GlobalReset.css"; 
  import { User } from "../types/User";
+ import { jwtDecode } from "jwt-decode";
+
     
 const Layout: React.FC = () => {
     const [showUserModal, setShowUserModal] = useState(false);
@@ -18,11 +20,8 @@ const Layout: React.FC = () => {
     const [showUserRegisterModal, setShowUserRegisterModal] = useState(false);
     const [username, setUsername] = useState(""); // New user state
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-    const user = {
-      name: "defaultUser",
-      tenancyType: "Enterprise",
-      theme: 9
-    };
+    const [user, setUser] = useState<User | null >(null);
+
 
     const location = useLocation();
 
@@ -31,7 +30,7 @@ const Layout: React.FC = () => {
     useEffect(() => {
       const loadBackground = async () => {
         try {
-          const theme = user?.theme || 1; 
+          const theme = user?._theme ?? 1;  // ?? is safer than ||, because it only falls back on null/undefined
           const background = await import(`../assets/backgrounds/background${theme}.svg`);
           setBackgroundImage(background.default);
         } catch (error) {
@@ -41,6 +40,34 @@ const Layout: React.FC = () => {
   
       loadBackground();
     }, [user]);
+
+    useEffect(() => {
+      const token = localStorage.getItem('google_token');
+      if (token) {
+        handleToken(token)
+      }
+    }, []);
+
+    interface DecodedToken {
+      name: string;
+      email: string;
+      picture: string;
+    }
+    
+    const handleToken = (token: string) => {
+      localStorage.setItem('google_token', token);
+      const userData = jwtDecode<DecodedToken>(token); // Decode the token to get user data
+      // Parse userData into a User object with the expected properties
+      const user: User = {
+        _username: userData.name,
+        _email: userData.email,
+        _picture: userData.picture,
+        _theme: 9,
+        _tenancyType: "enterprise"
+      };
+    
+      setUser(user); // Update the user state
+    };
 
     const getHeaderText = () => {
         switch (location.pathname) {
@@ -55,7 +82,7 @@ const Layout: React.FC = () => {
         }
       };
 
-    const handleLogin = async (userData: User) => {
+    /*const handleLogin = async (userData: User) => {
         try {
           await axios.post(`${apiUrl}/users/login`, userData);
           setShowUserModal(false)
@@ -70,6 +97,36 @@ const Layout: React.FC = () => {
             theme: "colored",
           });
           setUsername(userData._username)
+        } catch (err: any) {
+          console.log(err.response.data);
+          setShowUserModal(false)
+          toast.error("Failed to login, username or password incorrect.", {
+            position: "top-right",
+            autoClose: 3000, // 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
+      }*/
+
+      const handleSignIn = async (userData: User) => {
+        try {
+          setShowUserModal(false)
+          toast.success(`Log in successful. Welcome back, ${userData._username}!`, {
+            position: "top-right",
+            autoClose: 3000, // 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+          setUser(userData)
         } catch (err: any) {
           console.log(err.response.data);
           setShowUserModal(false)
@@ -119,7 +176,7 @@ const Layout: React.FC = () => {
     
       const handleLogout = async () => {
         try {
-          await axios.post(`${apiUrl}/users/logout`);
+          /*await axios.post(`${apiUrl}/users/logout`);*/
           setShowUserModal(false)
           toast.success(`Log out  successful. Bye!`, {
             position: "top-right",
@@ -131,7 +188,9 @@ const Layout: React.FC = () => {
             progress: undefined,
             theme: "colored",
           });
-          setUsername("")
+          /*setUsername("")*/
+          setUser(null)
+          localStorage.removeItem('google_token');
         } catch (err: any) {
           console.log(err.response.data);
           setShowUserModal(false)
@@ -148,6 +207,7 @@ const Layout: React.FC = () => {
         }
       }
 
+      
       return (
         <div
           style={{
@@ -160,12 +220,11 @@ const Layout: React.FC = () => {
           }}
         >
         {showUserModal && (
-            <UserModal 
-              username={username}
+            <UserModal
+              user={user}
               onClose={() => setShowUserModal(false)}
-              onLogin={(handleLogin)}
               onLogout={(handleLogout)}
-              onRegister={() => {setShowUserModal(false), setShowUserRegisterModal(true)}}
+              onTokenReceived={(handleToken)}
             />
           )}
           {showUserRegisterModal && (
@@ -176,15 +235,15 @@ const Layout: React.FC = () => {
             />
           )}
           {/* Shared Header */}
-          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?.theme || 1}/>
+          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?._theme || 1}/>
     
           {/* Main Content */}
-          <main style={{minHeight: "100vh", color: user?.theme < 5? 'black': 'white',}}>
+          <main style={{minHeight: "100vh", color: !user || user._theme < 5? 'black': 'white'}}>
             <Outlet />
           </main>
     
           {/* Shared Footer */}
-          <Footer theme={user?.theme || 1}/>
+          <Footer theme={user?._theme || 1}/>
         </div>
       );
     };
