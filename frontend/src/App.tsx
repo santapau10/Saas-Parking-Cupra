@@ -5,6 +5,7 @@ import Financial from "./screens/Financial";
 import Home from "./screens/Home";
 import Layout from "./screens/Layout";
 import NoPage from "./screens/NoPage";
+import TenantHome from "./screens/TenantHome";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="defects" element={<Defects />} />
           <Route path="financial" element={<Financial />} />
+          <Route path="tenanthome" element={<TenantHome />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

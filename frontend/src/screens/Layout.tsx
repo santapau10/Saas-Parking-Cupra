@@ -11,6 +11,7 @@
  import "../styles/GlobalReset.css"; 
  import { User } from "../types/User";
  import { jwtDecode } from "jwt-decode";
+ import { UserProvider } from '../context/UserContext';
 
     
 const Layout: React.FC = () => {
@@ -77,6 +78,8 @@ const Layout: React.FC = () => {
             return 'Defects';
             case '/financial':
               return 'Financial';
+            case '/tenanthome':
+              return 'Tenant Home Page';
           default:
             return '404';
         }
@@ -148,54 +151,56 @@ const Layout: React.FC = () => {
 
       
       return (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            backgroundImage: backgroundImage? `url(${backgroundImage})`  : `url(${defaultBackground})`,
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-          }}
-        >
-        {showUserModal && (
-            <UserModal
-              user={user}
-              onClose={() => setShowUserModal(false)}
-              onLogout={(handleLogout)}
-              onTokenReceived={(handleToken)}
-            />
-          )}
-          {showUserRegisterModal && (
-            <UserRegisterModal 
-              username={username}
-              onClose={() => setShowUserRegisterModal(false)}
-              onRegister={(handleRegister)}
-            />
-          )}
-          {/* Shared Header */}
-          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?._theme || 1}/>
-    
-          {/* Main Content */}
-          <main style={{minHeight: "100vh", color: !user || user._theme < 5? 'black': 'white'}}>
-            <Outlet />
-          </main>
-    
-          {/* Shared Footer */}
-          <Footer theme={user?._theme || 1}/>
+        <UserProvider user={user}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              backgroundImage: backgroundImage? `url(${backgroundImage})`  : `url(${defaultBackground})`,
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
+            }}
+          >
+          {showUserModal && (
+              <UserModal
+                user={user}
+                onClose={() => setShowUserModal(false)}
+                onLogout={(handleLogout)}
+                onTokenReceived={(handleToken)}
+              />
+            )}
+            {showUserRegisterModal && (
+              <UserRegisterModal 
+                username={username}
+                onClose={() => setShowUserRegisterModal(false)}
+                onRegister={(handleRegister)}
+              />
+            )}
+            {/* Shared Header */}
+            <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?._theme || 1}/>
+      
+            {/* Main Content */}
+            <main style={{fontFamily:'Arial', minHeight: "100vh", color: !user || user._theme < 5? 'black': 'white'}}>
+              <Outlet />
+            </main>
+      
+            {/* Shared Footer */}
+            <Footer theme={user?._theme || 1}/>
 
-          <ToastContainer 
-            position="top-right" 
-            autoClose={5000} // Adjust auto close duration
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-        </div>
+            <ToastContainer 
+              position="top-right" 
+              autoClose={5000} // Adjust auto close duration
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+          </div>
+        </UserProvider>
       );
     };
 

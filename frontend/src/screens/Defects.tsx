@@ -6,6 +6,8 @@ import axios from "axios";
 import DefectModal from "../components/DefectModal";
 import { Defect } from "../types/Defect";
 import "react-toastify/dist/ReactToastify.css";
+import { useUser } from '../context/UserContext';
+
 
 export default function App() {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
@@ -16,7 +18,7 @@ export default function App() {
   const [locationFilter, setLocationFilter] = useState(""); // Estado para el filtro por ubicación
   const [statusFilter, setStatusFilter] = useState(""); // Estado para el filtro por estado
 
-  const [username, setUsername] = useState(""); // New user state
+  const user = useUser(); // Access the user data from the context
 
   
   const fetchDefects = async () => {
@@ -128,13 +130,13 @@ export default function App() {
         <DefectModal
           onClose={() => setShowModal(false)}
           onSubmit={handleDefectSubmit}
-          currentUser={username}
+          currentUser={user ? user._username : 'Guest'}
         />
       )}
 
       <ToastContainer />
 
-      {username !== "" && <div style={{ display: "flex", gap: "10px" }}>
+      {user && <div style={{ display: "flex", gap: "10px" }}>
         <Button
           onClick={() => setShowModal(true)}
           style={{
