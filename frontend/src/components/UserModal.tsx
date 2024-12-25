@@ -1,6 +1,7 @@
 import React from 'react';
 import { User } from '../types/User';
 import GoogleSignInButton from './GoogleSignInButton';
+import profile2 from '../assets/profile2.svg'
 
 type Props = {
   user: User | null;
@@ -17,7 +18,14 @@ const UserModal: React.FC<Props> = ({ user, onClose, onLogout, onTokenReceived }
       {isLoggedIn ? (
         // Logged-in view
         <div style={contentStyle}>
-          <h2>Welcome, {user._username}!</h2>
+          <div style={{display:'flex' , flexDirection: 'row', alignItems: 'center', padding: 20}}>
+            <img height={60} width={60}
+              src={user._picture}
+              alt="Profile Picture"
+              onError={(e) => (e.currentTarget.src = profile2)}
+            />
+            <h2 style={{fontSize: 20, paddingLeft: 10}}>Welcome, {user._username}!</h2>
+          </div>
           <button onClick={onLogout} style={buttonStyle}>Log Out</button>
           <button onClick={onClose} style={buttonStyle}>Close</button>
         </div>
