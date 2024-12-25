@@ -7,13 +7,6 @@
     width: 100%;
   }
   
-  .header-light {
-    background-color: #e0f7fa; /* Light blue background */
-  }
-  
-  .header-dark {
-    background-color: #212121; /* Dark background */
-  }
   
   .title {
     font-size: 250%;

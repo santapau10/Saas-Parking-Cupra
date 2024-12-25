@@ -6,7 +6,7 @@ const TenantHome: React.FC = () => {
   const user = useUser(); // Access the user data from the context
 
   if (!user) {
-    return <div>Loading...</div>; // Or display something if the user is not available
+    return <div>Loading user...</div>;
   }
 
   return (
