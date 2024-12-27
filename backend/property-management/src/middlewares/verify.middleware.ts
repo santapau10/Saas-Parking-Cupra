@@ -1,40 +1,44 @@
-import { Request, Response, NextFunction } from 'express';
-import admin from 'firebase-admin';
+import axios from "axios";
+import { Request, Response, NextFunction } from "express";
 
-/**
- * Middleware para verificar roles basados en los custom claims de Firebase.
- * @param allowedRoles - Lista de roles permitidos para la ruta.
- */
-export const verifyRole = (allowedRoles: string[]) => {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const authorizationHeader = req.headers.authorization;
-
-    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
-      res.status(401).json({ message: 'No token provided or invalid format' });
+export const validateTokenMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      res.status(401).json({ error: "Authorization header missing" });
       return;
     }
 
-    const token = authorizationHeader.split(' ')[1];
-
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-
-      if (!decodedToken.role || !allowedRoles.includes(decodedToken.role)) {
-        res.status(403).json({ message: 'Forbidden: Insufficient permissions' });
-        return;
-      }
-
-      // req.user = {
-      //   uid: decodedToken.uid,
-      //   email: decodedToken.email,
-      //   role: decodedToken.role,
-      //   tenantId: decodedToken.tenantId || null,
-      // };
-
-      next();
-    } catch (error) {
-      console.error('Error verifying token:', error);
-      res.status(403).json({ message: 'Forbidden: Invalid or expired token' });
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      res.status(401).json({ error: "Token missing" });
+      return;
     }
-  };
+
+    const validationServiceURL = process.env.VALIDATION_SERVICE_URL;
+    if (!validationServiceURL) {
+      res.status(500).json({ error: "Validation service URL not configured" });
+      return;
+    }
+
+    const response = await axios.post(
+      `${validationServiceURL}/verify-token`, 
+      { token },
+      { headers: { "Content-Type": "application/json" } } 
+    );
+
+    if (response.status !== 200) {
+      res.status(401).json({ error: "Token validation failed" });
+      return;
+    }
+
+    next();
+  } catch (error: any) {
+    console.error("Error validating token:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };

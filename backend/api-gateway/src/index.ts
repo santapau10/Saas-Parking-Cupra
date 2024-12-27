@@ -1,5 +1,5 @@
 import express, { Application } from 'express';
-import gatewayRoutes from './routes/gateway.routes'
+import auth from './routes/gateway.routes'
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -7,7 +7,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 
-app.use('/api-gateway', gatewayRoutes);
+app.use('/api-gateway', auth);
+
 app.get('/api-gateway/health', (req, res) => {
     res.status(200).json({
         status: 'UP',

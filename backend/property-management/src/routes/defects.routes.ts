@@ -2,16 +2,16 @@
 import { Router } from 'express';
 import DefectController from '../controllers/DefectController';
 import multer from 'multer';
-
+import { validateTokenMiddleware } from '../middlewares/verify.middleware';
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.get('/', DefectController.getAll);
-router.get('/filteredByStatus/:status', DefectController.getByStatus);
-router.get('/filteredByLocation/:location', DefectController.getByLocation);
-router.get('/:id', DefectController.getById);
+router.get('/:parking', validateTokenMiddleware,DefectController.getAll);
+router.get('/:parking/filteredByStatus/:status', DefectController.getByStatus);
+router.get('/:parking/filteredByLocation/:location', DefectController.getByLocation);
+router.get('/:parking/:id', DefectController.getById);
 router.post('/', upload.single('_image'), DefectController.create);
-router.put('/:id', DefectController.update);
-router.delete('/:id', DefectController.delete);
+router.put('/:parking/:id', DefectController.update);
+router.delete('/:parking/:id', DefectController.delete);
 
 export default router;
