@@ -17,11 +17,11 @@ app.use(bodyParser.json());
 
 
 
-app.use('/defects', defectsRouter);
-app.use('/users', usersRouter)
+app.use('/financial-management/defects', defectsRouter);
+app.use('/financial-management/users', usersRouter)
 
 // Ruta /health para verificar el estado del servidor
-app.get('/health', (req, res) => {
+app.get('/financial-management/health', (req, res) => {
     res.status(200).json({
         status: 'UP',
         message: 'Server is healthy',

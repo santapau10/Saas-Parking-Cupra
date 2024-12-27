@@ -1,0 +1,38 @@
+{{- range .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Values.namespace | default $.Release.Namespace }}
+  labels:
+    app: {{ .name }}
+spec:
+  replicas: {{ .replicas }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: {{ .image }}
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /{{ .name }}/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          env:
+            {{- if .env }}
+            {{- range .env }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
+            {{- end }}
+---
+{{- end }}

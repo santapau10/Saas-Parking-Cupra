@@ -17,11 +17,11 @@ app.use(bodyParser.json());
 
 
 
-app.use('/defects', defectsRouter);
-app.use('/users', usersRouter)
-app.use('/parkings', parkingsRouter)
+app.use('/property-management/defects', defectsRouter);
+app.use('/property-management/users', usersRouter)
+app.use('/property-management/parkings', parkingsRouter)
 
-app.get('/health', (req, res) => {
+app.get('/property-management/health', (req, res) => {
     res.status(200).json({
         status: 'UP',
         message: 'Server is healthy',

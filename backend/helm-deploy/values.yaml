@@ -1,37 +1,46 @@
-apiGateway:
-  image: "gcr.io/my-project/api-gateway:latest"
-  replicas: 3
-  env:
-    - name: TENANT_ID
-      value: "{{ .Values.namespace }}"  
-  ports:
-    - containerPort: 8080
-
-propertyManagement:
-  image: "gcr.io/my-project/property-management:latest"
-  replicas: 3
-  env:
-    - name: TENANT_ID
-      value: "{{ .Values.namespace }}"  
-  ports:
-    - containerPort: 8080
-
-# Configuración para parking-management
-parkingManagement:
-  image: "gcr.io/my-project/parking-management:latest"
-  replicas: 3
-  env:
-    - name: TENANT_ID
-      value: "{{ .Values.namespace }}"
-  ports:
-    - containerPort: 8080
-
-# Configuración para financial-management
-financialManagement:
-  image: "gcr.io/my-project/financial-management:latest"
-  replicas: 3
-  env:
-    - name: TENANT_ID
-      value: "{{ .Values.namespace }}"  # Inyecta el namespace como Tenant ID
-  ports:
-    - containerPort: 8080
+namespace: default-namespace
+services:
+  api-gateway:
+    name: api-gateway
+    image: "gcr.io/cupra-cad/api-gateway:latest"
+    replicas: 1
+    nodePort: 30000
+    port: 5000
+    ports:
+      - containerPort: 8080
+    env:
+      - name: PORT
+        value: "8080"
+  property-management:
+    name: property-management
+    image: "gcr.io/cupra-cad/property-management:latest"
+    replicas: 1
+    nodePort: 30001
+    port: 5001
+    ports:
+      - containerPort: 8080
+    env:
+      - name: PORT
+        value: "8080"
+  parking-management: 
+    name: parking-management
+    image: "gcr.io/cupra-cad/parking-management:latest"
+    replicas: 1
+    nodePort: 30002
+    port: 5002
+    ports:
+      - containerPort: 8080
+    env:
+      - name: PORT
+        value: 8080
+  financial-management:  
+    name: financial-management
+    image: "gcr.io/cupra-cad/financial-management:latest"
+    replicas: 1
+    nodePort: 30003
+    port: 5003
+    ports:
+      - containerPort: 8080
+    env: 
+      - name: PORT
+        value: 8080

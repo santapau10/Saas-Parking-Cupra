@@ -1,15 +1,20 @@
+{{- range .Values.services }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "deploy.fullname" . }}
+  name: {{ .name }}
+  namespace: {{ $.Values.namespace | default $.Release.Namespace }}
   labels:
-    {{- include "deploy.labels" . | nindent 4 }}
+    app: {{ .name }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+  type:  NodePort
   selector:
-    {{- include "deploy.selectorLabels" . | nindent 4 }}
+    app: {{ .name }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+{{- end }}
