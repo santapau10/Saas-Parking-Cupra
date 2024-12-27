@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Defect } from "../types/Defect";
 import defaultImage from "../assets/default_image.jpg"; // Import the default image
+import '../styles/DefectModal.css';
 
 interface DefectModalProps {
   onClose: () => void;
@@ -79,44 +80,11 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "Arial",
-      }}
-    >
-      <div
-        style={{
-          background: "white",
-          padding: 20,
-          borderRadius: 5,
-          width: "400px",
-          height: "500px",
-          overflowY: "scroll",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-          msOverflowStyle: "none", // IE and Edge
-          scrollbarWidth: "none", // Firefox
-        }}
-      >
-        <style>
-          {`
-            /* For Chrome, Safari, and Edge */
-            .hide-scrollbar::-webkit-scrollbar {
-              display: none;
-            }
-          `}
-        </style>
-        <h2 style={{ textAlign: "center" }}>Report Defect</h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "15px" }}>
+    <div className="modal-overlay">
+      <div className="modal-container">
+        <h2 className="modal-header">Report Defect</h2>
+        <form className="modal-form" onSubmit={handleSubmit}>
+          <div>
             <label>
               <strong>Object:</strong>
               <input
@@ -125,11 +93,11 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
                 value={defect._object}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
+                className="modal-input"
               />
             </label>
           </div>
-          <div style={{ marginBottom: "15px" }}>
+          <div>
             <label>
               <strong>Location:</strong>
               <input
@@ -138,11 +106,11 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
                 value={defect._location}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
+                className="modal-input"
               />
             </label>
           </div>
-          <div style={{ marginBottom: "15px" }}>
+          <div>
             <label>
               <strong>Description:</strong>
               <textarea
@@ -150,11 +118,11 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
                 value={defect._description}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
+                className="modal-textarea"
               />
             </label>
           </div>
-          <div style={{ marginBottom: "15px" }}>
+          <div>
             <label>
               <strong>Detailed Description:</strong>
               <textarea
@@ -162,11 +130,11 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
                 value={defect._detailedDescription}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
+                className="modal-textarea"
               />
             </label>
           </div>
-          <div style={{ marginBottom: "15px" }}>
+          <div>
             <label>
               <strong>Reporting Date:</strong>
               <input
@@ -175,18 +143,18 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
                 value={defect._reportingDate.toISOString().split("T")[0]}
                 onChange={handleChange}
                 required
-                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
+                className="modal-input"
               />
             </label>
           </div>
-          <div style={{ marginBottom: "15px" }}>
+          <div>
             <label>
               <strong>Status:</strong>
               <select
                 name="_status"
                 value={defect._status}
                 onChange={handleChange}
-                style={{ width: "100%", padding: "8px", marginTop: "5px", fontFamily: "Arial" }}
+                className="modal-select"
               >
                 <option value="open">Open</option>
                 <option value="inwork">In Work</option>
@@ -196,7 +164,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
             </label>
           </div>
 
-          <div style={{ marginBottom: "15px" }}>
+          <div>
             <label>
               <strong>Image:</strong>
               <input
@@ -208,44 +176,25 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
             </label>
           </div>
 
-          <div style={{ marginBottom: "15px", textAlign: "center" }}>
+          <div className="modal-image-container">
             <img
               src={displayImage}
               alt="Selected"
-              style={{
-                maxWidth: "50%",
-                height: "auto",
-                border: "1px solid #ccc",
-                padding: "5px",
-              }}
+              className="modal-image"
             />
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div className="modal-button-container">
             <button
               type="submit"
-              style={{
-                padding: "10px",
-                backgroundColor: "green",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
+              className="modal-button modal-button-submit"
             >
               Submit
             </button>
             <button
               type="button"
               onClick={onClose}
-              style={{
-                padding: "10px",
-                backgroundColor: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
+              className="modal-button modal-button-cancel"
             >
               Cancel
             </button>

@@ -1,5 +1,5 @@
-const NoPage = () => {
-    return <h1 style={{textAlign: "center", margin: 50}}>Error 404: This page does not exist :(</h1>;
+const Financial = () => {
+    return <h1 style={{textAlign: "center", margin: 50}}>This page is being developed, come back later :)</h1>;
   };
   
-  export default NoPage; 
+  export default Financial; 
