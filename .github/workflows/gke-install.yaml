@@ -9,21 +9,22 @@ on:
         default: "default" # Default namespace
 
 # Environment variables available to all jobs and steps in this workflow
-env:
-  GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS_JSON }}
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  GKE_CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
 
 jobs:
   setup-build-deploy:
     name: Setup, Build, and Deploy
     runs-on: ubuntu-latest
+    environment: cupra # Establecer directamente a 'cupra-dev' para la rama dev
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS_JSON }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GKE_CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       # Setup gcloud CLI
-      - name: Google Cloud Auth
+      - name: Setup Google Cloud SDK
         uses: google-github-actions/auth@v1
         with:
           credentials_json: $GOOGLE_APPLICATION_CREDENTIALS
