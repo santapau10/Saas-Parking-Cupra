@@ -14,7 +14,7 @@ class FirestoreUserRepository implements IUserRepository {
         return null;
       });
     if (existingUser) {
-      throw new Error('Username already exists'); // Throw an error if the username is taken
+      throw new Error('Username already exists'); 
     }
      const userRecord = await tenantAuth.createUser({
       email: userData.email,

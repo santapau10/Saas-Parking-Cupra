@@ -34,7 +34,8 @@ class FirestoreParkingRepository implements IParkingRepository {
             data.tenant_id,
             data.capacity,
             data.floors,
-            signedImageUrl
+            signedImageUrl,
+            data.status
           );
         })
       );
@@ -67,7 +68,8 @@ class FirestoreParkingRepository implements IParkingRepository {
       data.tenant_id,
       data.capacity,
       data.floors,
-      data.picture
+      data.picture,
+      data.status
     );
   }
   async updateParkingCapacity(parkingId: string, newCapacity: number): Promise<void> {
@@ -89,6 +91,18 @@ class FirestoreParkingRepository implements IParkingRepository {
     }
 
     await parkingRef.update({ capacity: newBarriers });
+  }
+  async updateParkingStatus(parkingId: string, status: string): Promise<string> {
+    const parkingRef = this.firestore.collection(this.collectionName).doc(parkingId);
+
+    const doc = await parkingRef.get();
+    if (!doc.exists) {
+      throw new Error(`Parking with ID ${parkingId} not found`);
+    }
+    const newStatus = status === 'closed' ? 'open' : 'closed';
+    
+    await parkingRef.update({ status: newStatus });
+    return newStatus
   }
 }
 

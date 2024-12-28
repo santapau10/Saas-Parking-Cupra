@@ -12,5 +12,7 @@ router.get('/:id', ParkingController.getById);
 router.post('/:parking/setCapacity/', ParkingController.setCapacity)
 router.post('/:parking/setBarriers/', ParkingController.setBarriers)
 
+router.post('/:parking/setStatus/', ParkingController.setStatus)
+
 
 export default router;

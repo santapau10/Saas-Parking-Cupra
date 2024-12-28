@@ -6,6 +6,7 @@ export class Parking {
   capacity: number;
   floors: number;
   picture: string;
+  status: string;
 
   constructor(
     name: string,
@@ -14,7 +15,8 @@ export class Parking {
     tenantId: string,
     capacity: number,
     floors: number,
-    picture: string
+    picture: string,
+    status: string
   ) {
     this.name = name;
     this.location = location;
@@ -23,5 +25,6 @@ export class Parking {
     this.capacity = capacity;
     this.floors = floors;
     this.picture = picture;
+    this.status = status;
   }
 }

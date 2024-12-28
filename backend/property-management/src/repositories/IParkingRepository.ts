@@ -7,5 +7,6 @@ export interface IParkingRepository {
   getParkingById(id:string): Promise<Parking>;
   updateParkingCapacity(parkingId: string, newCapacity: number): Promise<void>;
   updateParkingBarriers(parkingId: string, newBarriers: number): Promise<void>;
+  updateParkingStatus(parkingId: string, status: string): Promise<string>;
 }
 

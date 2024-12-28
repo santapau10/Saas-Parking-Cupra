@@ -19,7 +19,7 @@ class ParkingController {
   }
   static async createParking(req: Request, res: Response): Promise<void> {
     try {
-      const newParking = new Parking(req.body.name, req.body.location, req.body.barriers, req.body.tenant_id, req.body.capacity, req.body.floors, req.body.picture);
+      const newParking = new Parking(req.body.name, req.body.location, req.body.barriers, req.body.tenant_id, req.body.capacity, req.body.floors, req.body.picture, 'closed');
       const parking = await parkingRespository.createParking(newParking);
       res.status(201).json({ message: 'User registered successfully', parking });
     } catch (error) {
@@ -70,15 +70,32 @@ class ParkingController {
         res.status(400).send({ error: 'Invalid barriers value' });
         return;
       }
-      const parking = await parkingRespository.getParkingById(parkingId);
 
       await parkingRespository.updateParkingBarriers(parkingId, newBarriers);
 
       res.status(200).send({
         message: `Barriers updated successfully`,
         parkingId,
-        oldBarriesr: parking.barriers,
         newBarriers,
+      });
+      return;
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: error });
+    }
+  }
+  static async setStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const parkingId = req.params.parking;
+
+      const parking = await parkingRespository.getParkingById(parkingId);
+
+      const status = await parkingRespository.updateParkingStatus(parkingId, parking.status);
+
+      res.status(200).send({
+        message: `Capacity updated successfully`,
+        parkingId,
+        status
       });
       return;
     } catch (error) {

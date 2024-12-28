@@ -1,0 +1,56 @@
+name: Build and Deploy to GKE
+
+on:
+  workflow_dispatch:
+    inputs:
+      namespace:
+        description: "Namespace to create and deploy into"
+        required: true
+        default: "default" # Default namespace
+
+# Environment variables available to all jobs and steps in this workflow
+env:
+  GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
+
+jobs:
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Setup gcloud CLI
+      - name: Google Cloud Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Configurar Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      # Install Helm
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Get Credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+            --zone us-central1 \
+            --project ${{ secrets.GCP_PROJECT }}
+
+      # Create Namespace in GKE
+      - name: Create Namespace
+        run: |
+          kubectl create namespace ${{ github.event.inputs.namespace }} || echo "Namespace ${{ github.event.inputs.namespace }} already exists"
+
+      # Deploy the Docker image to the GKE cluster using Helm
+      - name: Deploy
+        run: |
+          helm install ${{ github.event.inputs.namespace }}-microservices ./backend/helm-deploy \
+            --set namespace=${{ github.event.inputs.namespace }} \
+            --wait
