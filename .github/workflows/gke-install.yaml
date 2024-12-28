@@ -32,8 +32,8 @@ jobs:
       - name: Configurar Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: $GCP_PROJECT_ID
-          service_account_key: $GOOGLE_APPLICATION_CREDENTIALS
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
 
       # Install Helm
       - name: Install Helm
@@ -42,9 +42,9 @@ jobs:
 
       - name: Get Credentials
         run: |
-          gcloud container clusters get-credentials GKE_CLUSTER_NAME \
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
             --zone us-central1 \
-            --project $GCP_PROJECT_ID
+            --project ${{ secrets.GCP_PROJECT_ID }}
 
       # Create Namespace in GKE
       - name: Create Namespace
@@ -57,3 +57,6 @@ jobs:
           helm install ${{ github.event.inputs.namespace }}-microservices ./backend/helm-deploy \
             --set namespace=${{ github.event.inputs.namespace }} \
             --wait
+      - name: Invoke Cloud Function to get Ingress IP
+        run: |
+          curl -X POST https://REGION-PROJECT_ID.cloudfunctions.net/getIngressIp

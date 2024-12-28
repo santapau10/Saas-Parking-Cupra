@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import FirestoreUserRepository from '../repositories/FirestoreUserRepository';
 import { User } from '../models/user.model';
 import FirebaseTenantRepository from '../repositories/FirestoreTenantRepository';
+import axios from 'axios';
 
 const userRepository = new FirestoreUserRepository();
 const tenantRepository = new FirebaseTenantRepository();
@@ -19,16 +20,34 @@ class AuthController {
       res.status(500).json({ message: 'Registration failed', error: error });
     }
   }
-  static async registerTenant(req: Request, res: Response): Promise<void> {
-    try {
-      const tenant = await tenantRepository.create(req.body.name, req.body.plan);
-      const newUser = new User(req.body.name, req.body.password, tenant, req.body.email)
-      const userId = await userRepository.create(newUser, true);
-      res.status(201).json({ message: 'Tenant registered successfully', userId });
-    } catch (error) {
-      res.status(500).json({ message: 'Registration failed', error: error });
+static async registerTenant(req: Request, res: Response): Promise<void> {
+  try {
+    const tenant = await tenantRepository.create(req.body.name, req.body.plan);
+    const newUser = new User(req.body.name, req.body.password, tenant, req.body.email);
+    const userId = await userRepository.create(newUser, true);
+    if (req.body.plan === 'enterprise') {
+      await axios.post('https://api.github.com/repos/santapau10/Saas-Parking-Cupra/actions/workflows/gke-install.yaml/dispatches', {
+        event_type: 'deploy-to-gke',
+        client_payload: {
+          namespace: req.body.name 
+        }
+      }, {
+        headers: {
+          'Authorization': `Bearer YOUR_GITHUB_TOKEN`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      console.log(`GitHub Action triggered for tenant: ${req.body.name}`);
     }
+
+    // Responder con el éxito
+    res.status(201).json({ message: 'Tenant registered successfully', userId });
+  } catch (error) {
+    // Manejo de errores
+    res.status(500).json({ message: 'Registration failed', error: error });
   }
+}
   static async login(req: Request, res: Response): Promise<void> {
       try {
         if (!req.body.token) {
