@@ -21,8 +21,8 @@ class FirestoreUserRepository implements IUserRepository {
       password: userData.password,
       displayName: userData.username,
     })
-    const tenant = await this.firestore.collection('tenants').where("tenant_id", "==", userData.tenant_id).get();
-    const customClaims = { role: isAdmin ? 'admin':'user', tenantId: userData.tenant_id, ip:tenant.docs[0].data().ip, plan: tenant.docs[0].data().plan };
+    const tenant = await this.firestore.collection('tenants').where("tenantId", "==", userData.tenant_id).get();
+    const customClaims = { role: isAdmin ? 'admin':'user', tenantId: userData.tenant_id, /* ip:tenant.docs[0].data().ip, */ plan: tenant.docs[0].data().plan };
       await tenantAuth.setCustomUserClaims(userRecord.uid, customClaims);
       const token = await admin.auth().createCustomToken(userRecord.uid, customClaims);
       return token ;

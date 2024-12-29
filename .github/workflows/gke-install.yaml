@@ -35,6 +35,10 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
 
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components update
+          gcloud components install gke-gcloud-auth-plugin
       # Install Helm
       - name: Install Helm
         run: |

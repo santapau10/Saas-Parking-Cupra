@@ -13,7 +13,6 @@ export class Tenant {
     this._tenant_id = tenant_id;
     this._plan = plan;
   }
- 
 
   public get name(): string {
     return this._name;

@@ -27,16 +27,17 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
     const userId = await userRepository.create(newUser, true);
     if (req.body.plan === 'enterprise') {
       await axios.post('https://api.github.com/repos/santapau10/Saas-Parking-Cupra/actions/workflows/gke-install.yaml/dispatches', {
-        event_type: 'deploy-to-gke',
-        client_payload: {
-          namespace: req.body.name 
-        }
+          ref: 'main',  // Asegúrate de incluir la referencia, como en el ejemplo de curl
+          inputs: {
+              namespace: tenant
+          }
       }, {
-        headers: {
-          'Authorization': `Bearer Token`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
+          headers: {
+              'Authorization': `Bearer Token`,
+              'Accept': 'application/vnd.github.v3+json'
+          }
       });
+
 
       console.log(`GitHub Action triggered for tenant: ${req.body.name}`);
     }
