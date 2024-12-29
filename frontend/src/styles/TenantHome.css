@@ -51,6 +51,42 @@ strong {
   font-weight: bold;
 }
 
+/* Center the Modify Background button in the card footer */
+.card-footer {
+  display: flex;
+  justify-content: center; /* Centers the button horizontally */
+  padding: 10px;
+}
+
+
+/* Styling for the Modify Background button */
+.modify-background-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff; /* Blue color */
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for a professional look */
+}
+
+.modify-background-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+.modify-background-btn:active {
+  background-color: #004494; /* Even darker blue when clicked */
+  transform: translateY(0); /* Reset lift on click */
+}
+
 /* Optional: Add a small animation to the card appearance */
 .card {
   animation: fadeIn 0.3s ease-in-out;

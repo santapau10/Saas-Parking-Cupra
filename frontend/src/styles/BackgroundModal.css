@@ -1,0 +1,75 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+
+.background-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.background-item {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+  height: 200px; /* You can adjust the height based on your design */
+}
+
+.background-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image fills the space while maintaining its aspect ratio */
+  display: block;
+}
+
+.background-item.selected {
+  border-color: #007bff;
+  transform: scale(1.05);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.apply-button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: 0.3s;
+}
+
+.apply-button:hover {
+  background: #0056b3;
+}

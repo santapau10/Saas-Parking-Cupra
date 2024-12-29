@@ -3,7 +3,6 @@
  import Footer from '../components/Footer';
  import React, { useState, useEffect } from 'react';
  import UserModal from "../components/UserModal";
- import UserRegisterModal from "../components/UserRegisterModal";
  import defaultBackground from "../assets/backgrounds/background1.svg"
  import axios from "axios";
  import { ToastContainer, toast } from "react-toastify";
@@ -11,22 +10,17 @@
  import "../styles/GlobalReset.css"; 
  import { User } from "../types/User";
  import { jwtDecode } from "jwt-decode";
- import { UserProvider } from '../context/UserContext';
+ import { useUser } from '../context/UserContext';
 
     
 const Layout: React.FC = () => {
     const [showUserModal, setShowUserModal] = useState(false);
-
+    const [backgroundImage, setBackgroundImage] = useState(null);
     const setShowUserModalToTrue = () => setShowUserModal(true);
-    const [showUserRegisterModal, setShowUserRegisterModal] = useState(false);
-    const [username, setUsername] = useState(""); // New user state
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-    const [user, setUser] = useState<User | null >(null);
-
+    const {user, setUser} = useUser(); // Access the user data from the context
 
     const location = useLocation();
-
-    const [backgroundImage, setBackgroundImage] = useState(null);
 
     useEffect(() => {
       const loadBackground = async () => {
@@ -44,7 +38,8 @@ const Layout: React.FC = () => {
 
     useEffect(() => {
       const token = localStorage.getItem('google_token');
-      if (token) {
+      const token2 = localStorage.getItem('user');
+      if (token && !token2) {
         handleToken(token)
       }
     }, []);
@@ -56,19 +51,24 @@ const Layout: React.FC = () => {
     }
     
     const handleToken = (token: string) => {
-      localStorage.setItem('google_token', token);
+      //localStorage.setItem('google_token', token);
       const userData = jwtDecode<DecodedToken>(token); // Decode the token to get user data
       // Parse userData into a User object with the expected properties
       const user: User = {
         _username: userData.name,
         _email: userData.email,
         _picture: userData.picture,
-        _theme: 9,
+        _theme: 5,
         _tenancyType: "enterprise"
       };
-    
       setUser(user); // Update the user state
     };
+
+    // once the database is actually running, the login process should be:
+    // - fetch token, get username/email from it and see if it exists in database
+    //    - if it does, get from the database the user that corresponds to it, = user
+    //    - if not, create an initial user (kinda like the one we create in handleToken), = user
+    // - setUser(user), this function (implemented in the context) will also include the create/update instruction
 
     const getHeaderText = () => {
         switch (location.pathname) {
@@ -88,7 +88,7 @@ const Layout: React.FC = () => {
       const handleRegister = async (userData: User) => {
         try {
           await axios.post(`${apiUrl}/users/register`, userData);
-          setShowUserRegisterModal(false)
+          //setShowUserRegisterModal(false)
           toast.success(`Register successful. Welcome, ${userData._username}!`, {
             position: "top-right",
             autoClose: 3000, // 3 seconds
@@ -99,10 +99,10 @@ const Layout: React.FC = () => {
             progress: undefined,
             theme: "colored",
           });
-          setUsername(userData._username)
+          setUser(userData)
         } catch (err: any) {
           console.log(err.response.data);
-          setShowUserRegisterModal(false)
+          //setShowUserRegisterModal(false)
           toast.error("Failed to register, please try again. Make sure the username doesn't already exist.", {
             position: "top-right",
             autoClose: 3000, // 3 seconds
@@ -130,7 +130,6 @@ const Layout: React.FC = () => {
             progress: undefined,
             theme: "colored",
           });
-          /*setUsername("")*/
           setUser(null)
           localStorage.removeItem('google_token');
         } catch (err: any) {
@@ -151,56 +150,47 @@ const Layout: React.FC = () => {
 
       
       return (
-        <UserProvider user={user}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              backgroundImage: backgroundImage? `url(${backgroundImage})`  : `url(${defaultBackground})`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-            }}
-          >
-          {showUserModal && (
-              <UserModal
-                user={user}
-                onClose={() => setShowUserModal(false)}
-                onLogout={(handleLogout)}
-                onTokenReceived={(handleToken)}
-              />
-            )}
-            {showUserRegisterModal && (
-              <UserRegisterModal 
-                username={username}
-                onClose={() => setShowUserRegisterModal(false)}
-                onRegister={(handleRegister)}
-              />
-            )}
-            {/* Shared Header */}
-            <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?._theme || 1}/>
-      
-            {/* Main Content */}
-            <main style={{fontFamily:'Arial', minHeight: "100vh", color: !user || user._theme < 5? 'black': 'white'}}>
-              <Outlet />
-            </main>
-      
-            {/* Shared Footer */}
-            <Footer theme={user?._theme || 1}/>
-
-            <ToastContainer 
-              position="top-right" 
-              autoClose={5000} // Adjust auto close duration
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            backgroundImage: backgroundImage? `url(${backgroundImage})`  : `url(${defaultBackground})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+        {showUserModal && (
+            <UserModal
+              user={user}
+              onClose={() => setShowUserModal(false)}
+              onLogout={(handleLogout)}
+              onTokenReceived={(handleToken)}
             />
-          </div>
-        </UserProvider>
+          )}
+          {/* Shared Header */}
+          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?._theme || 1}/>
+    
+          {/* Main Content */}
+          <main style={{fontFamily:'Arial', minHeight: "100vh", color: !user || user._theme < 5? 'black': 'white'}}>
+            <Outlet />
+          </main>
+    
+          {/* Shared Footer */}
+          <Footer theme={user?._theme || 1}/>
+
+          <ToastContainer 
+            position="top-right" 
+            autoClose={5000} // Adjust auto close duration
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+        </div>
       );
     };
 

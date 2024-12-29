@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
+import BackgroundModal from '../components/BackgroundModal';
 import '../styles/TenantHome.css';
 
 const TenantHome: React.FC = () => {
-  const user = useUser(); // Access the user data from the context
+  const [showBackgroundModal, setShowBackgroundModal] = useState(false);
+
+  const {user, setUser} = useUser(); // Access the user data from the context
 
   if (!user) {
-    return <div>Loading user...</div>;
+    return <div>There is no user currently logged in. Please log in and try again</div>;
   }
 
   return (
     <div className="card">
+      {showBackgroundModal && (
+        <BackgroundModal
+          onApply={(updatedUser) => {
+            setShowBackgroundModal(false);
+            setUser(updatedUser);
+          }}
+        />
+      )}
       <div className="card-header">
         <h2>Welcome, {user._username}!</h2>
       </div>
@@ -25,6 +36,14 @@ const TenantHome: React.FC = () => {
             <p><strong>Tenancy Type:</strong> {user._tenancyType}</p>
           </div>
         </div>
+      </div>
+      <div className="card-footer">
+        {user._tenancyType == 'enterprise' && <button
+          className="modify-background-btn"
+          onClick={() => setShowBackgroundModal(true)}
+        >
+          Modify Background
+        </button>}
       </div>
     </div>
   );
