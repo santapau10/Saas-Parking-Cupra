@@ -66,7 +66,7 @@ jobs:
         id: ingress_ip
         run: |
           echo "Waiting for Ingress IP..."
-          ingress_ip=$(kubectl get ingress ${{ github.event.inputs.namespace }}-ingress -n ${{ github.event.inputs.namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          ingress_ip=$(kubectl get ingress generic-ingress -n ${{ github.event.inputs.namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           while [[ -z "$ingress_ip" ]]; do
             echo "Ingress IP not found, retrying in 1 minute..."
             sleep 60
