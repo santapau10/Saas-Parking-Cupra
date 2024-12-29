@@ -8,7 +8,6 @@ const router = Router();
 router.post("/verify-token", verifyToken);
 
 router.post('/registerTenant', AuthController.registerTenant);
-router.post('/login', AuthController.login);
 router.post('/registerUser', AuthController.registerUser);
 router.post('/logout', AuthController.logout);
 

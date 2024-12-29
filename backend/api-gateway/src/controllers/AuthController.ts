@@ -33,7 +33,7 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
           }
       }, {
           headers: {
-              'Authorization': `Bearer Token`,
+              'Authorization': `Bearer TOKEN`,
               'Accept': 'application/vnd.github.v3+json'
           }
       });
@@ -49,28 +49,6 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
     res.status(500).json({ message: 'Registration failed', error: error });
   }
 }
-  static async login(req: Request, res: Response): Promise<void> {
-      try {
-        if (!req.body.token) {
-          res.status(400).json({ message: 'El token es requerido' });
-          return;
-        }
-        const userInfo = await userRepository.login(req.body.token);
-        res.status(200).json({
-          message: 'Login exitoso',
-          user: {
-            userId: userInfo.userId,
-            role: userInfo.role,
-          },
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          res.status(401).json({ message: error.message });
-        } else {
-          res.status(500).json({ message: 'Error inesperado al iniciar sesión', error: String(error) });
-        }
-      }
-    }
   static async logout(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).json({ message: 'Logout successful' });

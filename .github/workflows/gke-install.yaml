@@ -61,6 +61,26 @@ jobs:
           helm install ${{ github.event.inputs.namespace }}-microservices ./backend/helm-deploy \
             --set namespace=${{ github.event.inputs.namespace }} \
             --wait
+
+      - name: Wait for Ingress IP
+        id: ingress_ip
+        run: |
+          echo "Waiting for Ingress IP..."
+          ingress_ip=$(kubectl get ingress ${{ github.event.inputs.namespace }}-ingress -n ${{ github.event.inputs.namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          while [[ -z "$ingress_ip" ]]; do
+            echo "Ingress IP not found, retrying in 1 minute..."
+            sleep 60
+            ingress_ip=$(kubectl get ingress ${{ github.event.inputs.namespace }}-ingress -n ${{ github.event.inputs.namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          done
+          echo "Ingress IP: $ingress_ip"
+          echo "::set-output name=ingress_ip::$ingress_ip"
+
+      - name: Invoke Cloud Function to update IP
+        run: |
+          curl -X POST https://us-central1-cupra-cad.cloudfunctions.net/getIpFromDeployedCluster \
+            -H "Content-Type: application/json" \
+            -d '{"namespace": "${{ github.event.inputs.namespace }}", "ip": "${{ steps.ingress_ip.outputs.ingress_ip }}"}'
+
       # - name: Invoke Cloud Function to get Ingress IP
       #   run: |
       #     curl -X POST https://REGION-PROJECT_ID.cloudfunctions.net/getIngressIp
