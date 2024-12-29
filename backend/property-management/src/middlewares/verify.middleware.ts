@@ -19,14 +19,14 @@ export const validateTokenMiddleware = async (
       return;
     }
 
-    const validationServiceURL = process.env.VALIDATION_SERVICE_URL;
+    const validationServiceURL = req.hostname;
     if (!validationServiceURL) {
       res.status(500).json({ error: "Validation service URL not configured" });
       return;
     }
 
     const response = await axios.post(
-      `${validationServiceURL}/verify-token`, 
+      `${validationServiceURL}/api-gateway/verify-token`, 
       { token },
       { headers: { "Content-Type": "application/json" } } 
     );

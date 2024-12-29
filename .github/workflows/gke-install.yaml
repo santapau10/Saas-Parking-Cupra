@@ -57,6 +57,6 @@ jobs:
           helm install ${{ github.event.inputs.namespace }}-microservices ./backend/helm-deploy \
             --set namespace=${{ github.event.inputs.namespace }} \
             --wait
-      - name: Invoke Cloud Function to get Ingress IP
-        run: |
-          curl -X POST https://REGION-PROJECT_ID.cloudfunctions.net/getIngressIp
+      # - name: Invoke Cloud Function to get Ingress IP
+      #   run: |
+      #     curl -X POST https://REGION-PROJECT_ID.cloudfunctions.net/getIngressIp

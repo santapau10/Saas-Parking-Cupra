@@ -33,7 +33,7 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
         }
       }, {
         headers: {
-          'Authorization': `Bearer YOUR_GITHUB_TOKEN`,
+          'Authorization': `Bearer Token`,
           'Accept': 'application/vnd.github.v3+json'
         }
       });
