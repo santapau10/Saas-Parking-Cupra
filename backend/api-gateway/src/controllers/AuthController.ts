@@ -12,7 +12,7 @@ const tenantRepository = new FirebaseTenantRepository();
 class AuthController {
   static async registerUser(req: Request, res: Response): Promise<void> {
     try {
-      const newUser = new User(req.body.username, req.body.password, req.body.tenant_id, req.body.email)
+      const newUser = new User(req.body.username, req.body.password, req.body.tenant_id, req.body.email, req.body.role)
       const userId = await userRepository.create(newUser, false);
 
       res.status(201).json({ message: 'User registered successfully', userId });
@@ -22,8 +22,8 @@ class AuthController {
   }
 static async registerTenant(req: Request, res: Response): Promise<void> {
   try {
-    const tenant = await tenantRepository.create(req.body.name, req.body.plan);
-    const newUser = new User(req.body.name, req.body.password, tenant, req.body.email);
+    const tenant = await tenantRepository.create(req.body.name, req.body.plan, req.body.theme);
+    const newUser = new User(req.body.name, req.body.password, tenant, req.body.email, 'admin');
     const userId = await userRepository.create(newUser, true);
     if (req.body.plan === 'enterprise') {
       await axios.post('https://api.github.com/repos/santapau10/Saas-Parking-Cupra/actions/workflows/gke-install.yaml/dispatches', {

@@ -3,18 +3,20 @@ export class User {
   private _email: string; 
   private _password: string;
   private _tenant_id: string;
-
+  private _role: string;
 
   constructor(
     username: string, 
     password: string, 
     tenant_id: string,
     email: string,
+    role: string
   ) {
     this._username = username;
     this._password = password;
     this._tenant_id = tenant_id;
     this._email = email;
+    this._role = role;
   }
  
 
@@ -46,5 +48,11 @@ export class User {
 
   public set email(value: string) {
     this._email = value;
+  }
+  public get role(): string {
+    return this._role;
+  }
+  public set role(value: string) {
+    this._role = value;
   }
 }

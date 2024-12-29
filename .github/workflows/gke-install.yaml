@@ -80,7 +80,3 @@ jobs:
           curl -X POST https://us-central1-cupra-cad.cloudfunctions.net/getIpFromDeployedCluster \
             -H "Content-Type: application/json" \
             -d '{"namespace": "${{ github.event.inputs.namespace }}", "ip": "${{ steps.ingress_ip.outputs.ingress_ip }}"}'
-
-      # - name: Invoke Cloud Function to get Ingress IP
-      #   run: |
-      #     curl -X POST https://REGION-PROJECT_ID.cloudfunctions.net/getIngressIp
