@@ -58,6 +58,7 @@ jobs:
       - name: Detect changed directories
         id: changes
         run: |
+          git fetch --depth=2
           CHANGED_DIRS=$(git diff --name-only HEAD~1 | awk -F"/" '{print $2}' | sort -u)
           echo "Change $CHANGED_DIRS"
           echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
