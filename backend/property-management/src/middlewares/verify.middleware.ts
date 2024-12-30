@@ -1,5 +1,5 @@
-import axios from "axios";
 import { Request, Response, NextFunction } from "express";
+import axios from "axios";
 
 export const validateTokenMiddleware = async (
   req: Request,
@@ -26,10 +26,18 @@ export const validateTokenMiddleware = async (
     }
 
     const response = await axios.post(
-      `${validationServiceURL}/api-gateway/verify-token`, 
-      { token },
-      { headers: { "Content-Type": "application/json" } } 
+      `${validationServiceURL}/api-gateway/verify-token`,
+      { 
+        parkingId: req.params.parking 
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
+
 
     if (response.status !== 200) {
       res.status(401).json({ error: "Token validation failed" });

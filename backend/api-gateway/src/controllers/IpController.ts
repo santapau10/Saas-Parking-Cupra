@@ -10,7 +10,7 @@ class IpController {
     try {
 
         const tenantId = req.params.tenantId;
-        const tenant = await this.firestore.collection('tenants').where("tenant_id", "==", tenantId).get();
+        const tenant = await this.firestore.collection('tenants').where("tenantId", "==", tenantId).get();
         if (tenant.empty) {
             res.status(404).json({ message: 'Tenant not found' });
             return;

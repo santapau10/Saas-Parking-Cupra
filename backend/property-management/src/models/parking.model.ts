@@ -5,7 +5,7 @@ export class Parking {
   tenant_id: string;
   capacity: number;
   floors: number;
-  picture: string;
+  picture: string ;
   status: string;
 
   constructor(

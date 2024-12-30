@@ -3,6 +3,7 @@
 import { Request, Response } from 'express';
 import FirestoreParkingRepository from '../repositories/FirestoreParkingRepository';
 import { Parking } from '../models/parking.model';
+import FirestoreService from '../services/firestore.service';
 
 
 const parkingRespository = new FirestoreParkingRepository();
@@ -19,11 +20,34 @@ class ParkingController {
   }
   static async createParking(req: Request, res: Response): Promise<void> {
     try {
-      const newParking = new Parking(req.body.name, req.body.location, req.body.barriers, req.body.tenant_id, req.body.capacity, req.body.floors, req.body.picture, 'closed');
+      const { name, location, barriers, capacity, floors } = req.body;
+      const tenant_id = req.params.tenant_id;
+
+      // Subir la imagen si existe
+      const pictureUrl = req.file
+        ? await FirestoreService.uploadFile(req.file.buffer, `parkings/${Date.now()}.jpg`, req.file.mimetype)
+        : null;
+
+      // Crear instancia de Parking
+      const newParking = new Parking(
+        name,
+        location,
+        barriers,
+        tenant_id,
+        capacity,
+        floors,
+        pictureUrl!, // URL de la imagen subida
+        'closed'
+      );
+
+      // Guardar el parking en el repositorio
       const parking = await parkingRespository.createParking(newParking);
-      res.status(201).json({ message: 'User registered successfully', parking });
+
+      // Respuesta exitosa
+      res.status(201).json({ message: 'Parking created successfully', parking });
     } catch (error) {
-      res.status(500).json({ message: 'Registration failed', error: error });
+      // Manejo de errores
+      res.status(500).json({ message: 'Parking creation failed', error: error });
     }
   }
   static async getById(req: Request, res: Response): Promise<void> {
