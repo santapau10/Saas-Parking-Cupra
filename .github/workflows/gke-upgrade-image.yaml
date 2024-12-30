@@ -81,24 +81,33 @@ jobs:
       # Build, push Docker images and deploy using Helm
       - name: Build, push, and deploy
         run: |
+          # Primer bucle: Construir y empujar imágenes Docker para los servicios modificados
           for service in $changed_dirs; do
             echo "Processing service: $service"
             IMAGE_NAME="gcr.io/cupra-cad/$service:latest"
             
-            # Build Docker image
+            # Construir la imagen Docker
             docker build --platform=linux/amd64 -t $IMAGE_NAME backend/$service
 
-            # Push Docker image
+            # Empujar la imagen Docker
             docker push $IMAGE_NAME
+          done
 
-            # Get the release and namespace
-            RELEASE_NAMESPACE=$(grep "$service" <<< "$releases" | cut -d'_' -f2)
+          # Segundo bucle: Iterar sobre los releases y sus namespaces para hacer el despliegue con Helm
+          RELEASES=$(helm list -q)  # Obtener la lista de releases desde Helm
+          for release in $RELEASES; do
+            echo "Processing Helm deployment for release: $release"
+            
+            # Obtener el namespace del release (se asume que el namespace está en el nombre del release sin la parte '-microservices')
+            RELEASE_NAMESPACE=$(echo $release | sed 's/-microservices//')
+            
             if [ -z "$RELEASE_NAMESPACE" ]; then
-              echo "Namespace for $service not found, skipping deployment."
+              echo "Namespace for $release not found, skipping Helm deployment."
               continue
             fi
 
-            # Deploy with Helm (Upgrade or Install)
-            helm upgrade --install $service backend/helm-deploy \
+            # Desplegar con Helm (Upgrade o Install)
+            echo "Deploying $release to namespace $RELEASE_NAMESPACE"
+            helm upgrade --install $release backend/helm-deploy \
               --namespace $RELEASE_NAMESPACE
           done
