@@ -21,6 +21,8 @@ jobs:
       # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       # Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
@@ -58,7 +60,7 @@ jobs:
       - name: Detect changed directories
         id: changes
         run: |
-          CHANGED_DIRS=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | awk -F"/" '{print $2}' | sort -u)
+          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F"/" '{print $2}' | sort -u)
           echo "Change $CHANGED_DIRS"
           echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
 
