@@ -11,6 +11,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: cupra # Establecer directamente a 'cupra-dev' para la rama dev
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS_JSON }}
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
@@ -43,10 +44,9 @@ jobs:
       - name: Install Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-      
+
       - name: Authenticate Docker
         run: gcloud auth configure-docker gcr.io
-
 
       - name: Get Credentials
         run: |
