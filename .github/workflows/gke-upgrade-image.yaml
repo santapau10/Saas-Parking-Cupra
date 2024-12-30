@@ -58,7 +58,7 @@ jobs:
       - name: Detect changed directories
         id: changes
         run: |
-          CHANGED_DIRS=$(git diff --name-only 527f16b361174f9d5a4793d4e192b09eca7ab088 f371c34976b7d71b192e71a60a6c6027402d875e | awk -F"/" '{print $2}' | sort -u)
+          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F"/" '{print $2}' | sort -u)
           echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
 
       - name: List Helm releases and extract namespaces
