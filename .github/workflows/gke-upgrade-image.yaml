@@ -94,6 +94,5 @@ jobs:
 
             # Desplegar con Helm (Upgrade o Install)
             echo "Deploying $release to namespace $RELEASE_NAMESPACE"
-            helm upgrade --install $release backend/helm-deploy \
-              --namespace $RELEASE_NAMESPACE
+            helm upgrade --install $release backend/helm-deploy --set namespace=$RELEASE_NAMESPACE
           done
