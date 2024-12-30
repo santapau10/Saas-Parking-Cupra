@@ -16,6 +16,6 @@ app.get('/api-gateway/health', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
-app.listen(PORT, () => {
+app.listen(PORT, () => { 
   console.log(`API Gateway corriendo en a tope 🧑🏼‍💻 en ${PORT}`);
 });
