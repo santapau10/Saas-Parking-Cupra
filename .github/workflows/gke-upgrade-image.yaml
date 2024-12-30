@@ -64,20 +64,6 @@ jobs:
           echo "Change $CHANGED_DIRS"
           echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
 
-      - name: List Helm releases and extract namespaces
-        run: |
-          RELEASES=$(helm list -q)
-          echo "Helm releases: $RELEASES"
-
-          # Iterar sobre los releases y obtener los namespaces
-          for release in $RELEASES; do
-            namespace=$(echo $release | sed 's/-microservices//')
-            echo "$release -> $namespace"
-            
-            # Escribir la variable en el archivo de entorno correctamente
-            echo "${release}_namespace=$namespace" >> $GITHUB_ENV
-          done
-
       # Build, push Docker images and deploy using Helm
       - name: Build, push, and deploy
         run: |
