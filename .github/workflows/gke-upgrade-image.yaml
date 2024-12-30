@@ -95,4 +95,7 @@ jobs:
             # Desplegar con Helm (Upgrade o Install)
             echo "Deploying $release to namespace $RELEASE_NAMESPACE"
             helm upgrade --install $release backend/helm-deploy --set namespace=$RELEASE_NAMESPACE
+            for service in $changed_dirs; do
+              kubectl rollout restart deployment $service --namespace $RELEASE_NAMESPACE
+            done
           done
