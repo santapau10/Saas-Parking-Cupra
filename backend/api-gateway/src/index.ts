@@ -17,5 +17,6 @@ app.get('/api-gateway/health', (req, res) => {
     });
 });
 app.listen(PORT, () => {
+  
   console.log(`API Gateway corriendo en a tope 🧑🏼‍💻 en ${PORT}`);
 });
