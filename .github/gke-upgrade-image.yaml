@@ -1,0 +1,88 @@
+name: Backend CI/CD
+
+on:
+  push:
+    paths:
+      - backend/api-gateway/**
+      - backend/financial-management/**
+      - backend/parking-management/**
+      - backend/property-management/**
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS_JSON }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GKE_CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
+      GCR_REPOSITORY: gcr.io/cupra-cad
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
+      - name: Configure Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
+      # Install GKE auth plugin
+      - name: Install GKE gcloud auth plugin
+        run: |
+          gcloud components update
+          gcloud components install gke-gcloud-auth-plugin
+
+      # Install Helm
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      # Detect changed directories
+      - name: Detect changed directories
+        id: changes
+        run: |
+          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F/ '{print $2}' | sort -u)
+          echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
+
+      # List Helm releases and extract namespaces
+      - name: List Helm releases and extract namespaces
+        run: |
+          RELEASES=$(helm list -q)
+          echo "releases=$RELEASES" >> $GITHUB_ENV
+          for release in $RELEASES; do
+            namespace=$(echo $release | sed 's/-microservices//')
+            echo "$release -> $namespace"
+            echo "$release:$namespace" >> $GITHUB_ENV
+          done
+
+      # Build, push Docker images and deploy using Helm
+      - name: Build, push, and deploy
+        run: |
+          for service in $changed_dirs; do
+            echo "Processing service: $service"
+            IMAGE_NAME="gcr.io/cupra-cad/$service:latest"
+            
+            # Build Docker image
+            docker build --platform=linux/amd64 -t $IMAGE_NAME backend/$service
+
+            # Push Docker image
+            docker push $IMAGE_NAME
+
+            # Get the release and namespace
+            RELEASE_NAMESPACE=$(grep "$service" <<< "$releases" | cut -d':' -f2)
+            if [ -z "$RELEASE_NAMESPACE" ]; then
+              echo "Namespace for $service not found, skipping deployment."
+              continue
+            fi
+
+            # Deploy with Helm (Upgrade or Install)
+            helm upgrade --install $service backend/helm-deploy \
+              --namespace $RELEASE_NAMESPACE
+          done
