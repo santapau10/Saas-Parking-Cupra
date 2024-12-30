@@ -53,22 +53,26 @@ jobs:
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
             --zone us-central1 \
             --project ${{ secrets.GCP_PROJECT_ID }}
+
       # Detect changed directories
       - name: Detect changed directories
         id: changes
         run: |
-          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F/ '{print $2}' | sort -u)
+          CHANGED_DIRS=$(git diff --name-only 527f16b361174f9d5a4793d4e192b09eca7ab088 f371c34976b7d71b192e71a60a6c6027402d875e | awk -F"/" '{print $2}' | sort -u)
           echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
 
-      # List Helm releases and extract namespaces
       - name: List Helm releases and extract namespaces
         run: |
           RELEASES=$(helm list -q)
-          echo "releases=$RELEASES" >> $GITHUB_ENV
+          echo "Helm releases: $RELEASES"
+
+          # Iterar sobre los releases y obtener los namespaces
           for release in $RELEASES; do
             namespace=$(echo $release | sed 's/-microservices//')
             echo "$release -> $namespace"
-            echo "$release:$namespace" >> $GITHUB_ENV
+            
+            # Escribir la variable en el archivo de entorno correctamente
+            echo "${release}_namespace=$namespace" >> $GITHUB_ENV
           done
 
       # Build, push Docker images and deploy using Helm
@@ -85,7 +89,7 @@ jobs:
             docker push $IMAGE_NAME
 
             # Get the release and namespace
-            RELEASE_NAMESPACE=$(grep "$service" <<< "$releases" | cut -d':' -f2)
+            RELEASE_NAMESPACE=$(grep "$service" <<< "$releases" | cut -d'_' -f2)
             if [ -z "$RELEASE_NAMESPACE" ]; then
               echo "Namespace for $service not found, skipping deployment."
               continue
