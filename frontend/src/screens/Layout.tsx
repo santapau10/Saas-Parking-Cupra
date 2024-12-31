@@ -11,6 +11,8 @@
  import { User } from "../types/User";
  import { jwtDecode } from "jwt-decode";
  import { useUser } from '../context/UserContext';
+ import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+ import { auth } from "../../firebaseConfig"; // Import your Firebase configuration
  
 
     
@@ -38,38 +40,49 @@ const Layout: React.FC = () => {
   
       loadBackground();
     }, [user]);
-    
-    const handleToken = async (token: string) => {
-      try {
-      const response = await fetch(`${IDENTITY_API_URL}${API_KEY}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          idToken: token,
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        console.error("API Error:", data.error.message);
-        throw new Error("Failed to fetch user information. Make sure this user has been registered.");
-      }
-      const user: User = {
-        _username: data.name,
-        _email: data.email,
-        _picture: data.picture,
-        _role: data.role,
-        _tenantId: data.tenantId
 
-      };
-      setUser(user);
-    } catch (err: any) {
-      toast.error("Failed to fetch user information.");
-      console.log(err);
-      throw err;
-    }
-  };
+interface CustomClaims {
+  role?: string;
+  tenantId?: string;
+}
+
+const handleToken = async (token: string) => {
+  try {
+    // Create a Firebase credential with the Google ID Token
+    const credential = GoogleAuthProvider.credential(token);
+
+    // Sign in to Firebase using the credential
+    const result = await signInWithCredential(auth, credential);
+
+    // Extract user information from the result
+    const user = result.user;
+
+    // Fetch the ID token result to access custom claims
+    const idTokenResult = await user.getIdTokenResult();
+
+    // Access custom claims, providing fallback values in case they're not set
+    const customClaims = idTokenResult.claims as CustomClaims;
+
+    // Map the user data into your desired User structure, including custom claims
+    const userData: User = {
+      _username: user.displayName || "Anonymous",  // Display Name
+      _email: user.email || "No email",  // Email
+      _picture: user.photoURL || "No picture",  // Photo URL
+      _role: customClaims.role || "default",  // Custom role from claims (default if not set)
+      _tenantId: customClaims.tenantId || "No tenant",  // Custom tenantId from claims (default if not set)
+    };
+
+    // Set the user
+    setUser(userData);
+
+    console.log("User fetched and set successfully:", userData);
+  } catch (err: any) {
+    toast.error("Failed to fetch user information.");
+    console.error("Firebase Auth Error:", err.message);
+    throw err;
+  }
+};
+
 
     // once the database is actually running, the login process should be:
     // - fetch token, get username/email from it and see if it exists in database

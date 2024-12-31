@@ -45,7 +45,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         _name: 'testTenant',
         _plan: 'enterprise',
         _tenant_id: newUser?._tenantId,
-        _theme: 5
+        _theme: 9
       }
       setTenant(newTenant)
       localStorage.setItem('tenant', JSON.stringify(newTenant));
