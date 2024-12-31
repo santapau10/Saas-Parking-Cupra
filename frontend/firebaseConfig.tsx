@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBCCy52Xgv7wP8orfUaa2LEYRWr1zkbGIE",
+    apiKey: "API_KEY",
     authDomain: "cupra-cad.firebaseapp.com",
     projectId: "cupra-cad",
     storageBucket: "cupra-cad.firebasestorage.app",
