@@ -18,7 +18,7 @@ export default function App() {
   const [locationFilter, setLocationFilter] = useState(""); // Estado para el filtro por ubicación
   const [statusFilter, setStatusFilter] = useState(""); // Estado para el filtro por estado
 
-  const user = useUser(); // Access the user data from the context
+    const { user } = useUser(); // Access the user data from the context
 
   
   const fetchDefects = async () => {

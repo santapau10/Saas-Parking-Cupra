@@ -22,7 +22,7 @@ class AuthController {
   }
 static async registerTenant(req: Request, res: Response): Promise<void> {
   try {
-    const tenant = await tenantRepository.create(req.body.name, req.body.plan, req.body.theme);
+    const tenant = await tenantRepository.create(req.body.name, req.body.plan);
     const newUser = new User(req.body.name, req.body.password, tenant, req.body.email, 'admin');
     const userId = await userRepository.create(newUser, true);
     if (req.body.plan === 'enterprise') {

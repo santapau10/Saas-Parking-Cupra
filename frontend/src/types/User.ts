@@ -3,6 +3,6 @@ export interface User {
    //_password: string;
    _email: string;
    _picture: string;
-   _theme: number;
-   _tenancyType: string;
+   _role: string;
+   _tenantId: string;
   }

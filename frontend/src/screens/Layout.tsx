@@ -11,6 +11,7 @@
  import { User } from "../types/User";
  import { jwtDecode } from "jwt-decode";
  import { useUser } from '../context/UserContext';
+ 
 
     
 const Layout: React.FC = () => {
@@ -18,14 +19,16 @@ const Layout: React.FC = () => {
     const [backgroundImage, setBackgroundImage] = useState(null);
     const setShowUserModalToTrue = () => setShowUserModal(true);
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-    const {user, setUser} = useUser(); // Access the user data from the context
-
+    const {user, setUser, tenant} = useUser(); // Access the user data from the context
     const location = useLocation();
+
+    const API_KEY = "AIzaSyCGkITCpQ3k6wRltruaL4t6cGE7TVXmXws"; // Replace with your Google API Key
+    const IDENTITY_API_URL = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=";
 
     useEffect(() => {
       const loadBackground = async () => {
         try {
-          const theme = user?._theme ?? 1;  // ?? is safer than ||, because it only falls back on null/undefined
+          const theme = tenant?._theme ?? 1;  // ?? is safer than ||, because it only falls back on null/undefined
           const background = await import(`../assets/backgrounds/background${theme}.svg`);
           setBackgroundImage(background.default);
         } catch (error) {
@@ -35,34 +38,38 @@ const Layout: React.FC = () => {
   
       loadBackground();
     }, [user]);
-
-    useEffect(() => {
-      const token = localStorage.getItem('google_token');
-      const token2 = localStorage.getItem('user');
-      if (token && !token2) {
-        handleToken(token)
-      }
-    }, []);
-
-    interface DecodedToken {
-      name: string;
-      email: string;
-      picture: string;
-    }
     
-    const handleToken = (token: string) => {
-      //localStorage.setItem('google_token', token);
-      const userData = jwtDecode<DecodedToken>(token); // Decode the token to get user data
-      // Parse userData into a User object with the expected properties
+    const handleToken = async (token: string) => {
+      try {
+      const response = await fetch(`${IDENTITY_API_URL}${API_KEY}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idToken: token,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("API Error:", data.error.message);
+        throw new Error("Failed to fetch user information. Make sure this user has been registered.");
+      }
       const user: User = {
-        _username: userData.name,
-        _email: userData.email,
-        _picture: userData.picture,
-        _theme: 5,
-        _tenancyType: "enterprise"
+        _username: data.name,
+        _email: data.email,
+        _picture: data.picture,
+        _role: data.role,
+        _tenantId: data.tenantId
+
       };
-      setUser(user); // Update the user state
-    };
+      setUser(user);
+    } catch (err: any) {
+      toast.error("Failed to fetch user information.");
+      console.log(err);
+      throw err;
+    }
+  };
 
     // once the database is actually running, the login process should be:
     // - fetch token, get username/email from it and see if it exists in database
@@ -131,7 +138,7 @@ const Layout: React.FC = () => {
             theme: "colored",
           });
           setUser(null)
-          localStorage.removeItem('google_token');
+          //localStorage.removeItem('google_token');
         } catch (err: any) {
           console.log(err.response.data);
           setShowUserModal(false)
@@ -169,15 +176,15 @@ const Layout: React.FC = () => {
             />
           )}
           {/* Shared Header */}
-          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={user?._theme || 1}/>
+          <Header setFunct={setShowUserModalToTrue} headerText={getHeaderText()} theme={tenant?._theme || 1}/>
     
           {/* Main Content */}
-          <main style={{fontFamily:'Arial', minHeight: "100vh", color: !user || user._theme < 5? 'black': 'white'}}>
+          <main style={{fontFamily:'Arial', minHeight: "100vh", color: !tenant || tenant._theme < 5? 'black': 'white'}}>
             <Outlet />
           </main>
     
           {/* Shared Footer */}
-          <Footer theme={user?._theme || 1}/>
+          <Footer theme={tenant?._theme || 1}/>
 
           <ToastContainer 
             position="top-right" 

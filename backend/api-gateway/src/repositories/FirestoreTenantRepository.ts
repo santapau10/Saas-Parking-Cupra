@@ -7,7 +7,7 @@ class FirebaseTenantRepository implements ITenantRepository {
   private firestore = FirestoreService.getFirestoreInstance();
   private collectionName = process.env.GCP_ENV === 'dev' ? 'tenants-dev' : 'tenants';
 
-  async create(name:string, plan:string, theme: string): Promise<string> {
+  async create(name:string, plan:string): Promise<string> {
     try {
       const tenantManager = admin.auth().tenantManager();
       const newTenant = await tenantManager.createTenant({
@@ -22,7 +22,7 @@ class FirebaseTenantRepository implements ITenantRepository {
         name: name,
         tenantId: tenantId,
         plan: plan,
-        theme: theme
+        theme: 1
       };
       await this.firestore.collection(this.collectionName).add(tenant);
       return tenantId
