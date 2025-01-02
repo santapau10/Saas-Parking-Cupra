@@ -31,6 +31,22 @@ class FirebaseTenantRepository implements ITenantRepository {
       throw new Error('No se pudo crear el tenant');
     }
   }
+  async get(tenantId: string): Promise<any | null> {
+    try {
+      const tenantRef = this.firestore.collection(this.collectionName).doc(tenantId);
+      const tenantSnapshot = await tenantRef.get();
+
+      if (!tenantSnapshot.exists) {
+        console.error(`Tenant with ID ${tenantId} not found.`);
+        return null;
+      }
+
+      return tenantSnapshot.data();
+    } catch (error) {
+      console.error('Error fetching tenant data:', error);
+      throw new Error('Failed to fetch tenant data');
+    }
+  }
 }
 
 export default FirebaseTenantRepository;

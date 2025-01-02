@@ -2,10 +2,8 @@
 
 import express, { Application } from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import defectsRouter from './routes/defects.routes';
-import usersRouter from './routes/auth.route'
+import parkingRouter from './routes/parking.route';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,8 +15,7 @@ app.use(bodyParser.json());
 
 
 
-app.use('/parking-management/defects', defectsRouter);
-app.use('/parking-management/users', usersRouter)
+app.use('/parking-management/parking', parkingRouter);
 // Ruta /health para verificar el estado del servidor
 app.get('/parking-management/health', (req, res) => {
     res.status(200).json({

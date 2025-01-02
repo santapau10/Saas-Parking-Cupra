@@ -51,8 +51,8 @@ class ParkingController {
     }
   }
   static async getById(req: Request, res: Response): Promise<void> {
-    const { id } = req.params;
-    const parking = await parkingRespository.getParkingById(id);
+    const { parkingId } = req.params;
+    const parking = await parkingRespository.getParkingById(parkingId);
     if (!parking) {
       res.status(404).json({ message: 'parkingo no encontrado' });
       return;

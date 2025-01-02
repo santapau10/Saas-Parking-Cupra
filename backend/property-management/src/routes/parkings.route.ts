@@ -14,7 +14,7 @@ router.get('/all/:tenant_id', ParkingController.getAllParkingsFromTenant);
 router.post('/:tenant_id', upload.single('picture'), ParkingController.createParking);
 
 
-router.get('/:id', ParkingController.getById);
+router.get('/:parkingId', ParkingController.getById);
 
 router.post('/:parking/setCapacity/', validateTokenMiddleware,ParkingController.setCapacity)
 router.post('/:parking/setBarriers/', validateTokenMiddleware,ParkingController.setBarriers)

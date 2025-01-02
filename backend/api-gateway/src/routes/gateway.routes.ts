@@ -11,6 +11,7 @@ router.post('/registerTenant', AuthController.registerTenant);
 router.post('/registerUser', AuthController.registerUser);
 router.post('/logout', AuthController.logout);
 
+router.get('/getTenantInfo/:tenantId', AuthController.getTenantInfo);
 
 router.get('/api/:tenantId', IpController.getIp);
 

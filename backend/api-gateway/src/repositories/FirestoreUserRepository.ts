@@ -26,6 +26,9 @@ class FirestoreUserRepository implements IUserRepository {
     const customClaims = { role: userData.role, tenantId: userData.tenant_id, plan: tenant.docs[0].data().plan };
     await tenantAuth.setCustomUserClaims(userRecord.uid, customClaims);
     const token = await admin.auth().createCustomToken(userRecord.uid, customClaims);
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    console.log(decodedToken);
+
     return token ;
   }
   async login(token: string): Promise<{userId:string, role: string}> {

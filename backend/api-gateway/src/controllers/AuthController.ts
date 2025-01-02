@@ -49,6 +49,16 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
     res.status(500).json({ message: 'Registration failed', error: error });
   }
 }
+static async getTenantInfo(req: Request, res: Response): Promise<void> {
+    try {
+      const tenantId = req.params.tenantId;
+      const tenant = await tenantRepository.get(tenantId);
+
+      res.status(201).json({ message: 'Tenant info retrieved  successfully', tenant });
+    } catch (error) {
+      res.status(500).json({ message: 'Tenant retrieve failed', error: error });
+    }
+  }
   static async logout(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).json({ message: 'Logout successful' });
