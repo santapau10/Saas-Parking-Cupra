@@ -5,7 +5,7 @@ import admin from 'firebase-admin';
 class FirestoreUserRepository implements IUserRepository {
   private firestore = FirestoreService.getFirestoreInstance();
 
-  async create(userData: User, isAdmin: boolean): Promise<string> {
+  async create(userData: User, isAdmin: boolean): Promise<{token: string, userId: string}> {
     const tenantAuth = admin.auth().tenantManager().authForTenant(userData.tenant_id);
       const existingUser = await tenantAuth.getUserByEmail(userData.email).catch((error) => {
         if (error.code !== 'auth/user-not-found') {
@@ -26,10 +26,7 @@ class FirestoreUserRepository implements IUserRepository {
     const customClaims = { role: userData.role, tenantId: userData.tenant_id, plan: tenant.docs[0].data().plan };
     await tenantAuth.setCustomUserClaims(userRecord.uid, customClaims);
     const token = await admin.auth().createCustomToken(userRecord.uid, customClaims);
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    console.log(decodedToken);
-
-    return token ;
+    return {token: token, userId: userRecord.uid};
   }
   async login(token: string): Promise<{userId:string, role: string}> {
     try {
@@ -40,6 +37,29 @@ class FirestoreUserRepository implements IUserRepository {
       };
     } catch (error) {
       throw new Error('Token inválido o sesión no válida');
+    }
+  }
+  async getTenant(userId: string): Promise<string> {
+    try {
+      // Buscar el documento en la colección tenants donde el uid sea igual a userId
+      const tenantSnapshot = await this.firestore
+        .collection('tenants')
+        .where('uid', '==', userId)
+        .limit(1)
+        .get();
+
+      // Verificar si se encontró algún documento
+      if (tenantSnapshot.empty) {
+        throw new Error('Tenant not found');
+      }
+
+      const tenantDoc = tenantSnapshot.docs[0];
+      const tenantData = tenantDoc.data();
+      
+      return tenantData.tenantId;
+    } catch (error) {
+      console.error('Error getting tenant:', error);
+      throw error;  // Puedes manejar el error de la manera que desees
     }
   }
 }

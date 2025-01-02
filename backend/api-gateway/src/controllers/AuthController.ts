@@ -24,7 +24,8 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
   try {
     const tenant = await tenantRepository.create(req.body.name, req.body.plan);
     const newUser = new User(req.body.name, req.body.password, tenant, req.body.email, 'admin');
-    const userId = await userRepository.create(newUser, true);
+    const {token, userId} = await userRepository.create(newUser, true);
+    await tenantRepository.setUid(tenant, userId);
     if (req.body.plan === 'enterprise') {
       await axios.post('https://api.github.com/repos/santapau10/Saas-Parking-Cupra/actions/workflows/gke-install.yaml/dispatches', {
           ref: 'main',  // Asegúrate de incluir la referencia, como en el ejemplo de curl
@@ -43,7 +44,7 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
     }
 
     // Responder con el éxito
-    res.status(201).json({ message: 'Tenant registered successfully', userId });
+    res.status(201).json({ message: 'Tenant registered successfully', token, userId });
   } catch (error) {
     // Manejo de errores
     res.status(500).json({ message: 'Registration failed', error: error });
@@ -64,6 +65,16 @@ static async getTenantInfo(req: Request, res: Response): Promise<void> {
       res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
       res.status(500).json({ message: 'Logout failed', error: error });
+    }
+  }
+  static async getTenantFromUser(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.params.userId;
+      const tenant = await userRepository.getTenant(userId);
+
+      res.status(201).json({ message: 'Tenant retrieved successfully', tenant });
+    } catch (error) {
+      res.status(500).json({ message: 'Tenant retrieve failed', error: error });
     }
   }
 }

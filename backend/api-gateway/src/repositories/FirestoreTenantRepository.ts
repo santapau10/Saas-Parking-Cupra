@@ -47,6 +47,15 @@ class FirebaseTenantRepository implements ITenantRepository {
       throw new Error('Failed to fetch tenant data');
     }
   }
+  async setUid(tenantId: string, uid: string): Promise<void> {
+    try {
+      const tenantRef = this.firestore.collection(this.collectionName).doc(tenantId);
+      await tenantRef.update({ uid: uid });
+    } catch (error) {
+      console.error('Error setting tenant UID:', error);
+      throw new Error('Failed to set tenant UID');
+    }
+  }
 }
 
 export default FirebaseTenantRepository;

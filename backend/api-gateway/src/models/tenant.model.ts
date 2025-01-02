@@ -3,17 +3,20 @@ export class Tenant {
   private _tenant_id: string;
   private _plan: string;
   private _theme: string;
+  private _userUid: string;
 
   constructor(
     name: string, 
     tenant_id: string, 
     plan: string,
-    theme: string
+    theme: string,
+    userUid: string
   ) {
     this._name = name;
     this._tenant_id = tenant_id;
     this._plan = plan;
     this._theme = theme;
+    this._userUid = userUid;
   }
 
   public get name(): string {
@@ -43,5 +46,11 @@ export class Tenant {
   }
   public set theme(value: string) {
     this._theme = value;
+  }
+  public get userUid(): string {
+    return this._userUid;
+  }
+  public set userUid(value: string) {
+    this._userUid = value;
   }
 }
