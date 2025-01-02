@@ -1,8 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+const apiKey = import.meta.env.GOOGLE_API_KEY;
+
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBzDNKYNxJvZJhJGxf3P2Keh2DB-gelLlI",
+    apiKey: `${apiKey}`,
     authDomain: "cupra-cad.firebaseapp.com",
     projectId: "cupra-cad",
     storageBucket: "cupra-cad.firebasestorage.app",
