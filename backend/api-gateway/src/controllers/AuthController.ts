@@ -71,8 +71,9 @@ static async getTenantInfo(req: Request, res: Response): Promise<void> {
   static async getTenantFromUser(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.params.userId;
-      const tenant = await userRepository.getTenant(userId);
-      console.log(tenant);
+      const tenantId = await userRepository.getTenant(userId);
+      console.log(tenantId);
+      const tenant = await tenantRepository.get(tenantId);
       res.status(201).json({ message: 'Tenant retrieved successfully', tenant });
     } catch (error) {
       res.status(500).json({ message: 'Tenant retrieve failed', error: error });

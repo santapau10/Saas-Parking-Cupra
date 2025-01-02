@@ -33,15 +33,17 @@ class FirebaseTenantRepository implements ITenantRepository {
   }
   async get(tenantId: string): Promise<any | null> {
     try {
-      const tenantRef = this.firestore.collection(this.collectionName).doc(tenantId);
-      const tenantSnapshot = await tenantRef.get();
-
-      if (!tenantSnapshot.exists) {
-        console.error(`Tenant with ID ${tenantId} not found.`);
-        return null;
+       const querySnapshot = await this.firestore
+        .collection(this.collectionName)
+        .where('tenantId', '==', tenantId)
+        .get();
+       if (querySnapshot.empty) {
+        return "No document found with tenantId: ${tenantId}";
       }
 
-      return tenantSnapshot.data();
+      const doc = querySnapshot.docs[0];
+
+      return doc.data();
     } catch (error) {
       console.error('Error fetching tenant data:', error);
       throw new Error('Failed to fetch tenant data');
