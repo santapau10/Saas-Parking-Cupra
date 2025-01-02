@@ -72,11 +72,29 @@ static async getTenantInfo(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.params.userId;
       const tenantId = await userRepository.getTenant(userId);
-      console.log(tenantId);
       const tenant = await tenantRepository.get(tenantId);
       res.status(201).json({ message: 'Tenant retrieved successfully', tenant });
     } catch (error) {
       res.status(500).json({ message: 'Tenant retrieve failed', error: error });
+    }
+  }
+  static async getUser(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.params.userId;
+      const user = await userRepository.get(userId);
+      res.status(201).json({ message: 'User retrieved successfully', user });
+    } catch (error) {
+      res.status(500).json({ message: 'User retrieve failed', error: error });
+    }
+  }
+  static async setTheme(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.body.tenantId;
+      const theme = req.body.theme;
+      await tenantRepository.setTheme(userId, theme);
+      res.status(201).json({ message: 'Theme updated successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Theme update failed', error: error });
     }
   }
 }

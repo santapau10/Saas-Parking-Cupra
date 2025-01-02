@@ -71,6 +71,24 @@ class FirebaseTenantRepository implements ITenantRepository {
       throw new Error('Failed to set tenant UID');
     }
   }
+  async setTheme(tenantId: string, theme: number): Promise<void> {
+    try {
+      const querySnapshot = await this.firestore
+        .collection(this.collectionName)
+        .where('tenantId', '==', tenantId)
+        .get();
+
+      if (querySnapshot.empty) {
+        throw new Error(`No document found with tenantId: ${tenantId}`);
+      }
+      const doc = querySnapshot.docs[0];
+
+      await doc.ref.set({ theme: theme }, { merge: true });
+    } catch (error) {
+      console.error('Error setting tenant theme:', error);
+      throw new Error('Failed to set tenant theme');
+    }
+  }
 
 }
 

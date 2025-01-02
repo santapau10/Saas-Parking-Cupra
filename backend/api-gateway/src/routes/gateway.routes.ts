@@ -14,6 +14,10 @@ router.post('/logout', AuthController.logout);
 router.get('/getTenantInfo/:tenantId', AuthController.getTenantInfo);
 
 router.get('/getTenantFromUser/:userId', AuthController.getTenantFromUser);
+router.get('/getUser/:userId', AuthController.getUser);
+
+
+router.post('/setTheme', AuthController.setTheme);
 
 router.get('/api/:tenantId', IpController.getIp);
 

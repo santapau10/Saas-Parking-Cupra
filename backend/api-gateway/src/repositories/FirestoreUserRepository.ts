@@ -4,6 +4,7 @@ import { User } from '../models/user.model';
 import admin from 'firebase-admin';
 class FirestoreUserRepository implements IUserRepository {
   private firestore = FirestoreService.getFirestoreInstance();
+  private collectionName = process.env.GCP_ENV === 'dev' ? 'users-dev' : 'users';
 
   async create(userData: User, isAdmin: boolean): Promise<{token: string, userId: string}> {
     const tenantAuth = admin.auth().tenantManager().authForTenant(userData.tenant_id);
@@ -16,11 +17,23 @@ class FirestoreUserRepository implements IUserRepository {
     if (existingUser) {
       throw new Error('Username already exists'); 
     }
-     const userRecord = await tenantAuth.createUser({
+    const userRecord = await tenantAuth.createUser({
       email: userData.email,
       password: userData.password,
       displayName: userData.username,
     })
+
+    const user = {
+        username: userData.username,
+        email: userData.email, 
+        tenantId: userData.tenant_id,
+        role: userData.role,
+        uid: userRecord.uid,
+    };
+    await this.firestore.collection(this.collectionName).add(user);
+
+
+
     const tenant = await this.firestore.collection('tenants').where("tenantId", "==", userData.tenant_id).get();
     
     const customClaims = { role: userData.role, tenantId: userData.tenant_id, plan: tenant.docs[0].data().plan };
@@ -57,6 +70,28 @@ class FirestoreUserRepository implements IUserRepository {
       const tenantData = tenantDoc.data();
       
       return tenantData.tenantId;
+    } catch (error) {
+      console.error('Error getting tenant:', error);
+      throw error;  // Puedes manejar el error de la manera que desees
+    }
+  }
+  async get(userId: string): Promise<any> {
+    try {
+      // Buscar el documento en la colección tenants donde el uid sea igual a userId
+      const userSnapshot = await this.firestore
+        .collection(this.collectionName)
+        .where('uid', '==', userId)
+        .limit(1)
+        .get();
+
+      if (userSnapshot.empty) {
+        throw new Error('Tenant not found');
+      }
+
+      const userDoc = userSnapshot.docs[0];
+      const userData = userDoc.data();
+      
+      return userData as User;
     } catch (error) {
       console.error('Error getting tenant:', error);
       throw error;  // Puedes manejar el error de la manera que desees
