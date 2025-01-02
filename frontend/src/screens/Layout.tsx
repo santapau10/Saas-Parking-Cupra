@@ -27,7 +27,7 @@ const Layout: React.FC = () => {
     useEffect(() => {
       const loadBackground = async () => {
         try {
-          const storedTheme = JSON.parse(localStorage.getItem('tenant') || "" )._theme ?? 1;
+          const storedTheme = tenant?._theme ?? 1;
           const background = await import(`../assets/backgrounds/background${storedTheme}.svg`);
           setBackgroundImage(background.default);
         } catch (error) {
@@ -35,7 +35,7 @@ const Layout: React.FC = () => {
         }
       };
       loadBackground();
-    }, []);
+    }, [tenant]);
 
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
