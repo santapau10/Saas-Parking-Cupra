@@ -23,10 +23,7 @@ const Layout: React.FC = () => {
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
     const {user, setUser, tenant} = useUser(); // Access the user data from the context
     const location = useLocation();
-
-    const API_KEY = "API_KEY"; // Replace with your Google API Key
-    const IDENTITY_API_URL = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=";
-
+    
     useEffect(() => {
       const loadBackground = async () => {
         try {
