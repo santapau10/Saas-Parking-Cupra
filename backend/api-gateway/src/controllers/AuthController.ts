@@ -25,6 +25,7 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
     const tenant = await tenantRepository.create(req.body.name, req.body.plan);
     const newUser = new User(req.body.name, req.body.password, tenant, req.body.email, 'admin');
     const {token, userId} = await userRepository.create(newUser, true);
+    console.log(`Tenant created: `, tenant, `User created: `, userId);
     await tenantRepository.setUid(tenant, userId);
     if (req.body.plan === 'enterprise') {
       await axios.post('https://api.github.com/repos/santapau10/Saas-Parking-Cupra/actions/workflows/gke-install.yaml/dispatches', {
@@ -71,7 +72,7 @@ static async getTenantInfo(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.params.userId;
       const tenant = await userRepository.getTenant(userId);
-
+      console.log(tenant);
       res.status(201).json({ message: 'Tenant retrieved successfully', tenant });
     } catch (error) {
       res.status(500).json({ message: 'Tenant retrieve failed', error: error });

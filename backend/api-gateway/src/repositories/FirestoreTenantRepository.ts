@@ -49,13 +49,27 @@ class FirebaseTenantRepository implements ITenantRepository {
   }
   async setUid(tenantId: string, uid: string): Promise<void> {
     try {
-      const tenantRef = this.firestore.collection(this.collectionName).doc(tenantId);
-      await tenantRef.update({ uid: uid });
+      // Buscar el documento con el campo `tenantId` igual al valor proporcionado
+      const querySnapshot = await this.firestore
+        .collection(this.collectionName)
+        .where('tenantId', '==', tenantId)
+        .get();
+
+      if (querySnapshot.empty) {
+        throw new Error(`No document found with tenantId: ${tenantId}`);
+      }
+
+      // Obtener el primer documento (asumiendo que es único)
+      const doc = querySnapshot.docs[0];
+
+      // Actualizar o agregar el campo `uid`
+      await doc.ref.set({ uid: uid }, { merge: true });
     } catch (error) {
       console.error('Error setting tenant UID:', error);
       throw new Error('Failed to set tenant UID');
     }
   }
+
 }
 
 export default FirebaseTenantRepository;
