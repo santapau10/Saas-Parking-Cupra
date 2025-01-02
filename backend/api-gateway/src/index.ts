@@ -1,11 +1,14 @@
 import express, { Application } from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 import auth from './routes/gateway.routes'
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-
+app.use(cors());
+app.use(bodyParser.json());
 
 app.use('/api-gateway', auth);
 
