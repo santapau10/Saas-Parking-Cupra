@@ -50,31 +50,25 @@ const handleToken = async (token: string) => {
   try {
     // Create a Firebase credential with the Google ID Token
     const credential = GoogleAuthProvider.credential(token);
-
     // Sign in to Firebase using the credential
     const result = await signInWithCredential(auth, credential);
-
     // Extract user information from the result
     const user = result.user;
-
     // Fetch the ID token result to access custom claims
     const idTokenResult = await user.getIdTokenResult();
-
     // Access custom claims, providing fallback values in case they're not set
     const customClaims = idTokenResult.claims as CustomClaims;
-
     // Map the user data into your desired User structure, including custom claims
     const userData: User = {
+      _userId: user.uid || "noId",
       _username: user.displayName || "Anonymous",  // Display Name
       _email: user.email || "No email",  // Email
       _picture: user.photoURL || "No picture",  // Photo URL
       _role: customClaims.role || "default",  // Custom role from claims (default if not set)
       _tenantId: customClaims.tenantId || "No tenant",  // Custom tenantId from claims (default if not set)
     };
-
     // Set the user
     setUser(userData);
-
     console.log("User fetched and set successfully:", userData);
   } catch (err: any) {
     toast.error("Failed to fetch user information.");
@@ -82,13 +76,6 @@ const handleToken = async (token: string) => {
     throw err;
   }
 };
-
-
-    // once the database is actually running, the login process should be:
-    // - fetch token, get username/email from it and see if it exists in database
-    //    - if it does, get from the database the user that corresponds to it, = user
-    //    - if not, create an initial user (kinda like the one we create in handleToken), = user
-    // - setUser(user), this function (implemented in the context) will also include the create/update instruction
 
     const getHeaderText = () => {
         switch (location.pathname) {
