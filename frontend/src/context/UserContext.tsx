@@ -12,7 +12,7 @@ interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   tenant: Tenant | null;
-  updateTenant: (tenant: Tenant | null) => void;
+  setTheme: (newTheme: number) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -53,16 +53,15 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } else {
         try {
         const response = await axios.get(`${apiUrl}/api-gateway/getTenantFromUser/${newUser._userId}`);
-        console.log(response)
         const newTenant: Tenant = {
           _name: response.data.tenant.name,
           _plan: response.data.tenant.plan,
           _tenant_id: response.data.tenant.tenantId,
-          _theme: response.data.tenant.theme
+          _theme: Number(response.data.tenant.theme)
         }
         setTenant(newTenant)
         localStorage.setItem('tenant', JSON.stringify(newTenant));
-        newUser._tenantId = tenant!._tenant_id;
+        newUser._tenantId = newTenant._tenant_id;
         } catch (err: any) {
           toast.error("Failed to get tenant from user.");
         }
@@ -79,18 +78,24 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 
 
-  const updateTenant = (newTenant: Tenant | null) => {
-    if (newTenant) {
-      localStorage.setItem('tenant', JSON.stringify(newTenant));
+  const setTheme = async (newTheme : number) => {
+    if (tenant) {
+      const newTenant = { ...tenant, _theme: newTheme };
       setTenant(newTenant)
-      } else {
-      localStorage.removeItem('tenant');
-      setTenant(null);
+      console.log(tenant)
+      const body = {
+        tenantId: tenant._tenant_id,
+        theme: newTheme
+      }
+      await axios.post(`${apiUrl}/api-gateway/setTheme`, body);
+      localStorage.setItem('tenant', JSON.stringify(newTenant));
+    } else {
+      throw new Error("There is no current tenant");
     }
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser: updateUser, tenant, updateTenant }}>
+    <UserContext.Provider value={{ user, setUser: updateUser, tenant, setTheme }}>
       {children}
     </UserContext.Provider>
   );

@@ -23,20 +23,29 @@ const Layout: React.FC = () => {
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
     const {user, setUser, tenant} = useUser(); // Access the user data from the context
     const location = useLocation();
-    
+
     useEffect(() => {
       const loadBackground = async () => {
         try {
-          const theme = tenant?._theme ?? 1;  // ?? is safer than ||, because it only falls back on null/undefined
-          const background = await import(`../assets/backgrounds/background${theme}.svg`);
+          const storedTheme = JSON.parse(localStorage.getItem('tenant') || "" )._theme ?? 1;
+          const background = await import(`../assets/backgrounds/background${storedTheme}.svg`);
           setBackgroundImage(background.default);
         } catch (error) {
           console.error("Error loading background:", error);
         }
       };
-  
       loadBackground();
-    }, [user]);
+    }, []);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     console.log(tenant);
+  //   }, 1000); // Print "hello" every second (1000 ms)
+
+  //   // Cleanup function to clear the interval when the component unmounts
+  //   return () => clearInterval(intervalId);
+  // }, []); // Empty dependency array means it runs once when the component mounts
+
 
 interface CustomClaims {
   role?: string;
@@ -51,21 +60,17 @@ const handleToken = async (token: string) => {
     const result = await signInWithCredential(auth, credential);
     // Extract user information from the result
     const user = result.user;
-    // Fetch the ID token result to access custom claims
-    const idTokenResult = await user.getIdTokenResult();
-    // Access custom claims, providing fallback values in case they're not set
-    const customClaims = idTokenResult.claims as CustomClaims;
-    // Map the user data into your desired User structure, including custom claims
+    const fetchedUser = await axios.get(`${apiUrl}/api-gateway/getUser/${user.uid}`);
+    console.log(fetchedUser)
     const userData: User = {
       _userId: user.uid || "noId",
       _username: user.displayName || "Anonymous",  // Display Name
       _email: user.email || "No email",  // Email
       _picture: user.photoURL || "No picture",  // Photo URL
-      _role: customClaims.role || "default",  // Custom role from claims (default if not set)
-      _tenantId: customClaims.tenantId || "No tenant",  // Custom tenantId from claims (default if not set)
+      _role: fetchedUser.data.user.role || "default",  // Custom role from claims (default if not set)
+      _tenantId: "", 
     };
-    // Set the user
-    setUser(userData);
+    setUser(userData); //here we fetch the tenant and update tenantId value
     console.log("User fetched and set successfully:", userData);
   } catch (err: any) {
     toast.error("Failed to fetch user information.");

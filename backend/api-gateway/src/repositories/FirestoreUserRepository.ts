@@ -77,15 +77,15 @@ class FirestoreUserRepository implements IUserRepository {
   }
   async get(userId: string): Promise<any> {
     try {
-      // Buscar el documento en la colección tenants donde el uid sea igual a userId
+      // Buscar el documento en la colección users donde el uid sea igual a userId
       const userSnapshot = await this.firestore
-        .collection(this.collectionName)
+        .collection('users')
         .where('uid', '==', userId)
         .limit(1)
         .get();
 
       if (userSnapshot.empty) {
-        throw new Error('Tenant not found');
+        throw new Error('User not found');
       }
 
       const userDoc = userSnapshot.docs[0];
@@ -93,7 +93,7 @@ class FirestoreUserRepository implements IUserRepository {
       
       return userData as User;
     } catch (error) {
-      console.error('Error getting tenant:', error);
+      console.error('Error getting user:', error);
       throw error;  // Puedes manejar el error de la manera que desees
     }
   }

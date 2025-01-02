@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-const apiKey = import.meta.env.GOOGLE_API_KEY;
+const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 
 const firebaseConfig = {

@@ -16,18 +16,22 @@ import background8 from '../assets/backgrounds/background8.svg';
 import background9 from '../assets/backgrounds/background9.svg';
 
 interface BackgroundModalProps {
-  onApply: (updatedUser: User) => void; // Handle both updating the user and closing the modal
+  onApply: (newTheme: number) => void; // Handle both updating the user and closing the modal
 }
 
 const BackgroundModal: React.FC<BackgroundModalProps> = ({ onApply }) => {
-  const { user } = useUser();
+  const { user, tenant } = useUser();
 
   if (!user) {
     // Handle the case where user is null
     return <div>There is no user currently logged in. Please log in and try again</div>; // or any fallback UI
   }
 
-  const [selectedBackground, setSelectedBackground] = useState<number>(user._theme);
+  if (!tenant) {
+    return <div>The tenant has not been loaded correctly. Please try again later</div>; // or any fallback UI
+  }
+
+  const [selectedBackground, setSelectedBackground] = useState<number>(tenant._theme || 1);
 
   // Backgrounds are now imported images, so we can reference them directly
   const backgrounds: string[] = [
@@ -49,7 +53,7 @@ const BackgroundModal: React.FC<BackgroundModalProps> = ({ onApply }) => {
   };
 
   const handleApply = (): void => {
-    onApply({ ...user, _theme: selectedBackground });
+    onApply(selectedBackground);
   };
 
   return (
