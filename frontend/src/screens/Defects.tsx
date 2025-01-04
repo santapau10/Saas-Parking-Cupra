@@ -7,6 +7,7 @@ import DefectModal from "../components/DefectModal";
 import { Defect } from "../types/Defect";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from '../context/UserContext';
+import { useLocation } from "react-router-dom";
 
 
 export default function App() {
@@ -18,15 +19,15 @@ export default function App() {
   const [locationFilter, setLocationFilter] = useState(""); // Estado para el filtro por ubicación
   const [statusFilter, setStatusFilter] = useState(""); // Estado para el filtro por estado
 
-    const { user } = useUser(); // Access the user data from the context
-
+  const { user } = useUser(); // Access the user data from the context
+  const parking = useLocation().pathname;
   
   const fetchDefects = async () => {
     try {
       setLoading(true);
       setError(null);
       console.log(apiUrl);
-      const response = await axios.get(`${apiUrl}/defects`);
+      const response = await axios.get(`${apiUrl}/property-management/defects/${parking}`);
       console.log(response);
       setDefects(response.data);
     } catch (err: any) {
@@ -44,7 +45,7 @@ export default function App() {
   const handleDefectSubmit = async (defect: FormData) => {
     try {
       console.log(apiUrl);
-      await axios.post(`${apiUrl}/defects`, defect, {
+      await axios.post(`${apiUrl}/property-management/defects`, defect, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -85,7 +86,7 @@ export default function App() {
 
     try {
       const response = await axios.get(
-        `${apiUrl}/defects/filteredByLocation/${locationFilter}`
+        `${apiUrl}/property-management/defects/${parking}/filteredByLocation/${locationFilter}`
       );
       setDefects(response.data);
     } catch (err: any) {
@@ -105,7 +106,7 @@ export default function App() {
 
     try {
       const response = await axios.get(
-        `${apiUrl}/defects/filteredByStatus/${statusFilter}`
+        `${apiUrl}/property-management/defects/${parking}/filteredByStatus/${statusFilter}`
       );
       setDefects(response.data);
     } catch (err: any) {

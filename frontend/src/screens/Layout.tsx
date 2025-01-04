@@ -37,21 +37,6 @@ const Layout: React.FC = () => {
       loadBackground();
     }, [tenant]);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     console.log(tenant);
-  //   }, 1000); // Print "hello" every second (1000 ms)
-
-  //   // Cleanup function to clear the interval when the component unmounts
-  //   return () => clearInterval(intervalId);
-  // }, []); // Empty dependency array means it runs once when the component mounts
-
-
-interface CustomClaims {
-  role?: string;
-  tenantId?: string;
-}
-
 const handleToken = async (token: string) => {
   try {
     // Create a Firebase credential with the Google ID Token
