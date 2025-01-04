@@ -21,6 +21,17 @@ class FirestoreDefectRepository implements IDefectRepository {
     }));
   }
 
+  async getFromParking(parking: string): Promise<any[]> {
+    const snapshot = await this.firestore.collection(this.collectionName).where('parking', '==', parking).get();
+    if (snapshot.empty) return [];
+
+    return await Promise.all(snapshot.docs.map(async doc => {
+      const data = doc.data();
+      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
+      return { id: doc.id, ...data, _image: imageUrl };
+    }));
+  }
+  
   async getByStatus(status: string): Promise<any[]> {
     const snapshot = await this.firestore.collection(this.collectionName).where('status', '==', status).get();
     if (snapshot.empty) return [];
@@ -32,16 +43,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     }));
   }
 
-  async getByLocation(location: string): Promise<any[]> {
-    const snapshot = await this.firestore.collection(this.collectionName).where('location', '==', location).get();
-    if (snapshot.empty) return [];
-
-    return await Promise.all(snapshot.docs.map(async doc => {
-      const data = doc.data();
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
-      return { id: doc.id, ...data, _image: imageUrl };
-    }));
-  }
+  
 
   async getById(id: string): Promise<any | null> {
     const doc = await this.firestore.collection(this.collectionName).doc(id).get();

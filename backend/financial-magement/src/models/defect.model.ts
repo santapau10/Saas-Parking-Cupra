@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export class Defect {
   private _object: string;
-  private _location: string; 
+  private _parking: string; 
   private _description: string;
   private _detailedDescription: string;
   private _reportingDate: Date;
@@ -12,7 +12,7 @@ export class Defect {
 
   constructor(
     object: string, 
-    location: string, 
+    parking: string, 
     description: string, 
     detailedDescription: string, 
     reportingDate: Date,
@@ -21,7 +21,7 @@ export class Defect {
     username: string
   ) {
     this._object = object;
-    this._location = location;
+    this._parking = parking;
     this._description = description;
     this._detailedDescription = detailedDescription;
     this._reportingDate = reportingDate;
@@ -37,11 +37,11 @@ export class Defect {
     this._object = value;
   }
 
-  public get location(): string {
-    return this._location;
+  public get parking(): string {
+    return this._parking;
   }
-  public set location(value: string) {
-    this._location = value;
+  public set parking(value: string) {
+    this._parking = value;
   }
 
   public get description(): string {

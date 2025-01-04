@@ -12,7 +12,7 @@ interface DefectModalProps {
 const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUser }) => {
   const [defect, setDefect] = useState<Defect>({
     _object: "",
-    _location: "",
+    _parking: "",
     _description: "",
     _detailedDescription: "",
     _reportingDate: new Date(),
@@ -62,7 +62,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
 
     const formData = new FormData();
     formData.append("_object", defect._object);
-    formData.append("_location", defect._location);
+    formData.append("_parking", defect._parking);
     formData.append("_description", defect._description);
     formData.append("_detailedDescription", defect._detailedDescription);
     formData.append("_reportingDate", defect._reportingDate.toISOString());
@@ -75,6 +75,7 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
       console.log("No image file selected.");
     }
 
+    console.log(formData)
     onSubmit(formData);
     onClose();
   };
@@ -99,11 +100,11 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
           </div>
           <div>
             <label>
-              <strong>Location:</strong>
+              <strong>Parking:</strong>
               <input
                 type="text"
-                name="_location"
-                value={defect._location}
+                name="_parking"
+                value={defect._parking}
                 onChange={handleChange}
                 required
                 className="modal-input"

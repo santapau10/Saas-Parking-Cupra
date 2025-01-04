@@ -1,6 +1,6 @@
 export interface Defect {
     _object: string;
-    _location: string;
+    _parking: string;
     _description: string;
     _detailedDescription: string;
     _reportingDate: Date;

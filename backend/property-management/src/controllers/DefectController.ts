@@ -11,17 +11,19 @@ class DefectController {
     res.status(200).json(defects);
   }
 
+  static async getFromParking(req: Request, res: Response): Promise<void> {
+    const { parking } = req.params;
+    const defects = await defectRepository.getFromParking(parking);
+    res.status(200).json(defects);
+  }
+
   static async getByStatus(req: Request, res: Response): Promise<void> {
     const { status } = req.params;
     const defects = await defectRepository.getByStatus(status);
     res.status(200).json(defects);
   }
 
-  static async getByLocation(req: Request, res: Response): Promise<void> {
-    const { location } = req.params;
-    const defects = await defectRepository.getByLocation(location);
-    res.status(200).json(defects);
-  }
+  
 
   static async getById(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
@@ -34,13 +36,13 @@ class DefectController {
   }
 
   static async create(req: Request, res: Response): Promise<void> {
-    const { _object, _location, _description, _detailedDescription, _reportingDate, _status, _username } = req.body;
+    const { _object, _parking, _description, _detailedDescription, _reportingDate, _status, _username } = req.body;
 
     const imageUrl = req.file
       ? await FirestoreService.uploadFile(req.file.buffer, `defects/${Date.now()}.jpg`, 'image/jpeg')
       : null;
 
-    const newDefect = { _object, _location, _description, _detailedDescription, _reportingDate: new Date(_reportingDate), _status, _image: imageUrl, _username };
+    const newDefect = { _object, _parking, _description, _detailedDescription, _reportingDate: new Date(_reportingDate), _status, _image: imageUrl, _username };
 
     const defectId = await defectRepository.create(newDefect);
     res.status(201).json({ id: defectId, ...newDefect });

@@ -20,14 +20,16 @@ export default function App() {
   const [statusFilter, setStatusFilter] = useState(""); // Estado para el filtro por estado
 
   const { user } = useUser(); // Access the user data from the context
-  const parking = useLocation().pathname;
+  const location = useLocation();
+  const parking = location.pathname.replace("/","")
   
   const fetchDefects = async () => {
     try {
       setLoading(true);
       setError(null);
       console.log(apiUrl);
-      const response = await axios.get(`${apiUrl}/property-management/defects/${parking}`);
+      const response = await axios.get(`${apiUrl}/property-management/defects`);
+      //const response = await axios.get(`${apiUrl}/property-management/defects/${parking}`);
       console.log(response);
       setDefects(response.data);
     } catch (err: any) {
@@ -44,7 +46,6 @@ export default function App() {
 
   const handleDefectSubmit = async (defect: FormData) => {
     try {
-      console.log(apiUrl);
       await axios.post(`${apiUrl}/property-management/defects`, defect, {
         headers: {
           "Content-Type": "multipart/form-data",

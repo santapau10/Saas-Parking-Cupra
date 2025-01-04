@@ -22,7 +22,7 @@ const DefectDetail = ({ defect, onClose }: ModalProps) => {
           <h2>{defect._object}</h2>
           <div className="modal-info">
             <p>
-              <strong>Location:</strong> {defect._location}
+              <strong>Parking:</strong> {defect._parking}
             </p>
             <p>
               <strong>Description:</strong> {defect._description}

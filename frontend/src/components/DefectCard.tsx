@@ -44,7 +44,7 @@ const DefectCard = (defect: Defect) => {
       <h2 className="defect-title">{defect._object}</h2>
       <p>
         <FontAwesomeIcon icon={faMapMarkerAlt} /> {/* Icono de ubicación */}
-        <strong> Location:</strong> {defect._location}
+        <strong> Parking:</strong> {defect._parking}
       </p>
       <p>
         <FontAwesomeIcon icon={faClipboard} /> {/* Icono de descripción */}

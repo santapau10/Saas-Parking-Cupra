@@ -9,6 +9,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const app: Application = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -28,5 +29,5 @@ app.get('/property-management/health', (req, res) => {
 });
 
 app.listen(process.env.PORT, () => {
-    console.log(`El service de property esta activado 🚀`);
+    console.log(`El service de property esta activado 🚀 en ${PORT}`);
 });
