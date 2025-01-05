@@ -1,6 +1,6 @@
 export class Parking {
   name: string;
-  location: string;
+  address: string;
   barriers: number;
   tenant_id: string;
   capacity: number;
@@ -10,7 +10,7 @@ export class Parking {
 
   constructor(
     name: string,
-    location: string,
+    address: string,
     barriers: number,
     tenantId: string,
     capacity: number,
@@ -19,7 +19,7 @@ export class Parking {
     status: string
   ) {
     this.name = name;
-    this.location = location;
+    this.address = address;
     this.barriers = barriers;
     this.tenant_id = tenantId;
     this.capacity = capacity;

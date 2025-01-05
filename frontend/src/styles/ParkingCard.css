@@ -1,0 +1,96 @@
+/* Remove bottom margin of the card */
+.parking-card {
+    font-family: 'Arial', sans-serif;
+    background-color: rgba(0, 0, 0, 0.05); /* Default background */
+    border-radius: 10px;
+    margin: 10px auto; /* Center card horizontally */
+    width: 300px; /* Fixed width */
+    max-width: 100%; /* Ensures responsiveness on smaller screens */
+    cursor: pointer;
+    overflow: hidden; /* Prevent content overflow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0; /* Remove bottom margin */
+    padding-bottom: 0; /* Remove any extra padding */
+}
+
+/* Ensure child elements don't add extra margin */
+.parking-card * {
+    margin-bottom: 0 !important; /* Force remove bottom margins for all elements inside the card */
+}
+
+.parking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Top half for the image */
+.parking-image-container {
+    height: 200px; /* Set height for image container */
+    overflow: hidden;
+}
+
+.parking-image {
+    width: 100%; /* Make image fill the container width */
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the container */
+}
+
+/* Bottom half for details */
+.parking-details {
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between details */
+    margin-bottom: 0 ; /* Ensure no bottom margin */
+}
+
+/* Title inside the parking card */
+.parking-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.parking-card p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+    margin-bottom: 0 !important; /* Prevent any extra margin at the bottom of paragraphs */
+}
+
+.parking-card strong {
+    color: #333;
+}
+
+.parking-card span {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* Status colors */
+.parking-status-open {
+    color: green;
+}
+
+.parking-status-closed {
+    color: red;
+}
+
+.parking-status-default {
+    color: black;
+}
+
+/* Styles for theme > 5 */
+.parking-card.theme-high {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.parking-card.theme-high:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+}

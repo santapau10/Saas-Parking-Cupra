@@ -4,9 +4,47 @@ import { IParkingRepository } from './IParkingRepository';
 
 class FirestoreParkingRepository implements IParkingRepository {
   private firestore = FirestoreService.getFirestoreInstance();
-  
   private collectionName = process.env.GCP_ENV === 'dev' ? 'parkings-dev' : 'parkings';
-  async getAll(tenant_id: string): Promise<Parking[]> {
+  async getAll(): Promise<Parking[]> {
+    try {
+      const snapshot = await this.firestore
+        .collection(this.collectionName)
+        .get();
+
+      if (snapshot.empty) {
+        console.log(`No se encontraron estacionamientos.`);
+        return [];
+      }
+
+      const parkingList: Parking[] = await Promise.all(
+        snapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          const signedImageUrl = data.picture
+            ? await FirestoreService.generateSignedUrl(
+                data.picture.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/${this.collectionName}`, '')
+              )
+            : '';
+
+          return new Parking(
+            data.name,
+            data.address,
+            data.barriers,
+            data.tenant_id,
+            data.capacity,
+            data.floors,
+            signedImageUrl,
+            data.status
+          );
+        })
+      );
+
+      return parkingList;
+    } catch (error) {
+      console.error('Error al obtener los estacionamientos:', error);
+      throw new Error('No se pudieron recuperar los estacionamientos.');
+    }
+  }
+  async getAllFromTenant(tenant_id: string): Promise<Parking[]> {
     try {
       const snapshot = await this.firestore
         .collection(this.collectionName)

@@ -9,10 +9,18 @@ import FirestoreService from '../services/firestore.service';
 const parkingRespository = new FirestoreParkingRepository();
 
 class ParkingController {
+  static async getAllParkings(req: Request, res: Response): Promise<void> {
+    try {
+      const parkingList = await parkingRespository.getAll()
+      res.status(201).json({ message: 'Fetching Successfully', parkingList });
+    } catch (error) {
+      res.status(500).json({ message: 'Fetching failed', error: error });
+    }
+  }
   static async getAllParkingsFromTenant(req: Request, res: Response): Promise<void> {
     try {
       const {tenant_id} = req.params;
-      const parkingList = await parkingRespository.getAll(tenant_id)
+      const parkingList = await parkingRespository.getAllFromTenant(tenant_id)
       res.status(201).json({ message: 'Fetching Successfully', parkingList });
     } catch (error) {
       res.status(500).json({ message: 'Fetching failed', error: error });

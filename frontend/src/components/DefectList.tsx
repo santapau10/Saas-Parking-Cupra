@@ -23,7 +23,7 @@ function DefectList({ items, heading }: Props) {
   return (
     <>
       <h1 style={{ fontFamily: "Arial", margin: 25 }}>{heading}</h1>
-      {Array.isArray(items) && items.length === 0 && <p>No items found :(</p>}
+      {Array.isArray(items) && items.length === 0 && <p>No defects found :(</p>}
       <ul className="list-group">
         {Array.isArray(items) && items.length > 0 ? (
           items.map((item) => (

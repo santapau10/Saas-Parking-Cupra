@@ -8,6 +8,7 @@ import multer from 'multer';
 const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
 
+router.get('/all', ParkingController.getAllParkings);
 router.get('/all/:tenant_id', ParkingController.getAllParkingsFromTenant);
 // router.post('/:tenant_id', ParkingController.createParking);
 
