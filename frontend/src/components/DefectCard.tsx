@@ -64,7 +64,7 @@ const DefectCard = (defect: Defect) => {
       </p>
       <p>
         <FontAwesomeIcon icon={faUserAlt} /> {/* Reporter Icon */}
-        <strong> Reported by:</strong> {defect._username || "Anonymous"}
+        <strong> Reported by:</strong> {defect._username.length < 17 ? defect._username : defect._username.substring(0,14) + "..."}
       </p>
     </div>
   );

@@ -3,7 +3,9 @@
     background-color: rgba(0, 0, 0, 0.05); /* Default background */
     padding: 15px;
     border-radius: 10px;
-    margin-bottom: 10px;
+    margin: 10px auto; /* Center card horizontally */
+    width: 300px; /* Fixed width */
+    max-width: 100%; /* Ensures responsiveness on smaller screens */
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
@@ -22,7 +24,6 @@
 .defect-card.theme-high:hover {
     background-color: rgba(255, 255, 255, 0.7);
 }
-
 
 .defect-title {
     font-size: 1.5rem;
