@@ -67,7 +67,7 @@ class FirestoreParkingRepository implements IParkingRepository {
 
           return new Parking(
             data.name,
-            data.location,
+            data.address,
             data.barriers,
             data.tenant_id,
             data.capacity,
@@ -101,7 +101,7 @@ class FirestoreParkingRepository implements IParkingRepository {
     }
     return new Parking(
       data.name,
-      data.location,
+      data.address,
       data.barriers,
       data.tenant_id,
       data.capacity,
@@ -109,6 +109,35 @@ class FirestoreParkingRepository implements IParkingRepository {
       data.picture,
       data.status
     );
+  }
+  async getParkingByName(name: string): Promise<Parking> {
+    try {
+      // Buscar el documento en la colección tenants donde el uid sea igual a userId
+      const snapshot = await this.firestore
+        .collection(this.collectionName)
+        .where('name', '==', name)
+        .limit(1)
+        .get();
+
+      // Verificar si se encontró algún documento
+      if (snapshot.empty) {
+        throw new Error('Parking not found');
+      }
+      const data = snapshot.docs[0].data();
+      return new Parking(
+        data.name,
+        data.address,
+        data.barriers,
+        data.tenant_id,
+        data.capacity,
+        data.floors,
+        data.picture,
+        data.status
+      );
+    } catch (error) {
+      console.error('Error getting parking:', error);
+      throw error;
+    }
   }
   async updateParkingCapacity(parkingId: string, newCapacity: number): Promise<void> {
     const parkingRef = this.firestore.collection(this.collectionName).doc(parkingId);

@@ -7,7 +7,8 @@ const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.get('/',DefectController.getAll);
-router.get('/:parking', validateTokenMiddleware,DefectController.getFromParking);
+//router.get('/:parking', validateTokenMiddleware,DefectController.getFromParking);
+router.get('/:parking',DefectController.getFromParking);
 router.get('/:parking/filteredByStatus/:status', validateTokenMiddleware,DefectController.getByStatus);
 router.get('/:parking/:id', validateTokenMiddleware,DefectController.getById);
 

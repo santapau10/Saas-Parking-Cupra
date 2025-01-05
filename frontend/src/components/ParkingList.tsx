@@ -14,7 +14,7 @@ function ParkingList({ items, heading }: Props) {
   const navigate = useNavigate();
 
   const handleDefectClick = (parking: Parking) => {
-    navigate(`/${parking._name}`);
+    navigate(`/parkings/${parking._name}`);
   };
 
   useEffect(() => {

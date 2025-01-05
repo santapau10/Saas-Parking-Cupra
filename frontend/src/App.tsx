@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Defects from "./screens/Defects";
+import ParkingDetails from "./screens/ParkingDetails";
 import Financial from "./screens/Financial";
 import Home from "./screens/Home";
 import Layout from "./screens/Layout";
@@ -15,7 +15,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="defects" element={<Defects />} />
+            <Route path="/parkings/:parkingName" element={<ParkingDetails />} />
             <Route path="financial" element={<Financial />} />
             <Route path="tenanthome" element={<TenantHome />} />
             <Route path="*" element={<NoPage />} />

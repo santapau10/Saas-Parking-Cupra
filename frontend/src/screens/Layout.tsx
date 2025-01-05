@@ -23,6 +23,7 @@ const Layout: React.FC = () => {
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
     const {user, setUser, tenant} = useUser(); // Access the user data from the context
     const location = useLocation();
+    const path = location.pathname;
 
     useEffect(() => {
       const loadBackground = async () => {
@@ -65,7 +66,7 @@ const handleToken = async (token: string) => {
 };
 
     const getHeaderText = () => {
-        switch (location.pathname) {
+        switch (path) {
           case '/':
             return 'Home Page';
           case '/defects':
@@ -75,7 +76,11 @@ const handleToken = async (token: string) => {
             case '/tenanthome':
               return 'Tenant Home Page';
           default:
-            return '404';
+            if (path.startsWith('/parkings/')) {
+              const parkingName = path.split('/parkings/')[1]; // Extract parking name
+              return `Parking: ${parkingName}`;
+          }
+          return '404';
         }
       };
     

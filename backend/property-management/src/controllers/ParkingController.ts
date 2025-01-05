@@ -67,6 +67,15 @@ class ParkingController {
     }
     res.status(200).json(parking);
   }
+  static async getByName(req: Request, res: Response): Promise<void> {
+    const { parkingName } = req.params;
+    const parking = await parkingRespository.getParkingByName(parkingName);
+    if (!parking) {
+      res.status(404).json({ message: 'parkingo no encontrado' });
+      return;
+    }
+    res.status(200).json(parking);
+  }
 
   static async setCapacity(req: Request, res: Response): Promise<void> {
     try {
