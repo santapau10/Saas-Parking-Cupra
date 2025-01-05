@@ -1,21 +1,32 @@
 .defect-card {
     font-family: 'Arial', sans-serif;
-    background-color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.05); /* Default background */
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .defect-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.15);
 }
+
+/* Styles for theme > 5 */
+.defect-card.theme-high {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.defect-card.theme-high:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
 
 .defect-title {
     font-size: 1.5rem;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     color: #333;
 }
 
@@ -23,6 +34,7 @@
     font-size: 1rem;
     color: #555;
     line-height: 1.6;
+    margin-bottom: 10px;
 }
 
 .defect-card strong {
@@ -31,22 +43,26 @@
 
 .defect-card span {
     font-size: 1rem;
-    padding: 5px 10px;
-    border-radius: 5px;
+    font-weight: bold;
 }
 
-.defect-card span[style*="green"] {
-    background-color: rgba(0, 128, 0, 0.1);
+/* Status colors */
+.defect-status-open {
+    color: green;
 }
 
-.defect-card span[style*="blue"] {
-    background-color: rgba(0, 0, 255, 0.1);
+.defect-status-inwork {
+    color: blue;
 }
 
-.defect-card span[style*="gray"] {
-    background-color: rgba(128, 128, 128, 0.1);
+.defect-status-closed {
+    color: gray;
 }
 
-.defect-card span[style*="red"] {
-    background-color: rgba(255, 0, 0, 0.1);
+.defect-status-rejected {
+    color: red;
+}
+
+.defect-status-default {
+    color: black;
 }

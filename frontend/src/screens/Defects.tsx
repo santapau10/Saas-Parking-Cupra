@@ -30,8 +30,9 @@ export default function App() {
       console.log(apiUrl);
       const response = await axios.get(`${apiUrl}/property-management/defects`);
       //const response = await axios.get(`${apiUrl}/property-management/defects/${parking}`);
-      console.log(response);
       setDefects(response.data);
+      
+      console.log(defects)
     } catch (err: any) {
       setError("Failed to load defects. Please try again later.");
       toast.error("Failed to load defects. Please try again later.");

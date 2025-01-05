@@ -8,68 +8,62 @@ import {
   faUserAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { Defect } from "../types/Defect";
+import "../styles/DefectCard.css";
+import { useUser } from '../context/UserContext';
 
 const DefectCard = (defect: Defect) => {
-  // Formatear la fecha
+  // Format the date
   const formattedDate = new Date(defect._reportingDate).toLocaleDateString();
 
-  // Función para retornar el color basado en el estado
-  const getStatusColor = (status: string) => {
+  const theme = useUser().tenant?._theme || 1;
+
+  // Get the status class based on the status
+  const getStatusClass = (status: string) => {
     switch (status) {
       case "open":
-        return "green";
+        return "defect-status-open";
       case "inwork":
-        return "blue";
+        return "defect-status-inwork";
       case "closed":
-        return "gray";
+        return "defect-status-closed";
       case "rejected":
-        return "red";
+        return "defect-status-rejected";
       default:
-        return "black";
+        return "defect-status-default";
     }
   };
 
   return (
     <div
-      className="defect-card"
-      style={{
-        fontFamily: "Arial",
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 10,
-        cursor: 'pointer'
-      }}
+      className={`defect-card ${theme < 7 ? "" : "theme-high"}`}
     >
       <h2 className="defect-title">{defect._object}</h2>
       <p>
-        <FontAwesomeIcon icon={faMapMarkerAlt} /> {/* Icono de ubicación */}
+        <FontAwesomeIcon icon={faMapMarkerAlt} /> {/* Location Icon */}
         <strong> Parking:</strong> {defect._parking}
       </p>
       <p>
-        <FontAwesomeIcon icon={faClipboard} /> {/* Icono de descripción */}
+        <FontAwesomeIcon icon={faClipboard} /> {/* Description Icon */}
         <strong> Description:</strong> {defect._description}
       </p>
       <p>
-        <FontAwesomeIcon icon={faInfoCircle} /> {/* Icono de detalles */}
+        <FontAwesomeIcon icon={faInfoCircle} /> {/* Details Icon */}
         <strong> Details:</strong> {defect._detailedDescription}
       </p>
       <p>
-        <FontAwesomeIcon icon={faCalendarAlt} /> {/* Icono de fecha */}
+        <FontAwesomeIcon icon={faCalendarAlt} /> {/* Date Icon */}
         <strong> Reported On:</strong> {formattedDate}
       </p>
       <p>
-        <FontAwesomeIcon icon={faFlag} /> {/* Icono de estado */}
+        <FontAwesomeIcon icon={faFlag} /> {/* Status Icon */}
         <strong> Status:</strong>
-        <span
-          style={{ color: getStatusColor(defect._status), fontWeight: "bold" }}
-        >
+        <span className={getStatusClass(defect._status)}>
           {" "}
           {defect._status}
         </span>
       </p>
       <p>
-      <FontAwesomeIcon icon={faUserAlt} /> {/* Icono de detalles */}
+        <FontAwesomeIcon icon={faUserAlt} /> {/* Reporter Icon */}
         <strong> Reported by:</strong> {defect._username || "Anonymous"}
       </p>
     </div>

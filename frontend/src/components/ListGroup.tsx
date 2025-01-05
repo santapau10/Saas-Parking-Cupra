@@ -22,7 +22,7 @@ function ListGroup({ items, heading }: Props) {
 
   return (
     <>
-      <h1 style={{ fontFamily: "Arial" }}>{heading}</h1>
+      <h1 style={{ fontFamily: "Arial", margin: 25 }}>{heading}</h1>
       {Array.isArray(items) && items.length === 0 && <p>No items found :(</p>}
       <ul className="list-group">
         {Array.isArray(items) && items.length > 0 ? (
