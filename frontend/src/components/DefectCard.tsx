@@ -35,7 +35,7 @@ const DefectCard = (defect: Defect) => {
 
   return (
     <div
-      className={`defect-card ${theme < 7 ? "" : "theme-high"}`}
+      className={`defect-card ${theme < 6 ? "" : "theme-high"}`}
     >
       <h2 className="defect-title">{defect._object}</h2>
       <p>
