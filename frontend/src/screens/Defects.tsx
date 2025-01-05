@@ -1,5 +1,5 @@
 import Button from "../components/Button";
-import ListGroup from "../components/ListGroup";
+import DefectList from "../components/DefectList";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
@@ -31,7 +31,7 @@ export default function App() {
       const response = await axios.get(`${apiUrl}/property-management/defects`);
       //const response = await axios.get(`${apiUrl}/property-management/defects/${parking}`);
       setDefects(response.data);
-      
+
       console.log(defects)
     } catch (err: any) {
       setError("Failed to load defects. Please try again later.");
@@ -186,7 +186,7 @@ export default function App() {
       ) : error ? (
         <p>{error}</p>
       ) : (
-        <ListGroup items={defects} heading="Defect list" />
+        <DefectList items={defects} heading="Defect list" />
       )}
     </div>
   );

@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Defect } from "../types/Defect";
 import DefectCard from "./DefectCard";
 import DefectDetail from "./DefectDetail";
-import "../styles/ListGroup.css"; // Asegúrate de tener el CSS necesario
+import "../styles/DefectList.css"; // Asegúrate de tener el CSS necesario
 
 interface Props {
   items: Defect[];
   heading: string;
 }
 
-function ListGroup({ items, heading }: Props) {
+function DefectList({ items, heading }: Props) {
   const [selectedDefect, setSelectedDefect] = useState<Defect | null>(null);
 
   const handleDefectClick = (defect: Defect) => {
@@ -44,4 +44,4 @@ function ListGroup({ items, heading }: Props) {
   );
 }
 
-export default ListGroup;
+export default DefectList;
