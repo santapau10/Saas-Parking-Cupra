@@ -14,9 +14,9 @@ router.get('/:parking/:id', validateTokenMiddleware,DefectController.getById);
 
 //validateTokenMiddleware
 
-router.post('/', upload.single('_image'), DefectController.create);
+router.post('/', upload.single('image'), DefectController.create);
 
-router.put('/:parking/:id', DefectController.update);
-router.delete('/:parking/:id', DefectController.delete);
+router.put('/:id', DefectController.update);
+router.delete('/:id', DefectController.delete);
 
 export default router;

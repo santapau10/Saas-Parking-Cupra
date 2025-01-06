@@ -1,3 +1,4 @@
+/* Card styles */
 .defect-card {
     font-family: 'Arial', sans-serif;
     background-color: rgba(0, 0, 0, 0.05); /* Default background */
@@ -8,6 +9,7 @@
     max-width: 100%; /* Ensures responsiveness on smaller screens */
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    position: relative; /* For positioning the delete button and modal */
 }
 
 .defect-card:hover {
@@ -29,8 +31,10 @@
     font-size: 1.5rem;
     margin-bottom: 15px;
     color: #333;
+    display: inline-block; /* For alignment with delete button */
 }
 
+/* Paragraph styles */
 .defect-card p {
     font-size: 1rem;
     color: #555;
@@ -66,4 +70,77 @@
 
 .defect-status-default {
     color: black;
+}
+
+/* Delete button styles */
+.delete-button {
+    background: none;
+    border: none;
+    color: #ff4d4f;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: absolute; /* Position in the top right */
+    top: 15px;
+    right: 15px;
+    transition: color 0.3s ease;
+    z-index: 2; /* Ensure it is above other card content */
+}
+
+.delete-button:hover {
+    color: #e60000;
+}
+
+/* Delete modal styles */
+.delete-modal {
+    position: absolute; /* Relative to the card */
+    top: 50%; /* Center vertically within the card */
+    left: 50%; /* Center horizontally within the card */
+    transform: translate(-50%, -50%); /* Center modal over the card */
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 100; /* Ensure it appears above everything else */
+    width: 90%;
+    max-width: 300px; /* Limit width for responsiveness */
+    text-align: center;
+}
+
+/* Modal text */
+.delete-modal p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Modal buttons */
+.delete-modal button {
+    padding: 8px 15px;
+    font-size: 1rem;
+    margin: 0 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cancel button */
+.delete-modal button:first-child {
+    background-color: #ccc;
+    color: #333;
+}
+
+.delete-modal button:first-child:hover {
+    background-color: #bbb;
+}
+
+/* Confirm button */
+.delete-modal button:last-child {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+.delete-modal button:last-child:hover {
+    background-color: #e60000;
 }

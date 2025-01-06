@@ -3,7 +3,7 @@ import DefectList from "../components/DefectList";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import DefectModal from "../components/DefectModal";
+import DefectCreateModal from "../components/DefectCreateModal";
 import { Defect } from "../types/Defect";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "../context/UserContext";
@@ -58,7 +58,6 @@ export default function App() {
         );
         const parsedData = parseSingleParkingData(response.data);
         setParkingData(parsedData);
-        console.log(defects)
       } catch (err: any) {
         setError("Failed to load parking information. Please try again later.");
         toast.error(err);
@@ -102,6 +101,16 @@ export default function App() {
     }
   };
 
+  const handleDefectDelete = async (defectId: string) => {
+    try {
+      await axios.delete(`${apiUrl}/property-management/defects/${defectId}`);
+      toast.success("Defect deleted successfully!");
+      await fetchDefects();
+    } catch (err: any) {
+      toast.error(`Failed to delete defect ${defectId}. Please try again later.`);
+    }
+  };
+
   const filterByStatus = async () => {
     if (!statusFilter) {
       await fetchDefects();
@@ -131,10 +140,9 @@ export default function App() {
       }}
     >
       {showModal && (
-        <DefectModal
+        <DefectCreateModal
           onClose={() => setShowModal(false)}
           onSubmit={handleDefectSubmit}
-          currentUser={user ? user._username : "Guest"}
         />
       )}
 
@@ -179,8 +187,6 @@ export default function App() {
           </p>
         </div>
       )}
-
-      {user && (
         <div style={{ display: "flex", gap: "10px" }}>
           <Button
             onClick={() => setShowModal(true)}
@@ -194,8 +200,6 @@ export default function App() {
             Create defect
           </Button>
         </div>
-      )}
-
       <div>
         <input
           type="text"
@@ -216,7 +220,7 @@ export default function App() {
       ) : error ? (
         <p>{error}</p>
       ) : (
-        <DefectList items={defects} heading="Defect list" />
+        <DefectList items={defects} heading="Defect list" onDelete={(defectId) => handleDefectDelete(defectId)} />
       )}
     </div>
   );

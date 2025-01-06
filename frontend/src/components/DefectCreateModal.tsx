@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Defect } from "../types/Defect";
 import defaultImage from "../assets/default_image.jpg"; // Import the default image
-import '../styles/DefectModal.css';
+import '../styles/DefectCreateModal.css';
+import { useUser } from "../context/UserContext";
+import { useLocation } from "react-router-dom";
 
-interface DefectModalProps {
+interface DefectCreateModalProps {
   onClose: () => void;
   onSubmit: (formData: FormData) => void;
-  currentUser: string;
 }
 
-const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUser }) => {
+const DefectCreateModal: React.FC<DefectCreateModalProps> = ({ onClose, onSubmit }) => {
   const [defect, setDefect] = useState<Defect>({
     _object: "",
     _parking: "",
@@ -23,6 +24,10 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
 
   const [_image, set_image] = useState<File | null>(null);
   const [displayImage, setDisplayImage] = useState<string>(defaultImage);
+  const { user } = useUser();
+  const username = user ? user._username : "Guest";
+  const location = useLocation();
+  const parkingName = location ? location.pathname.replace("/parkings/", "") : "unknown";
 
   useEffect(() => {
     const fetchDefaultImage = async () => {
@@ -61,16 +66,16 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("_object", defect._object);
-    formData.append("_parking", defect._parking);
-    formData.append("_description", defect._description);
-    formData.append("_detailedDescription", defect._detailedDescription);
-    formData.append("_reportingDate", defect._reportingDate.toISOString());
-    formData.append("_status", defect._status);
-    formData.append("_username", currentUser)
+    formData.append("object", defect._object);
+    formData.append("parking", parkingName);
+    formData.append("description", defect._description);
+    formData.append("detailedDescription", defect._detailedDescription);
+    formData.append("reportingDate", defect._reportingDate.toISOString());
+    formData.append("status", defect._status);
+    formData.append("username", username)
 
     if (_image) {
-      formData.append("_image", _image);
+      formData.append("image", _image);
     } else {
       console.log("No image file selected.");
     }
@@ -92,19 +97,6 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
                 type="text"
                 name="_object"
                 value={defect._object}
-                onChange={handleChange}
-                required
-                className="modal-input"
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              <strong>Parking:</strong>
-              <input
-                type="text"
-                name="_parking"
-                value={defect._parking}
                 onChange={handleChange}
                 required
                 className="modal-input"
@@ -206,4 +198,4 @@ const DefectModal: React.FC<DefectModalProps> = ({ onClose, onSubmit, currentUse
   );
 };
 
-export default DefectModal;
+export default DefectCreateModal;

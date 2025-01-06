@@ -7,9 +7,10 @@ import "../styles/DefectList.css"; // Asegúrate de tener el CSS necesario
 interface Props {
   items: Defect[];
   heading: string;
+  onDelete: (defectId: string) => void;
 }
 
-function DefectList({ items, heading }: Props) {
+function DefectList({ items, heading, onDelete }: Props) {
   const [selectedDefect, setSelectedDefect] = useState<Defect | null>(null);
 
   const handleDefectClick = (defect: Defect) => {
@@ -18,6 +19,9 @@ function DefectList({ items, heading }: Props) {
 
   const handleCloseModal = () => {
     setSelectedDefect(null); // Cierra el modal
+  };
+  const handleDefectDelete = (defectId: string) => {
+    onDelete(defectId); // Cierra el modal
   };
 
   return (
@@ -28,7 +32,7 @@ function DefectList({ items, heading }: Props) {
         {Array.isArray(items) && items.length > 0 ? (
           items.map((item) => (
             <div key={item._object} onClick={() => handleDefectClick(item)}>
-              <DefectCard {...item} />
+              <DefectCard defect={{...item}} onDelete={(defectId) => handleDefectDelete(defectId)} />
             </div>
           ))
         ) : (

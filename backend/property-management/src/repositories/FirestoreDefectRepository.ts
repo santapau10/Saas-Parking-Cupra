@@ -17,7 +17,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
       const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
-      return { id: doc.id, ...data, _image: imageUrl };
+      return { id: doc.id, ...data, image: imageUrl };
     }));
   }
 
@@ -28,7 +28,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
       const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
-      return { id: doc.id, ...data, _image: imageUrl };
+      return { id: doc.id, ...data, image: imageUrl };
     }));
   }
   
@@ -39,7 +39,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
       const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
-      return { id: doc.id, ...data, _image: imageUrl };
+      return { id: doc.id, ...data, image: imageUrl };
     }));
   }
 
@@ -51,7 +51,7 @@ class FirestoreDefectRepository implements IDefectRepository {
 
     const data = doc.data()!;
     const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
-    return { id: doc.id, ...data, _image: imageUrl };
+    return { id: doc.id, ...data, image: imageUrl };
   }
 
   async create(defectData: any): Promise<string> {
@@ -67,14 +67,14 @@ class FirestoreDefectRepository implements IDefectRepository {
     const updatedDoc = await docRef.get();
     return updatedDoc.exists
       ? new Defect(
-        updatedDoc.data()!._object,
-        updatedDoc.data()!._location,
-        updatedDoc.data()!._description,
-        updatedDoc.data()!._detailedDescription,
-        new Date(updatedDoc.data()!._reportingDate),
-        updatedDoc.data()!._status,
-        updatedDoc.data()!._image,
-        updatedDoc.data()!._username
+        updatedDoc.data()!.object,
+        updatedDoc.data()!.location,
+        updatedDoc.data()!.description,
+        updatedDoc.data()!.detailedDescription,
+        new Date(updatedDoc.data()!.reportingDate),
+        updatedDoc.data()!.status,
+        updatedDoc.data()!.image,
+        updatedDoc.data()!.username
       )
       : null;
   }
