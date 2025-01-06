@@ -16,7 +16,7 @@ class FirestoreDefectRepository implements IDefectRepository {
 
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
+      const imageUrl = data.image ? await FirestoreService.generateSignedUrl(data.image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
       return { id: doc.id, ...data, image: imageUrl };
     }));
   }
@@ -27,7 +27,7 @@ class FirestoreDefectRepository implements IDefectRepository {
 
     return await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data();
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
+      const imageUrl = data.image ? await FirestoreService.generateSignedUrl(data.image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
       return { id: doc.id, ...data, image: imageUrl };
     }));
   }

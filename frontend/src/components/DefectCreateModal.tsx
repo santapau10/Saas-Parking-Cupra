@@ -12,7 +12,7 @@ interface DefectCreateModalProps {
 
 const DefectCreateModal: React.FC<DefectCreateModalProps> = ({ onClose, onSubmit }) => {
   const [defect, setDefect] = useState<Defect>({
-    _object: "",
+    _id: "",
     _parking: "",
     _description: "",
     _detailedDescription: "",
@@ -66,7 +66,6 @@ const DefectCreateModal: React.FC<DefectCreateModalProps> = ({ onClose, onSubmit
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("object", defect._object);
     formData.append("parking", parkingName);
     formData.append("description", defect._description);
     formData.append("detailedDescription", defect._detailedDescription);
@@ -91,17 +90,6 @@ const DefectCreateModal: React.FC<DefectCreateModalProps> = ({ onClose, onSubmit
         <h2 className="modal-header">Report Defect</h2>
         <form className="modal-form" onSubmit={handleSubmit}>
           <div>
-            <label>
-              <strong>Object:</strong>
-              <input
-                type="text"
-                name="_object"
-                value={defect._object}
-                onChange={handleChange}
-                required
-                className="modal-input"
-              />
-            </label>
           </div>
           <div>
             <label>
@@ -112,6 +100,7 @@ const DefectCreateModal: React.FC<DefectCreateModalProps> = ({ onClose, onSubmit
                 onChange={handleChange}
                 required
                 className="modal-textarea"
+                maxLength={20}
               />
             </label>
           </div>

@@ -38,7 +38,7 @@ export default function App() {
 
   const parseDefectData = (data: any[]): Defect[] => {
     return data.map((item) => ({
-        _object: item.object ?? "", 
+        _id: item.id ?? "", 
         _parking: item.parking ?? "",
         _description: item.description ?? "", 
         _detailedDescription: item.detailedDescription ?? "", 
@@ -72,9 +72,9 @@ export default function App() {
       setLoading(true);
       setError(null);
       const response = await axios.get(`${apiUrl}/property-management/defects/${parkingName}`);
+      console.log(response.data)
       const parsedDefects = parseDefectData(response.data)
       setDefects(parsedDefects);
-      console.log(parsedDefects)
     } catch (err: any) {
       setError("Failed to load defects. Please try again later.");
       toast.error(err);

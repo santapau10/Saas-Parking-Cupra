@@ -43,28 +43,21 @@ const DefectCard: React.FC<DefectCardProps> = ({defect, onDelete}) => {
       className={`defect-card ${theme < 6 ? "" : "theme-high"}`}
       onClick={() => console.log("Card clicked!")}
     >
-      <h2 className="defect-title">{defect._object}</h2>
+      <h2 className="defect-title">{defect._description}</h2>
       <button
         className="delete-button"
         onClick={(event) => {
           event.stopPropagation(); // Prevent the click from bubbling to the card
           setShowDeleteModal(true);
-          onDelete("J1o63L4BVXKoGCOtVMjw");
         }}
       >
         <FontAwesomeIcon icon={faTrashAlt} />
       </button>
       <p>
-        <FontAwesomeIcon icon={faMapMarkerAlt} /> <strong> Parking:</strong>{" "}
-        {defect._parking}
-      </p>
-      <p>
-        <FontAwesomeIcon icon={faClipboard} /> <strong> Description:</strong>{" "}
-        {defect._description}
-      </p>
-      <p>
         <FontAwesomeIcon icon={faInfoCircle} /> <strong> Details:</strong>{" "}
-        {defect._detailedDescription}
+        {defect._detailedDescription.length < 18
+          ? defect._detailedDescription
+          : defect._detailedDescription.substring(0, 20) + "..."}
       </p>
       <p>
         <FontAwesomeIcon icon={faCalendarAlt} /> <strong> Reported On:</strong>{" "}
@@ -78,16 +71,16 @@ const DefectCard: React.FC<DefectCardProps> = ({defect, onDelete}) => {
       </p>
       <p>
         <FontAwesomeIcon icon={faUserAlt} /> <strong> Reported by:</strong>{" "}
-        {defect._username.length < 16
+        {defect._username.length < 18
           ? defect._username
-          : defect._username.substring(0, 14) + "..."}
+          : defect._username.substring(0, 20) + "..."}
       </p>
 
       {showDeleteModal && (
         <div className="delete-modal">
           <p>Are you sure you want to delete this defect?</p>
           <button onClick={(event) => { event.stopPropagation(); setShowDeleteModal(false)} }>Cancel</button>
-          <button onClick={(event) => { event.stopPropagation(); console.log("Defect deleted!")} }>
+          <button onClick={(event) => { event.stopPropagation(); onDelete(defect._id);} }>
             Confirm
           </button>
         </div>

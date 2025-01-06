@@ -31,7 +31,7 @@ function DefectList({ items, heading, onDelete }: Props) {
       <ul className="list-group">
         {Array.isArray(items) && items.length > 0 ? (
           items.map((item) => (
-            <div key={item._object} onClick={() => handleDefectClick(item)}>
+            <div key={item._id} onClick={() => handleDefectClick(item)}>
               <DefectCard defect={{...item}} onDelete={(defectId) => handleDefectDelete(defectId)} />
             </div>
           ))

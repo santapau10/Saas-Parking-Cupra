@@ -1,5 +1,5 @@
 export interface Defect {
-    _object: string;
+    _id: string;
     _parking: string;
     _description: string;
     _detailedDescription: string;

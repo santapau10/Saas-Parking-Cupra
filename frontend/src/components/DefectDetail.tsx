@@ -19,14 +19,8 @@ const DefectDetail = ({ defect, onClose }: ModalProps) => {
           &times;
         </button>
         <div className="modal-content">
-          <h2>{defect._object}</h2>
+          <h2>{defect._description}</h2>
           <div className="modal-info">
-            <p>
-              <strong>Parking:</strong> {defect._parking}
-            </p>
-            <p>
-              <strong>Description:</strong> {defect._description}
-            </p>
             <p>
               <strong>Details:</strong> {defect._detailedDescription}
             </p>
@@ -42,7 +36,7 @@ const DefectDetail = ({ defect, onClose }: ModalProps) => {
           </div>
           {defect._image && (
             <div className="modal-image">
-              <img src={defect._image} alt={`Image of ${defect._object}`} />
+              <img src={defect._image} alt={`Image of ${defect._id}`} />
             </div>
           )}
         </div>
