@@ -41,7 +41,6 @@ const DefectCard: React.FC<DefectCardProps> = ({defect, onDelete}) => {
   return (
     <div
       className={`defect-card ${theme < 6 ? "" : "theme-high"}`}
-      onClick={() => console.log("Card clicked!")}
     >
       <h2 className="defect-title">{defect._description}</h2>
       <button

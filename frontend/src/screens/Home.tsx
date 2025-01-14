@@ -15,14 +15,14 @@ const HomePage: React.FC = () => {
 
   const parseParkingData = (data: any[]): Parking[] => {
     return data.map((item) => ({
-      _name: item.name ?? "", // Fallback to an empty string if name is missing
+      _name: item.name ?? "",
       _address: item.address ?? "",
       _barriers: item.barriers ?? 0,
       _tenant_id: item.tenant_id ?? "",
       _capacity: item.capacity ?? 0,
       _floors: item.floors ?? 0,
       _picture: item.picture ?? "",
-      _status: item.status ?? "closed", // Default to "closed" if status is missing
+      _status: item.status ?? "closed",
     }));
   };
   

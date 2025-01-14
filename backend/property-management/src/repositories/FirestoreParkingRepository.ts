@@ -84,8 +84,8 @@ class FirestoreParkingRepository implements IParkingRepository {
       throw new Error('No se pudieron recuperar los estacionamientos.');
     }
   }
-  async createParking(parking: Parking): Promise<string>{
-    const docRef = await this.firestore.collection(this.collectionName).add(parking);
+  async createParking(parkingData: any): Promise<string>{
+    const docRef = await this.firestore.collection(this.collectionName).add(parkingData);
     return docRef.id;
   }
   async getParkingById(id: string): Promise<Parking> {

@@ -28,7 +28,7 @@ class ParkingController {
   }
   static async createParking(req: Request, res: Response): Promise<void> {
     try {
-      const { name, location, barriers, capacity, floors } = req.body;
+      const { name, address, barriers, capacity, floors, status } = req.body;
       const tenant_id = req.params.tenant_id;
 
       // Subir la imagen si existe
@@ -37,16 +37,7 @@ class ParkingController {
         : null;
 
       // Crear instancia de Parking
-      const newParking = new Parking(
-        name,
-        location,
-        barriers,
-        tenant_id,
-        capacity,
-        floors,
-        pictureUrl!, // URL de la imagen subida
-        'closed'
-      );
+      const newParking = { name, address, barriers, tenant_id, capacity, floors, pictureUrl, status };
 
       // Guardar el parking en el repositorio
       const parking = await parkingRespository.createParking(newParking);
