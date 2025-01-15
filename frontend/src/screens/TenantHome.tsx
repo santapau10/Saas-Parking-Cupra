@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useUser } from '../context/UserContext';
 import BackgroundModal from '../components/BackgroundModal';
 import ParkingCreateModal from '../components/ParkingCreateModal';
+import CreateUserForm from '../components/CreateUserForm';
 import { Parking } from '../types/Parking';
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -64,6 +65,20 @@ const TenantHome: React.FC = () => {
       await fetchParkings();
     } catch (err: any) {
       toast.error("Failed to create parking. Please try again later.");
+    }
+  };
+
+  const handleUserSubmit = async (userData: FormData) => {
+    try {
+      userData.forEach((value, key) => {
+        console.log(key, value);
+      });
+      const userObject: Record<string, any> = {};
+      userData.forEach((value, key) => {userObject[key] = value;});
+      await axios.post(`${apiUrl}/api-gateway/registerUser`, userObject);
+      toast.success("User created successfully!");
+    } catch (err: any) {
+      toast.error("Failed to create user. Please try again later.");
     }
   };
 
@@ -131,6 +146,11 @@ const TenantHome: React.FC = () => {
               >
                 Create parking
               </button>
+            }
+          </div>
+          <div>
+            {user._role === 'admin' &&
+              <CreateUserForm onSubmit={handleUserSubmit} tenant_prop={user._tenantId}/>
             }
           </div>
         </>
