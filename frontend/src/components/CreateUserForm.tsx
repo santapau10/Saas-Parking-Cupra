@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import "../styles/CreateUserForm.css"
+import "../styles/CreateUserForm.css";
+
 interface FormProps {
   onSubmit: (data: FormData) => void;
   tenant_prop: string;
@@ -32,6 +33,7 @@ const CreateUserForm: React.FC<FormProps> = ({ onSubmit, tenant_prop }) => {
 
   return (
     <form onSubmit={handleSubmit} className="form">
+      <h2 className="formTitle">Create a New User</h2> {/* Title added here */}
       <div className="formGroup">
         <label htmlFor="username" className="label">
           Username:
@@ -86,7 +88,9 @@ const CreateUserForm: React.FC<FormProps> = ({ onSubmit, tenant_prop }) => {
           className="input"
           required
         >
-          <option value="" style={{color: "grey"}}>Please select an option...</option>
+          <option value="" style={{ color: "grey" }}>
+            Please select an option...
+          </option>
           <option value="financial">Financial</option>
           <option value="property manager">Property Manager</option>
         </select>

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Parking } from '../types/Parking';
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ParkingList from '../components/ParkingList';
 import { User } from '../types/User';
+import LandingCard from '../components/LandingCard';
 
 const HomePage: React.FC = () => {
   const [parkings, setParkings] = useState<Parking[]>([]);
@@ -52,22 +52,36 @@ const HomePage: React.FC = () => {
     fetchParkings(); // Cargar defectos al montar el componente
   }, [localStorage]);
 
+  const handleTenantSubmit = async (tenantData: FormData) => {
+    try {
+      const tenantObject: Record<string, any> = {};
+      tenantData.forEach((value, key) => {tenantObject[key] = value;});
+      await axios.post(`${apiUrl}/api-gateway/registerTenant`, tenantObject);
+      toast.success("Tenant created successfully!");
+    } catch (err: any) {
+      toast.error("Failed to create Tenant. Please try again later.");
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
       <ToastContainer />
-        <div style={{display: 'flex',
-          flexDirection: 'column',
-          flexWrap: 'wrap',
-          gap: '16px',
-          padding: '16px',
-          justifyContent: 'center',
-          alignItems:'center'}}>
+      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <LandingCard onSubmit={handleTenantSubmit}/>
+      </div>
+      <div style={{display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        gap: '16px',
+        padding: '16px',
+        justifyContent: 'center',
+        alignItems:'center'}}>
 
-          <ParkingList items={parkings} heading="Parking list" />  
-        </div>
+        <ParkingList items={parkings} heading="Parking list" />  
+      </div>
     </div>
   );
 };

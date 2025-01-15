@@ -1,6 +1,7 @@
 /* Basic styling for the card */
 .card {
   width: 100%;
+  height: 100%;
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
@@ -89,7 +90,7 @@ strong {
 
 .create-parking-btn {
   display: inline-block;
-  margin-top: 20px;
+  margin-bottom: 50px;
   padding: 10px 20px;
   background-color: #28a745; /* Green color */
   color: white;
