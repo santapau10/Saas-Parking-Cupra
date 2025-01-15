@@ -8,7 +8,6 @@ class FirestoreUserRepository implements IUserRepository {
 
   async create(userData: User, isAdmin: boolean): Promise<{token: string, userId: string}> {
     const tenantAuth = admin.auth().tenantManager().authForTenant(userData.tenant_id);
-    console.log("0")
       const existingUser = await tenantAuth.getUserByEmail(userData.email).catch((error) => {
         if (error.code !== 'auth/user-not-found') {
           throw error; 
@@ -16,7 +15,6 @@ class FirestoreUserRepository implements IUserRepository {
         return null;
       });
     if (existingUser) {
-      console.log("1")
       throw new Error('Username already exists'); 
     }
     const userRecord = await tenantAuth.createUser({
@@ -24,7 +22,6 @@ class FirestoreUserRepository implements IUserRepository {
       password: userData.password,
       displayName: userData.username,
     })
-    console.log("2")
     const user = {
         username: userData.username,
         email: userData.email, 
