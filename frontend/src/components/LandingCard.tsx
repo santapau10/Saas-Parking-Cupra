@@ -21,10 +21,10 @@ const LandingCard: React.FC<LandingCardProps> = ({ onSubmit }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("username", newTenant.name);
+    formData.append("name", newTenant.name);
     formData.append("password", newTenant.password);
     formData.append("email", newTenant.email);
-    formData.append("email", newTenant.email);
+    formData.append("plan", newTenant.plan);
     onSubmit(formData);
   };
 
@@ -68,7 +68,7 @@ const LandingCard: React.FC<LandingCardProps> = ({ onSubmit }) => {
           className="input"
           type="text"
           name="name"
-          placeholder="Full Name"
+          placeholder="Name"
           value={newTenant.name}
           onChange={handleChange}
           required
