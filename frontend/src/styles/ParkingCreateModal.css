@@ -1,0 +1,112 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.modal-container {
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;
+  max-height: 80vh; /* Ensures modal scales with viewport height */
+  overflow-y: auto; /* Enables scrolling */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-container::-webkit-scrollbar {
+  width: 8px; /* Show a visible scrollbar */
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Customize scrollbar thumb */
+  border-radius: 4px;
+}
+
+.modal-header {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Added consistent spacing between form elements */
+}
+
+.modal-input,
+.modal-textarea,
+.modal-select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  font-family: Arial, sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box; /* Ensures padding does not exceed container width */
+}
+
+.modal-input,
+.modal-textarea,
+.modal-select,
+.modal-image-container {
+  margin-bottom: 20px; /* Added margin between input boxes */
+}
+
+.modal-button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.modal-button-submit {
+  background-color: #28a745; /* Green for submit */
+  color: white;
+}
+
+.modal-button-cancel {
+  background-color: #dc3545; /* Red for cancel */
+  color: white;
+}
+
+.modal-image-container {
+  text-align: center;
+}
+
+.modal-image {
+  max-width: 60%; /* Adjusted size for ParkingCreateModal */
+  height: auto;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+/* Add this to remove the arrows/spinners from the number inputs */
+input[type="number"] {
+  -moz-appearance: textfield; /* For Firefox */
+  -webkit-appearance: none;   /* For Chrome/Safari */
+  appearance: none;           /* For modern browsers */
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;  /* Disable the spinner buttons */
+  margin: 0;                 /* Optional: remove space around the spinner buttons */
+}

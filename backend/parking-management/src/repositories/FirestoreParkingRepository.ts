@@ -27,7 +27,7 @@ class FirestoreParkingRepository implements IParkingRepository {
     }
     return new Parking(
       data.name,
-      data.location,
+      data.address,
       data.barriers,
       data.tenant_id,
       data.capacity,

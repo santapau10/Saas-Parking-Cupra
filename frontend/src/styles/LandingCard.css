@@ -1,0 +1,106 @@
+.landing-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: transparent;
+    margin-bottom: 50px;
+    min-height: 80vh;
+    padding: 40px;
+    border-radius: 10px;
+    width: 850px;
+  }
+  
+  .cards-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .insidecard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .insidecard-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .insidecard-price {
+    font-size: 1.25rem;
+    color: #2d8ec7;
+    margin-bottom: 20px;
+  }
+  
+  .insidecard-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .feature {
+    font-size: 1rem;
+    color: #acacac;
+    margin-bottom: 10px;
+  }
+  
+  .tenant-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .input:focus {
+    border-color: #2d8ec7;
+    outline: none;
+  }
+  
+  .select {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .select:focus {
+    border-color: #2d8ec7;
+    outline: none;
+  }
+  
+  .submit-button {
+    background-color: #2d8ec7;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .submit-button:hover {
+    background-color: #2481a1;
+  }
+  

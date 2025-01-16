@@ -1,7 +1,8 @@
 /* Basic styling for the card */
 .card {
   width: 100%;
-  max-width: 500px;
+  height: 100%;
+  max-width: 800px;
   margin: 20px auto;
   padding: 20px;
   background-color: rgba(80, 80, 80, 0.5); /* Darker grey with higher transparency */
@@ -86,6 +87,34 @@ strong {
   background-color: #004494; /* Even darker blue when clicked */
   transform: translateY(0); /* Reset lift on click */
 }
+
+.create-parking-btn {
+  display: inline-block;
+  margin-bottom: 50px;
+  padding: 10px 20px;
+  background-color: #28a745; /* Green color */
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for a professional look */
+}
+
+.create-parking-btn:hover {
+  background-color: #218838; /* Darker green on hover */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+.create-parking-btn:active {
+  background-color: #1e7e34; /* Even darker green when clicked */
+  transform: translateY(0); /* Reset lift on click */
+}
+
 
 /* Optional: Add a small animation to the card appearance */
 .card {

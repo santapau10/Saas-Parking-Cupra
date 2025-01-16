@@ -47,7 +47,6 @@ const handleToken = async (token: string) => {
     // Extract user information from the result
     const user = result.user;
     const fetchedUser = await axios.get(`${apiUrl}/api-gateway/getUser/${user.uid}`);
-    console.log(fetchedUser)
     const userData: User = {
       _userId: user.uid || "noId",
       _username: user.displayName || "Anonymous",  // Display Name

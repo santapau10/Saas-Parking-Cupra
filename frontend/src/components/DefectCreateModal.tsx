@@ -78,8 +78,6 @@ const DefectCreateModal: React.FC<DefectCreateModalProps> = ({ onClose, onSubmit
     } else {
       console.log("No image file selected.");
     }
-
-    console.log(formData)
     onSubmit(formData);
     onClose();
   };

@@ -22,7 +22,6 @@ class FirestoreUserRepository implements IUserRepository {
       password: userData.password,
       displayName: userData.username,
     })
-
     const user = {
         username: userData.username,
         email: userData.email, 

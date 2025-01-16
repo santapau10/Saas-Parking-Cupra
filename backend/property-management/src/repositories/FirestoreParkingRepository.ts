@@ -85,6 +85,7 @@ class FirestoreParkingRepository implements IParkingRepository {
       throw new Error('No se pudieron recuperar los estacionamientos.');
     }
   }
+<<<<<<< HEAD
   async createParking(parking: Parking, tenant_id: string, plan: string): Promise<string>{
     // const docRef = await this.firestore.collection(`${tenant_id}/${this.collectionName}`).add(parking);
     const plainParking = parking.toPlainObject();
@@ -94,6 +95,10 @@ class FirestoreParkingRepository implements IParkingRepository {
             .collection('parkings') // Subcolección "parkings"
             .add(plainParking); // Documento con los datos del parking
     console.log('Parking created with ID:', docRef.id);
+=======
+  async createParking(parkingData: any): Promise<string>{
+    const docRef = await this.firestore.collection(this.collectionName).add(parkingData);
+>>>>>>> d382ba8bed85a60b4e1bc1d68281e375094805ce
     return docRef.id;
   }
   async getParkingById(tenant_id: string, tenant_plan: string, id:string): Promise<Parking> {

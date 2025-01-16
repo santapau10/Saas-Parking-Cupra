@@ -29,7 +29,11 @@ class ParkingController {
   }
   static async createParking(req: Request, res: Response): Promise<void> {
     try {
+<<<<<<< HEAD
       const { name, address, barriers, capacity, floors } = req.body;
+=======
+      const { name, address, barriers, capacity, floors, status } = req.body;
+>>>>>>> d382ba8bed85a60b4e1bc1d68281e375094805ce
       const tenant_id = req.params.tenant_id;
       const tenant_plan = req.headers['tenant_plan'] as string;
 
@@ -39,6 +43,7 @@ class ParkingController {
         : null;
 
       // Crear instancia de Parking
+<<<<<<< HEAD
       const newParking = new Parking(
         name,
         address,
@@ -49,6 +54,9 @@ class ParkingController {
         picture!,
         'closed'
       );
+=======
+      const newParking = { name, address, barriers, tenant_id, capacity, floors, pictureUrl, status };
+>>>>>>> d382ba8bed85a60b4e1bc1d68281e375094805ce
 
       const parking = await parkingRespository.createParking(newParking, tenant_id, tenant_plan);
 

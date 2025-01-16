@@ -72,7 +72,6 @@ export default function App() {
       setLoading(true);
       setError(null);
       const response = await axios.get(`${apiUrl}/property-management/defects/${parkingName}`);
-      console.log(response.data)
       const parsedDefects = parseDefectData(response.data)
       setDefects(parsedDefects);
     } catch (err: any) {
