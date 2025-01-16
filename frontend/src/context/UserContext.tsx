@@ -31,15 +31,20 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Load user from localStorage on initial load
   const [user, setUser] = useState<User | null>(null);
   const [tenant, setTenant] = useState<Tenant | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const tenant = localStorage.getItem('tenant');
+    const token = localStorage.getItem('token');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
     if (tenant) {
       setTenant(JSON.parse(tenant));
+    }
+    if (token) {
+      setToken(JSON.parse(token));
     }
   }, []);
 
@@ -66,11 +71,33 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           toast.error("Failed to get tenant from user.");
         }
       }
+
+      const token = localStorage.getItem('token');
+      if (token) {
+        setToken(token);
+      } else {
+        try {
+          const reqBody = {
+            tenant: newUser._tenantId,
+            role: newUser._role,
+          }
+          const response = await axios.post(`${apiUrl}/api-gateway/getToken`, reqBody);
+          const responseToken = response.data.token;
+          setToken(responseToken);
+          localStorage.setItem('token', responseToken);
+        } catch (err:any) {
+          toast.error("Failed to get token.");
+        }
+      }
+
       localStorage.setItem('user', JSON.stringify(newUser)); // Persist user to localStorage
+    
     } else {
       localStorage.removeItem('user'); // Remove user from localStorage
-      localStorage.removeItem('tenant')
+      localStorage.removeItem('tenant');
       setTenant(null);
+      localStorage.removeItem('token');
+      setToken(null);
     }
     setUser(newUser);
   };

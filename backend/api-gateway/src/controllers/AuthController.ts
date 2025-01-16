@@ -101,9 +101,9 @@ static async getTenantInfo(req: Request, res: Response): Promise<void> {
   private static readonly JWT_SECRET = 'your_secret_key';
   static async getToken(req: Request, res: Response): Promise<void> {
     try {
-      const { tenant, parking, role } = req.body;
-      if (!tenant || !parking) {
-        res.status(400).json({ message: 'Tenant and parking are required' });
+      const { tenant, role } = req.body;
+      if (!tenant || !role) {
+        res.status(400).json({ message: 'Tenant and role are required' });
         return;
       }
       const payload = {
@@ -112,7 +112,7 @@ static async getTenantInfo(req: Request, res: Response): Promise<void> {
         issuedAt: new Date().toISOString(),
       };
 
-      const token = jwt.sign(payload, this.JWT_SECRET, { expiresIn: '2h' });
+      const token = jwt.sign(payload, AuthController.JWT_SECRET, { expiresIn: '2h' });
       res.status(201).json({
         message: 'Token created successfully',
         token,
