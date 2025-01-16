@@ -6,44 +6,63 @@ class FirestoreParkingRepository implements IParkingRepository {
   private firestore = FirestoreService.getFirestoreInstance();
   private collectionName = process.env.GCP_ENV === 'dev' ? 'parkings-dev' : 'parkings';
   async getAll(): Promise<Parking[]> {
-    try {
-      const snapshot = await this.firestore
-        .collection(this.collectionName)
-        .get();
+  try {
+    const parkingList: Parking[] = [];
+    const collectionsSnapshot = await this.firestore.listCollections();
 
-      if (snapshot.empty) {
-        console.log(`No se encontraron estacionamientos.`);
-        return [];
-      }
+    // Recorre todas las colecciones de nivel superior (e.g., 'free', 'standard')
+    for (const tenantPlan of collectionsSnapshot) {
+      const tenantsSnapshot = await tenantPlan.get();
 
-      const parkingList: Parking[] = await Promise.all(
-        snapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          const signedImageUrl = data.picture
-            ? await FirestoreService.generateSignedUrl(
-                data.picture.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/${this.collectionName}`, '')
-              )
-            : '';
+      // Recorre los documentos (tenants) dentro de cada colección
+      for (const tenantDoc of tenantsSnapshot.docs) {
+        const tenantId = tenantDoc.id;
 
-          return new Parking(
-            data.name,
-            data.address,
-            data.barriers,
-            data.tenant_id,
-            data.capacity,
-            data.floors,
-            signedImageUrl,
-            data.status
+        // Accede a la subcolección `parkings` dentro del tenant
+        const parkingsSnapshot = await this.firestore
+          .collection(tenantPlan.id)
+          .doc(tenantId)
+          .collection('parkings')
+          .get();
+
+        if (!parkingsSnapshot.empty) {
+          const tenantParkings = await Promise.all(
+            parkingsSnapshot.docs.map(async (doc) => {
+              const data = doc.data();
+              const signedImageUrl = data.picture
+                ? await FirestoreService.generateSignedUrl(
+                    data.picture.replace(
+                      `https://storage.googleapis.com/${process.env.GCP_BUCKET}/${tenantDoc}/${tenantId}/parkings`,
+                      ''
+                    )
+                  )
+                : '';
+
+              return new Parking(
+                data.name,
+                data.address,
+                data.barriers,
+                data.tenant_id,
+                data.capacity,
+                data.floors,
+                signedImageUrl,
+                data.status
+              );
+            })
           );
-        })
-      );
 
-      return parkingList;
-    } catch (error) {
-      console.error('Error al obtener los estacionamientos:', error);
-      throw new Error('No se pudieron recuperar los estacionamientos.');
+          parkingList.push(...tenantParkings);
+        }
+      }
     }
+
+    return parkingList;
+  } catch (error) {
+    console.error('Error al obtener todos los estacionamientos:', error);
+    throw new Error('No se pudieron recuperar los estacionamientos.');
   }
+}
+
   async getAllFromTenant(tenant_id: string, tenant_plan:string): Promise<Parking[]> {
     try {
       const snapshot = await this.firestore
@@ -85,7 +104,6 @@ class FirestoreParkingRepository implements IParkingRepository {
       throw new Error('No se pudieron recuperar los estacionamientos.');
     }
   }
-<<<<<<< HEAD
   async createParking(parking: Parking, tenant_id: string, plan: string): Promise<string>{
     // const docRef = await this.firestore.collection(`${tenant_id}/${this.collectionName}`).add(parking);
     const plainParking = parking.toPlainObject();
@@ -95,10 +113,6 @@ class FirestoreParkingRepository implements IParkingRepository {
             .collection('parkings') // Subcolección "parkings"
             .add(plainParking); // Documento con los datos del parking
     console.log('Parking created with ID:', docRef.id);
-=======
-  async createParking(parkingData: any): Promise<string>{
-    const docRef = await this.firestore.collection(this.collectionName).add(parkingData);
->>>>>>> d382ba8bed85a60b4e1bc1d68281e375094805ce
     return docRef.id;
   }
   async getParkingById(tenant_id: string, tenant_plan: string, id:string): Promise<Parking> {
