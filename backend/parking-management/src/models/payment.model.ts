@@ -1,10 +1,12 @@
 class Payment {
   private parkingId: string;
   private amount: number;
+  private licensePlate: string;
   
-  constructor(parkingId: string, amount: number) {
+  constructor(parkingId: string, amount: number, licensePlate: string) {
     this.parkingId = parkingId;
     this.amount = amount;
+    this.licensePlate = licensePlate;
   }
 
   /**
@@ -37,6 +39,14 @@ class Payment {
    */
   public setAmount(amount: number): void {
     this.amount = amount;
+  }
+
+  /**
+   * Get the license plate
+   * @returns License plate as a string
+   */
+  public getLicensePlate(): string {
+    return this.licensePlate;
   }
 }
 

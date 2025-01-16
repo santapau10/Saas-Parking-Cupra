@@ -21,8 +21,12 @@ class FirestoreDefectRepository implements IDefectRepository {
     }));
   }
 
-  async getFromParking(parking: string): Promise<any[]> {
-    const snapshot = await this.firestore.collection(this.collectionName).where('parking', '==', parking).get();
+  async getFromParking(tenant_id:string, tenant_plan:string, parking: string): Promise<any[]> {
+    const snapshot = await this.firestore
+            .collection(tenant_plan) // Selecciona la colección `free` o `standard`
+            .doc(tenant_id) // Selecciona el documento del tenant (e.g., `tenant1`)
+            .collection(this.collectionName) // Accede a la subcolección `parkings`
+            .get();
     if (snapshot.empty) return [];
 
     return await Promise.all(snapshot.docs.map(async doc => {
@@ -32,8 +36,8 @@ class FirestoreDefectRepository implements IDefectRepository {
     }));
   }
   
-  async getByStatus(status: string): Promise<any[]> {
-    const snapshot = await this.firestore.collection(this.collectionName).where('status', '==', status).get();
+  async getByStatus(status: string,tenant_id:string): Promise<any[]> {
+    const snapshot = await this.firestore.collection(`${tenant_id}/${this.collectionName}`).where('status', '==', status).get();
     if (snapshot.empty) return [];
 
     return await Promise.all(snapshot.docs.map(async doc => {
@@ -54,8 +58,12 @@ class FirestoreDefectRepository implements IDefectRepository {
     return { id: doc.id, ...data, image: imageUrl };
   }
 
-  async create(defectData: any): Promise<string> {
-    const docRef = await this.firestore.collection(this.collectionName).add(defectData);
+  async create(tenant_id:string, tenant_plan:string, defectData: any): Promise<string> {
+    const docRef = await this.firestore
+            .collection(tenant_plan) // Colección "free" o "standard"
+            .doc(tenant_id) // Documento "tenant1" o "tenant2"
+            .collection(this.collectionName) // Subcolección "parkings"
+            .add(defectData); // Documento con los datos del parking
     return docRef.id;
   }
 
@@ -67,7 +75,6 @@ class FirestoreDefectRepository implements IDefectRepository {
     const updatedDoc = await docRef.get();
     return updatedDoc.exists
       ? new Defect(
-        updatedDoc.data()!.object,
         updatedDoc.data()!.location,
         updatedDoc.data()!.description,
         updatedDoc.data()!.detailedDescription,

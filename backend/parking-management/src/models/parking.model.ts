@@ -27,4 +27,16 @@ export class Parking {
     this.picture = picture;
     this.status = status;
   }
+  toPlainObject() {
+        return {
+            name: this.name,
+            address: this.address,
+            barriers: this.barriers,
+            tenant_id: this.tenant_id,
+            capacity: this.capacity,
+            floors: this.floors,
+            picture: this.picture,
+            status: this.status,
+        };
+    }
 }

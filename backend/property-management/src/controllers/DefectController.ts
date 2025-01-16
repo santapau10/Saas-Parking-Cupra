@@ -13,13 +13,17 @@ class DefectController {
 
   static async getFromParking(req: Request, res: Response): Promise<void> {
     const { parking } = req.params;
-    const defects = await defectRepository.getFromParking(parking);
+    const tenant_id = req.params.tenant_id as string;
+    const tenant_plan = req.headers['tenant_plan'] as string;
+
+    const defects = await defectRepository.getFromParking(tenant_id, tenant_plan, parking);
     res.status(200).json(defects);
   }
 
   static async getByStatus(req: Request, res: Response): Promise<void> {
     const { status } = req.params;
-    const defects = await defectRepository.getByStatus(status);
+    const tenant_id = req.headers['tenant_id'] as string;
+    const defects = await defectRepository.getByStatus(status, tenant_id);
     res.status(200).json(defects);
   }
 
@@ -36,15 +40,16 @@ class DefectController {
   }
 
   static async create(req: Request, res: Response): Promise<void> {
-    const { parking, description, detailedDescription, reportingDate, status, username } = req.body;
-
+    const { description, detailedDescription, reportingDate, status, username } = req.body;
+    const parking = req.params.parking as string;
+    const tenant_id = req.params.tenant_id as string;
+    const tenant_plan = req.headers['tenant_plan'] as string;
     const imageUrl = req.file
-      ? await FirestoreService.uploadFile(req.file.buffer, `defects/${Date.now()}.jpg`, 'image/jpeg')
+      ? await FirestoreService.uploadFile(req.file.buffer, `${tenant_plan}/${tenant_id}/defects/${Date.now()}.jpg`, 'image/jpeg')
       : null;
 
     const newDefect = { parking, description, detailedDescription, reportingDate: new Date(reportingDate), status, image: imageUrl, username };
-
-    const defectId = await defectRepository.create(newDefect);
+    const defectId = await defectRepository.create(tenant_id, tenant_plan, newDefect);
     res.status(201).json({ id: defectId, ...newDefect });
   }
 

@@ -21,4 +21,7 @@ router.post('/setTheme', AuthController.setTheme);
 
 router.get('/api/:tenantId', IpController.getIp);
 
+
+router.post('/getToken', AuthController.getToken);
+
 export default router;

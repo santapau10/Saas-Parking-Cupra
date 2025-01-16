@@ -20,7 +20,8 @@ class ParkingController {
   static async getAllParkingsFromTenant(req: Request, res: Response): Promise<void> {
     try {
       const {tenant_id} = req.params;
-      const parkingList = await parkingRespository.getAllFromTenant(tenant_id)
+      const tenant_plan = req.headers['tenant_plan'] as string;
+      const parkingList = await parkingRespository.getAllFromTenant(tenant_id, tenant_plan)
       res.status(201).json({ message: 'Fetching Successfully', parkingList });
     } catch (error) {
       res.status(500).json({ message: 'Fetching failed', error: error });
@@ -28,39 +29,40 @@ class ParkingController {
   }
   static async createParking(req: Request, res: Response): Promise<void> {
     try {
-      const { name, location, barriers, capacity, floors } = req.body;
+      const { name, address, barriers, capacity, floors } = req.body;
       const tenant_id = req.params.tenant_id;
+      const tenant_plan = req.headers['tenant_plan'] as string;
 
       // Subir la imagen si existe
-      const pictureUrl = req.file
-        ? await FirestoreService.uploadFile(req.file.buffer, `parkings/${Date.now()}.jpg`, req.file.mimetype)
+      const picture = req.file
+        ? await FirestoreService.uploadFile(req.file.buffer, `${tenant_plan}/${tenant_id}/parkings/${Date.now()}.jpg`, req.file.mimetype)
         : null;
 
       // Crear instancia de Parking
       const newParking = new Parking(
         name,
-        location,
+        address,
         barriers,
         tenant_id,
         capacity,
         floors,
-        pictureUrl!, // URL de la imagen subida
+        picture!,
         'closed'
       );
 
-      // Guardar el parking en el repositorio
-      const parking = await parkingRespository.createParking(newParking);
+      const parking = await parkingRespository.createParking(newParking, tenant_id, tenant_plan);
 
-      // Respuesta exitosa
       res.status(201).json({ message: 'Parking created successfully', parking });
-    } catch (error) {
+    } catch (error: Error | any) {
       // Manejo de errores
-      res.status(500).json({ message: 'Parking creation failed', error: error });
+      res.status(500).json({ message: 'Parking creation failed', error: error.message });
     }
   }
   static async getById(req: Request, res: Response): Promise<void> {
     const { parkingId } = req.params;
-    const parking = await parkingRespository.getParkingById(parkingId);
+    const tenant_id = req.params.tenant_id;
+      const tenant_plan = req.headers['tenant_plan'] as string;
+    const parking = await parkingRespository.getParkingById(tenant_id, tenant_plan, parkingId);
     if (!parking) {
       res.status(404).json({ message: 'parkingo no encontrado' });
       return;
@@ -80,20 +82,20 @@ class ParkingController {
   static async setCapacity(req: Request, res: Response): Promise<void> {
     try {
       const parkingId = req.params.parking;
+      const tenant_id = req.params.tenant_id;
+      const tenant_plan = req.headers['tenant_plan'] as string;
       const newCapacity = parseInt(req.body.capacity, 10);
 
       if (isNaN(newCapacity) || newCapacity < 0) {
         res.status(400).send({ error: 'Invalid capacity value' });
         return;
       }
-      const parking = await parkingRespository.getParkingById(parkingId);
 
-      await parkingRespository.updateParkingCapacity(parkingId, newCapacity);
+      await parkingRespository.updateParkingCapacity(tenant_plan,tenant_id,parkingId, newCapacity);
 
       res.status(200).send({
         message: `Capacity updated successfully`,
         parkingId,
-        oldCapacity: parking.capacity,
         newCapacity,
       });
       return;
@@ -105,14 +107,16 @@ class ParkingController {
   static async setBarriers(req: Request, res: Response): Promise<void> {
     try {
       const parkingId = req.params.parking;
-      const newBarriers = parseInt(req.body.capacity, 10);
+      const tenant_id = req.params.tenant_id;
+      const tenant_plan = req.headers['tenant_plan'] as string;
+      const newBarriers = parseInt(req.body.barriers, 10);
 
       if (isNaN(newBarriers) || newBarriers < 0) {
         res.status(400).send({ error: 'Invalid barriers value' });
         return;
       }
 
-      await parkingRespository.updateParkingBarriers(parkingId, newBarriers);
+      await parkingRespository.updateParkingBarriers(tenant_id, tenant_plan, parkingId, newBarriers);
 
       res.status(200).send({
         message: `Barriers updated successfully`,
@@ -128,10 +132,12 @@ class ParkingController {
   static async setStatus(req: Request, res: Response): Promise<void> {
     try {
       const parkingId = req.params.parking;
+      const tenant_id = req.params.tenant_id;
+      const tenant_plan = req.headers['tenant_plan'] as string;
 
-      const parking = await parkingRespository.getParkingById(parkingId);
+      const parking = await parkingRespository.getParkingById(tenant_id, tenant_plan, parkingId);
 
-      const status = await parkingRespository.updateParkingStatus(parkingId, parking.status);
+      const status = await parkingRespository.updateParkingStatus(tenant_id, tenant_plan, parkingId, parking.status);
 
       res.status(200).send({
         message: `Capacity updated successfully`,
@@ -139,9 +145,9 @@ class ParkingController {
         status
       });
       return;
-    } catch (error) {
+    } catch (error: Error | any) {
       console.error(error);
-      res.status(500).send({ error: error });
+      res.status(500).send({ error: error.message });
     }
   }
 }

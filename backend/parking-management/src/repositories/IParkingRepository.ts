@@ -3,8 +3,8 @@ import Payment from "../models/payment.model";
 
 
 export interface IParkingRepository {
-  getParkingById(id:string): Promise<Parking>;
+  getParkingById(tenant_id:string, tenant_plan:string,id:string): Promise<Parking>;
   updateParkingCapacity(parkingId: string, newCapacity: number): Promise<void>;
-  registerPayment(payment: Payment): Promise<void>;
+  registerPayment(payment: Payment, tenant_id: string, tenant_plan:string): Promise<void>;
 }
 

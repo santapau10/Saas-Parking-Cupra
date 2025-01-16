@@ -5,6 +5,7 @@ import FirestoreUserRepository from '../repositories/FirestoreUserRepository';
 import { User } from '../models/user.model';
 import FirebaseTenantRepository from '../repositories/FirestoreTenantRepository';
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 
 const userRepository = new FirestoreUserRepository();
 const tenantRepository = new FirebaseTenantRepository();
@@ -95,6 +96,33 @@ static async getTenantInfo(req: Request, res: Response): Promise<void> {
       res.status(201).json({ message: 'Theme updated successfully' });
     } catch (error) {
       res.status(500).json({ message: 'Theme update failed', error: error });
+    }
+  }
+  private static readonly JWT_SECRET = 'your_secret_key';
+  static async getToken(req: Request, res: Response): Promise<void> {
+    try {
+      const { tenant, parking, role } = req.body;
+      if (!tenant || !parking) {
+        res.status(400).json({ message: 'Tenant and parking are required' });
+        return;
+      }
+      const payload = {
+        tenant,
+        role,
+        issuedAt: new Date().toISOString(),
+      };
+
+      const token = jwt.sign(payload, this.JWT_SECRET, { expiresIn: '2h' });
+      res.status(201).json({
+        message: 'Token created successfully',
+        token,
+      });
+    } catch (error) {
+      console.error('Error generating token:', error);
+      res.status(500).json({
+        message: 'Token generation failed',
+        error: error,
+      });
     }
   }
 }
