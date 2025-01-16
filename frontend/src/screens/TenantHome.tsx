@@ -18,7 +18,7 @@ const TenantHome: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showCreateParkingModal, setShowCreateParkingModal] = useState<boolean>(false);
 
-  const { user, setTheme } = useUser();
+  const { user, setTheme, tenant, token } = useUser();
 
   const parseParkingData = (data: any[]): Parking[] => {
     return data.map((item) => ({
@@ -38,7 +38,12 @@ const TenantHome: React.FC = () => {
       setLoading(true);
       setError(null);
       const url = `/property-management/parkings/all/${user?._tenantId}`;
-      const response = await axios.get(`${apiUrl}${url}`);
+      const response = await axios.get(`${apiUrl}${url}`, {
+        headers: {
+          "tenant_plan": tenant?._plan, 
+          "Authorization": `Bearer ${token}`
+        },
+      });
       const parsedData = parseParkingData(response.data.parkingList);
       setParkings(parsedData);
     } catch (err: any) {
@@ -59,6 +64,8 @@ const TenantHome: React.FC = () => {
       await axios.post(`${apiUrl}/property-management/parkings/${user?._tenantId}`, parking, {
         headers: {
           "Content-Type": "multipart/form-data",
+          "tenant_plan": tenant?._plan, 
+          "Authorization": `Bearer ${token}`
         },
       });
       toast.success("Parking created successfully!");

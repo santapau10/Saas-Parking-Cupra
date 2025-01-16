@@ -6,12 +6,14 @@ import "react-toastify/dist/ReactToastify.css";
 import ParkingList from '../components/ParkingList';
 import { User } from '../types/User';
 import LandingCard from '../components/LandingCard';
+import { useUser } from '../context/UserContext';
 
 const HomePage: React.FC = () => {
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const { tenant, token } = useUser();
 
   const parseParkingData = (data: any[]): Parking[] => {
     return data.map((item) => ({
@@ -37,7 +39,12 @@ const HomePage: React.FC = () => {
         const user: User = JSON.parse(localUser)
         url = `/property-management/parkings/all/${user._tenantId}`;
       }
-      const response = await axios.get(`${apiUrl}${url}`);
+      const response = await axios.get(`${apiUrl}${url}`, {
+        headers: {
+          "tenant_plan": tenant?._plan, 
+          "Authorization": `Bearer ${token}`
+        },
+      });
       const parsedData = parseParkingData(response.data.parkingList);
       setParkings(parsedData);
     } catch (err: any) {
@@ -56,7 +63,12 @@ const HomePage: React.FC = () => {
     try {
       const tenantObject: Record<string, any> = {};
       tenantData.forEach((value, key) => {tenantObject[key] = value;});
-      await axios.post(`${apiUrl}/api-gateway/registerTenant`, tenantObject);
+      await axios.post(`${apiUrl}/api-gateway/registerTenant`, tenantObject, {
+        headers: {
+          "tenant_plan": tenant?._plan, 
+          "Authorization": `Bearer ${token}`
+        },
+      });
       toast.success("Tenant created successfully!");
     } catch (err: any) {
       toast.error("Failed to create Tenant. Please try again later.");

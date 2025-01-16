@@ -19,7 +19,7 @@ export default function App() {
   const [statusFilter, setStatusFilter] = useState("");
   const [parkingData, setParkingData] = useState<Parking | null>(null);
 
-  const { user, tenant } = useUser();
+  const { tenant, token } = useUser();
   const location = useLocation();
   const parkingName = location?.pathname.replace("/parkings/", "") || "parkingA";
 
@@ -71,7 +71,7 @@ export default function App() {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${apiUrl}/property-management/defects/${parkingName}`);
+      const response = await axios.get(`${apiUrl}/property-management/defects/${parkingData?._tenant_id}/${parkingName}`);
       const parsedDefects = parseDefectData(response.data)
       setDefects(parsedDefects);
     } catch (err: any) {
@@ -88,7 +88,7 @@ export default function App() {
 
   const handleDefectSubmit = async (defect: FormData) => {
     try {
-      await axios.post(`${apiUrl}/property-management/defects`, defect, {
+      await axios.post(`${apiUrl}/property-management/defects/${parkingData?._tenant_id}`, defect, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -102,7 +102,11 @@ export default function App() {
 
   const handleDefectDelete = async (defectId: string) => {
     try {
-      await axios.delete(`${apiUrl}/property-management/defects/${defectId}`);
+      await axios.delete(`${apiUrl}/property-management/defects/${defectId}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+      });
       toast.success("Defect deleted successfully!");
       await fetchDefects();
     } catch (err: any) {
@@ -116,9 +120,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await axios.get(
-        `${apiUrl}/property-management/defects/${parkingName}/filteredByStatus/${statusFilter}`
-      );
+      const response = await axios.get(`${apiUrl}/property-management/defects/${parkingName}/filteredByStatus/${statusFilter}`);
       setDefects(response.data);
     } catch (err: any) {
       toast.error("Failed to filter defects by status. Please try again later.");

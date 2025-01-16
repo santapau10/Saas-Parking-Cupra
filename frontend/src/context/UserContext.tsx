@@ -13,6 +13,7 @@ interface UserContextType {
   setUser: (user: User | null) => void;
   tenant: Tenant | null;
   setTheme: (newTheme: number) => void;
+  token: string | null;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -122,7 +123,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser: updateUser, tenant, setTheme }}>
+    <UserContext.Provider value={{ user, setUser: updateUser, tenant, setTheme, token }}>
       {children}
     </UserContext.Provider>
   );
