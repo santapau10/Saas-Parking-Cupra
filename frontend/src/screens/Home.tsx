@@ -12,7 +12,8 @@ const HomePage: React.FC = () => {
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  //const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const apiUrl = "http://localhost:3001"
   const { tenant, token } = useUser();
 
   const parseParkingData = (data: any[]): Parking[] => {
@@ -33,20 +34,32 @@ const HomePage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      var url = "/property-management/parkings/all";
+  
       const localUser = localStorage.getItem('user');
       if (localUser) {
-        const user: User = JSON.parse(localUser)
-        url = `/property-management/parkings/all/${user._tenantId}`;
+        const user: User = JSON.parse(localUser);
+        // Wait for token to be available
+        if (!token) {
+          console.log("Waiting for token to be available...");
+          return;
+        }
+  
+        console.log(token);
+        console.log(user);
+  
+        const response = await axios.get(`${apiUrl}/property-management/parkings/all/${user._tenantId}`, {
+          headers: {
+            "tenant_plan": tenant?._plan,
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        const parsedData = parseParkingData(response.data.parkingList);
+        setParkings(parsedData);
+      } else {
+        // const response = await axios.get(`${apiUrl}/property-management/parkings/all/`);
+        // const parsedData = parseParkingData(response.data.parkingList);
+        // setParkings(parsedData);
       }
-      const response = await axios.get(`${apiUrl}${url}`, {
-        headers: {
-          "tenant_plan": tenant?._plan, 
-          "Authorization": `Bearer ${token}`
-        },
-      });
-      const parsedData = parseParkingData(response.data.parkingList);
-      setParkings(parsedData);
     } catch (err: any) {
       setError("Failed to load parkings. Please try again later.");
       toast.error(error);
@@ -54,10 +67,20 @@ const HomePage: React.FC = () => {
       setLoading(false);
     }
   };
-
+  
+  // Watch for token and ensure `fetchParkings` only runs when token is available
   useEffect(() => {
-    fetchParkings(); // Cargar defectos al montar el componente
-  }, [localStorage]);
+    if (localStorage.getItem("user")) {
+      if (token) {
+        fetchParkings();
+      } else {
+        console.log("Token not available yet. Waiting...");
+      }
+    } else {
+      fetchParkings();
+    }
+  }, [token]);
+  
 
   const handleTenantSubmit = async (tenantData: FormData) => {
     try {

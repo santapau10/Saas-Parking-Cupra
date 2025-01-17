@@ -11,7 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 import '../styles/TenantHome.css';
 
 const TenantHome: React.FC = () => {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  //const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const apiUrl = "http://localhost:3001"
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -79,7 +80,11 @@ const TenantHome: React.FC = () => {
     try {
       const userObject: Record<string, any> = {};
       userData.forEach((value, key) => {userObject[key] = value;});
-      await axios.post(`${apiUrl}/api-gateway/registerUser`, userObject);
+      await axios.post(`${apiUrl}/api-gateway/registerUser`, userObject, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+      });
       toast.success("User created successfully!");
     } catch (err: any) {
       toast.error("Failed to create user. Please try again later.");

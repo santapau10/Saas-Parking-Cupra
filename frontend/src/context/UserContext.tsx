@@ -45,7 +45,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setTenant(JSON.parse(tenant));
     }
     if (token) {
-      setToken(JSON.parse(token));
+      setToken(token);
     }
   }, []);
 

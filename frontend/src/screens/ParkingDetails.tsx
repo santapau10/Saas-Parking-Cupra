@@ -11,7 +11,8 @@ import { useLocation } from "react-router-dom";
 import { Parking } from "../types/Parking";
 
 export default function App() {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  //const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const apiUrl = "http://localhost:3001"
   const [showModal, setShowModal] = useState(false);
   const [defects, setDefects] = useState<Defect[]>([]);
   const [loading, setLoading] = useState(true);
