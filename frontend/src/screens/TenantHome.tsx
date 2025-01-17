@@ -11,8 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 import '../styles/TenantHome.css';
 
 const TenantHome: React.FC = () => {
-  //const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  const apiUrl = "http://localhost:3001"
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  // const apiUrl = "http://localhost:3001"
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

@@ -12,8 +12,8 @@ const HomePage: React.FC = () => {
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  //const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  const apiUrl = "http://localhost:3001"
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  // const apiUrl = "http://localhost:3001"
   const { tenant, token } = useUser();
 
   const parseParkingData = (data: any[]): Parking[] => {
