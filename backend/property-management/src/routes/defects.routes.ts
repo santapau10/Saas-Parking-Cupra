@@ -10,12 +10,12 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get('/',DefectController.getAll);
 //router.get('/:parking', validateTokenMiddleware,DefectController.getFromParking);
 
-router.get('/:tenant_id/:parking',DefectController.getFromParking);
-router.get('/:parking/filteredByStatus/:status', AuthMiddleware.verifyToken,DefectController.getByStatus);
-router.get('/:tenant_id/:parking/:id', AuthMiddleware.verifyToken,DefectController.getById);
+router.get('/:tenant_id/:parking', DefectController.getFromParking);
+router.get('/filteredByStatus/:parking/:status', AuthMiddleware.verifyToken, DefectController.getByStatus);
+// router.get('/:tenant_id/:parking/:id', AuthMiddleware.verifyToken,DefectController.getById);
 
 
-router.post('/:tenant_id/:parking', upload.single('image'), DefectController.create);
+router.post('/:tenant_id', upload.single('image'), DefectController.create);
 
 
 

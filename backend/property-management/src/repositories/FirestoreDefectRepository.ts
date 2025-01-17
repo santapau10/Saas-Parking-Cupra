@@ -21,30 +21,78 @@ class FirestoreDefectRepository implements IDefectRepository {
     }));
   }
 
-  async getFromParking(tenant_id:string, tenant_plan:string, parking: string): Promise<any[]> {
-    const snapshot = await this.firestore
-            .collection(tenant_plan) // Selecciona la colección `free` o `standard`
-            .doc(tenant_id) // Selecciona el documento del tenant (e.g., `tenant1`)
-            .collection(this.collectionName) // Accede a la subcolección `parkings`
-            .get();
-    if (snapshot.empty) return [];
+  async getFromParking(tenant_id: string, tenant_plan: string, parking: string): Promise<any[]> {
+    try {
+      // Accede a la colección `defects` bajo el tenant correspondiente
+      const snapshot = await this.firestore
+        .collection(tenant_plan) // Selecciona la colección `free` o `standard`
+        .doc(tenant_id) // Selecciona el documento del tenant (e.g., `tenant1`)
+        .collection('defects') // Accede a la colección `defects`
+        .where('parking', '==', parking) // Filtra por el campo `parking`
+        .get();
 
-    return await Promise.all(snapshot.docs.map(async doc => {
-      const data = doc.data();
-      const imageUrl = data.image ? await FirestoreService.generateSignedUrl(data.image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
-      return { id: doc.id, ...data, image: imageUrl };
-    }));
+      if (snapshot.empty) {
+        console.log(`No se encontraron defectos para el parking: ${parking}`);
+        return [];
+      }
+
+      // Mapeo de los resultados
+      return await Promise.all(
+        snapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          const imageUrl = data.image
+            ? await FirestoreService.generateSignedUrl(
+                data.image.replace(
+                  `https://storage.googleapis.com/${process.env.GCP_BUCKET}/`,
+                  ''
+                )
+              )
+            : null;
+          return { id: doc.id, ...data, image: imageUrl };
+        })
+      );
+    } catch (error) {
+      console.error('Error al obtener defectos del parking:', error);
+      throw new Error('No se pudieron recuperar los defectos.');
+    }
   }
-  
-  async getByStatus(status: string,tenant_id:string): Promise<any[]> {
-    const snapshot = await this.firestore.collection(`${tenant_id}/${this.collectionName}`).where('status', '==', status).get();
-    if (snapshot.empty) return [];
 
-    return await Promise.all(snapshot.docs.map(async doc => {
-      const data = doc.data();
-      const imageUrl = data._image ? await FirestoreService.generateSignedUrl(data._image.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')) : null;
-      return { id: doc.id, ...data, image: imageUrl };
-    }));
+  
+  async getByStatus(tenant_id: string, tenant_plan: string, parking: string, status:string): Promise<any[]> {
+    try {
+      // Accede a la colección `defects` bajo el tenant correspondiente
+      const snapshot = await this.firestore
+        .collection(tenant_plan) // Selecciona la colección `free` o `standard`
+        .doc(tenant_id) // Selecciona el documento del tenant (e.g., `tenant1`)
+        .collection('defects') // Accede a la colección `defects`
+        .where('parking', '==', parking) // Filtra por el campo `parking`
+        .where('status', '==', status) // Filtra por el campo `status`
+        .get();
+
+      if (snapshot.empty) {
+        console.log(`No se encontraron defectos para el parking: ${parking}`);
+        return [];
+      }
+
+      // Mapeo de los resultados
+      return await Promise.all(
+        snapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          const imageUrl = data.image
+            ? await FirestoreService.generateSignedUrl(
+                data.image.replace(
+                  `https://storage.googleapis.com/${process.env.GCP_BUCKET}/`,
+                  ''
+                )
+              )
+            : null;
+          return { id: doc.id, ...data, image: imageUrl };
+        })
+      );
+    } catch (error) {
+      console.error('Error al obtener defectos del parking:', error);
+      throw new Error('No se pudieron recuperar los defectos.');
+    }
   }
 
   
@@ -88,6 +136,14 @@ class FirestoreDefectRepository implements IDefectRepository {
 
   async delete(id: string): Promise<void> {
     await this.firestore.collection(this.collectionName).doc(id).delete();
+  }
+  async getTenantPlan(tenant_id: string): Promise<string> {
+    const doc = await this.firestore.collection('tenants').where('tenant_id', '==', tenant_id).get();
+    if (doc.empty) {
+      throw new Error(`Tenant with ID ${tenant_id} not found`);
+    }
+    const data = doc.docs[0].data();
+    return data.plan;
   }
 }
 

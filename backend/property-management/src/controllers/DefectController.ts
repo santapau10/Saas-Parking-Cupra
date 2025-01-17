@@ -14,16 +14,18 @@ class DefectController {
   static async getFromParking(req: Request, res: Response): Promise<void> {
     const { parking } = req.params;
     const tenant_id = req.params.tenant_id as string;
-    const tenant_plan = req.headers['tenant_plan'] as string;
-
+    const tenant_plan = await defectRepository.getTenantPlan(tenant_id);
     const defects = await defectRepository.getFromParking(tenant_id, tenant_plan, parking);
     res.status(200).json(defects);
   }
 
   static async getByStatus(req: Request, res: Response): Promise<void> {
     const { status } = req.params;
+    const parking = req.params.parking as string;
     const tenant_id = req.headers['tenant_id'] as string;
-    const defects = await defectRepository.getByStatus(status, tenant_id);
+    const tenant_plan = await defectRepository.getTenantPlan(tenant_id);
+
+    const defects = await defectRepository.getByStatus(tenant_id, tenant_plan, parking, status);
     res.status(200).json(defects);
   }
 
@@ -40,10 +42,9 @@ class DefectController {
   }
 
   static async create(req: Request, res: Response): Promise<void> {
-    const { description, detailedDescription, reportingDate, status, username } = req.body;
-    const parking = req.params.parking as string;
+    const { parking, description, detailedDescription, reportingDate, status, username } = req.body;
     const tenant_id = req.params.tenant_id as string;
-    const tenant_plan = req.headers['tenant_plan'] as string;
+    const tenant_plan = await defectRepository.getTenantPlan(tenant_id);
     const imageUrl = req.file
       ? await FirestoreService.uploadFile(req.file.buffer, `${tenant_plan}/${tenant_id}/defects/${Date.now()}.jpg`, 'image/jpeg')
       : null;

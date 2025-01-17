@@ -61,7 +61,7 @@ class ParkingController {
   static async getById(req: Request, res: Response): Promise<void> {
     const { parkingId } = req.params;
     const tenant_id = req.params.tenant_id;
-      const tenant_plan = req.headers['tenant_plan'] as string;
+    const tenant_plan = req.headers['tenant_plan'] as string;
     const parking = await parkingRespository.getParkingById(tenant_id, tenant_plan, parkingId);
     if (!parking) {
       res.status(404).json({ message: 'parkingo no encontrado' });

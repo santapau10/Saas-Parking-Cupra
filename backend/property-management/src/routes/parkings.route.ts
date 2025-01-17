@@ -13,7 +13,6 @@ router.get('/all', ParkingController.getAllParkings);
 router.get('/all/:tenant_id', AuthMiddleware.verifyToken,ParkingController.getAllParkingsFromTenant);
 router.post('/:tenant_id', AuthMiddleware.verifyToken,upload.single('picture'), ParkingController.createParking);
 
-
 router.get('/:tenant_id/:parkingId', ParkingController.getById);
 
 router.get('/byName/:parkingName', ParkingController.getByName);
