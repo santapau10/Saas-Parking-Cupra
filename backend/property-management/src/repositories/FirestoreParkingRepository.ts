@@ -9,8 +9,10 @@ class FirestoreParkingRepository implements IParkingRepository {
     try {
       const parkingList: Parking[] = [];
       const collectionsSnapshot = await this.firestore.listCollections(); // Obtiene las colecciones de primer nivel
-
-      for (const planCollection of collectionsSnapshot) {
+      const filteredCollections = collectionsSnapshot.filter(
+        (collection) => !['ips', 'tenants', 'users'].includes(collection.id)
+      );
+      for (const planCollection of filteredCollections) {
         const tenantsSnapshot = await planCollection.listDocuments(); // Obtiene los documentos dentro de cada plan
 
         for (const tenantDoc of tenantsSnapshot) {
@@ -151,8 +153,10 @@ class FirestoreParkingRepository implements IParkingRepository {
   async getParkingByName(parkingName: string): Promise<Parking | null> {
     try {
       const collectionsSnapshot = await this.firestore.listCollections(); // Obtiene las colecciones de primer nivel
-
-      for (const planCollection of collectionsSnapshot) {
+      const filteredCollections = collectionsSnapshot.filter(
+        (collection) => !['ips', 'tenants', 'users'].includes(collection.id)
+      );
+      for (const planCollection of filteredCollections) {
         const tenantsSnapshot = await planCollection.listDocuments(); // Obtiene los documentos dentro de cada plan
 
         for (const tenantDoc of tenantsSnapshot) {
