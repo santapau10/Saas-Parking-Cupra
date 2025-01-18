@@ -6,62 +6,57 @@ class FirestoreParkingRepository implements IParkingRepository {
   private firestore = FirestoreService.getFirestoreInstance();
   private collectionName = process.env.GCP_ENV === 'dev' ? 'parkings-dev' : 'parkings';
   async getAll(): Promise<Parking[]> {
-  try {
-    const parkingList: Parking[] = [];
-    const collectionsSnapshot = await this.firestore.listCollections();
+    try {
+      const parkingList: Parking[] = [];
+      const collectionsSnapshot = await this.firestore.listCollections(); // Obtiene las colecciones de primer nivel
 
-    // Recorre todas las colecciones de nivel superior (e.g., 'free', 'standard')
-    for (const tenantPlan of collectionsSnapshot) {
-      const tenantsSnapshot = await tenantPlan.get();
+      for (const planCollection of collectionsSnapshot) {
+        const tenantsSnapshot = await planCollection.listDocuments(); // Obtiene los documentos dentro de cada plan
 
-      // Recorre los documentos (tenants) dentro de cada colección
-      for (const tenantDoc of tenantsSnapshot.docs) {
-        const tenantId = tenantDoc.id;
+        for (const tenantDoc of tenantsSnapshot) {
+          const parkingsSnapshot = await tenantDoc
+            .collection('parkings') // Busca la subcolección `parkings` dentro de cada tenant
+            .get();
 
-        // Accede a la subcolección `parkings` dentro del tenant
-        const parkingsSnapshot = await this.firestore
-          .collection(tenantPlan.id)
-          .doc(tenantId)
-          .collection('parkings')
-          .get();
-
-        if (!parkingsSnapshot.empty) {
-          const tenantParkings = await Promise.all(
-            parkingsSnapshot.docs.map(async (doc) => {
-              const data = doc.data();
-              const signedImageUrl = data.picture
-                ? await FirestoreService.generateSignedUrl(
-                    data.picture.replace(
-                      `https://storage.googleapis.com/${process.env.GCP_BUCKET}/${tenantDoc}/${tenantId}/parkings`,
-                      ''
+          if (!parkingsSnapshot.empty) {
+            const tenantParkings = await Promise.all(
+              parkingsSnapshot.docs.map(async (doc) => {
+                const data = doc.data();
+                const signedImageUrl = data.picture
+                  ? await FirestoreService.generateSignedUrl(
+                      data.picture.replace(
+                        `https://storage.googleapis.com/${process.env.GCP_BUCKET}/`,
+                        ''
+                      )
                     )
-                  )
-                : '';
+                  : '';
 
-              return new Parking(
-                data.name,
-                data.address,
-                data.barriers,
-                data.tenant_id,
-                data.capacity,
-                data.floors,
-                signedImageUrl,
-                data.status
-              );
-            })
-          );
+                return new Parking(
+                  data.name,
+                  data.address,
+                  data.barriers,
+                  data.tenant_id,
+                  data.capacity,
+                  data.floors,
+                  signedImageUrl,
+                  data.status
+                );
+              })
+            );
 
-          parkingList.push(...tenantParkings);
+            // Añade los parkings obtenidos a la lista principal
+            parkingList.push(...tenantParkings);
+          }
         }
       }
-    }
 
-    return parkingList;
-  } catch (error) {
-    console.error('Error al obtener todos los estacionamientos:', error);
-    throw new Error('No se pudieron recuperar los estacionamientos.');
+      return parkingList;
+    } catch (error) {
+      console.error('Error al obtener todos los estacionamientos:', error);
+      throw new Error('No se pudieron recuperar los estacionamientos.');
+    }
   }
-}
+
 
   async getAllFromTenant(tenant_id: string, tenant_plan:string): Promise<Parking[]> {
     try {
@@ -153,54 +148,55 @@ class FirestoreParkingRepository implements IParkingRepository {
       }
   }
 
-  async getParkingByName(name: string): Promise<Parking | null> {
+  async getParkingByName(parkingName: string): Promise<Parking | null> {
     try {
-      // Obtener todas las colecciones principales (planes: free, standard, etc.)
-      const collections = await this.firestore.listCollections();
+      const collectionsSnapshot = await this.firestore.listCollections(); // Obtiene las colecciones de primer nivel
 
-      for (const planCollection of collections) {
-        const plan = planCollection.id; // Nombre de la colección (e.g., 'free', 'standard')
+      for (const planCollection of collectionsSnapshot) {
+        const tenantsSnapshot = await planCollection.listDocuments(); // Obtiene los documentos dentro de cada plan
 
-        // Obtener todos los tenants dentro del plan
-        const tenantsSnapshot = await this.firestore.collection(plan).get();
-
-        for (const tenantDoc of tenantsSnapshot.docs) {
-          const tenantId = tenantDoc.id; // ID del tenant
-
-          // Buscar en la subcolección `parkings` del tenant actual
-          const parkingsSnapshot = await this.firestore
-            .collection(plan)
-            .doc(tenantId)
-            .collection('parkings')
-            .where('name', '==', name)
-            .limit(1)
+        for (const tenantDoc of tenantsSnapshot) {
+          const parkingsSnapshot = await tenantDoc
+            .collection(this.collectionName) // Busca la subcolección `parkings` dentro de cada tenant
+            .where('name', '==', parkingName) // Filtra por el nombre del estacionamiento
             .get();
 
-          // Si se encuentra el parking, devolverlo
           if (!parkingsSnapshot.empty) {
-            const parkingData = parkingsSnapshot.docs[0].data();
+            const parkingDoc = parkingsSnapshot.docs[0]; // Toma el primer documento encontrado
+            const data = parkingDoc.data();
+
+            const signedImageUrl = data.picture
+              ? await FirestoreService.generateSignedUrl(
+                  data.picture.replace(
+                    `https://storage.googleapis.com/${process.env.GCP_BUCKET}/`,
+                    ''
+                  )
+                )
+              : '';
+
+            // Devuelve el estacionamiento encontrado
             return new Parking(
-              parkingData.name,
-              parkingData.address,
-              parkingData.barriers,
-              parkingData.tenant_id,
-              parkingData.capacity,
-              parkingData.floors,
-              parkingData.picture,
-              parkingData.status
+              data.name,
+              data.address,
+              data.barriers,
+              data.tenant_id,
+              data.capacity,
+              data.floors,
+              signedImageUrl,
+              data.status
             );
           }
         }
       }
 
-      // Si no se encuentra el parking, devolver null o lanzar un error
-      console.log('Parking not found');
+      // Si no se encuentra ningún estacionamiento con ese nombre, devuelve null
       return null;
     } catch (error) {
-      console.error('Error getting parking by name:', error);
-      throw new Error('Failed to retrieve parking by name.');
+      console.error('Error al buscar el estacionamiento por nombre:', error);
+      throw new Error('No se pudo buscar el estacionamiento.');
     }
   }
+
   async updateParkingCapacity(plan: string, tenant_id: string, parkingId: string, newCapacity: number): Promise<void> {
       try {
           // Accede a la subcolección `parkings` dentro de la colección principal y el documento del tenant
