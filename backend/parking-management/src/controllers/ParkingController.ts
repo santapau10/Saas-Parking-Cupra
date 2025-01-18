@@ -48,10 +48,7 @@ class ParkingController {
           const tenant_id = req.headers['tenant_id'] as string;
           const tenant_plan = req.headers['tenant_plan'] as string;
           const parking = await parkingRepository.getParkingById(tenant_id, tenant_plan,exit.parking_id);
-          // if (parking.capacity >= parking.capacity) {
-          //     res.status(400).json({ message: 'Parking is empty' });
-          //     return;
-          // }
+          
           // await parkingRepository.updateParkingCapacity(exit.parking_id, parking.capacity + 1);
           await parkingRepository.addExit(exit ,tenant_id, tenant_plan);
           res.status(200).json({ message: 'Exit registered successfully' });
@@ -79,10 +76,10 @@ class ParkingController {
         // Calcular la diferencia de tiempo en horas
         const entryTime = new Date(entry.timestamp);
         const currentTime = new Date();
-        const diffInHours = Math.ceil((currentTime.getTime() - entryTime.getTime()) / (1000 * 60 * 60));
+        const diffInHours = Math.ceil((currentTime.getTime() - entryTime.getTime()) / (1000 * 60));
+        console.log('diffInHours', diffInHours);
 
-        // Calcular el monto basado en la tarifa
-        const amount = diffInHours * rate;
+        const amount = (diffInHours/60) * rate;
        
         // Registrar el pago
         const payment = new Payment(parkingId, amount, license_plate);
