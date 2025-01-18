@@ -21,7 +21,8 @@ interface DefectCardProps {
 const DefectCard: React.FC<DefectCardProps> = ({defect, onDelete}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const theme = useUser().tenant?._theme || 1;
+  const { user, tenant } = useUser()
+  const theme = tenant?._theme || 1;
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -43,7 +44,7 @@ const DefectCard: React.FC<DefectCardProps> = ({defect, onDelete}) => {
       className={`defect-card ${theme < 6 ? "" : "theme-high"}`}
     >
       <h2 className="defect-title">{defect._description}</h2>
-      <button
+      {user?._role == "admin" && <button
         className="delete-button"
         onClick={(event) => {
           event.stopPropagation(); // Prevent the click from bubbling to the card
@@ -51,7 +52,7 @@ const DefectCard: React.FC<DefectCardProps> = ({defect, onDelete}) => {
         }}
       >
         <FontAwesomeIcon icon={faTrashAlt} />
-      </button>
+      </button>}
       <p>
         <FontAwesomeIcon icon={faInfoCircle} /> <strong> Details:</strong>{" "}
         {defect._detailedDescription.length < 18
