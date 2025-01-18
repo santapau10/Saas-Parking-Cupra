@@ -138,7 +138,7 @@ class FirestoreDefectRepository implements IDefectRepository {
     await this.firestore.collection(this.collectionName).doc(id).delete();
   }
   async getTenantPlan(tenant_id: string): Promise<string> {
-    const doc = await this.firestore.collection('tenants').where('tenant_id', '==', tenant_id).get();
+    const doc = await this.firestore.collection('tenants').where('tenantId', '==', tenant_id).get();
     if (doc.empty) {
       throw new Error(`Tenant with ID ${tenant_id} not found`);
     }
