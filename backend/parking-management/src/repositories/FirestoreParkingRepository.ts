@@ -9,19 +9,18 @@ class FirestoreParkingRepository implements IParkingRepository {
   
   private collectionName = process.env.GCP_ENV === 'dev' ? 'parkings-dev' : 'parkings';
   async getParkingById(tenant_id:string, tenant_plan:string, id: string): Promise<Parking> {
-    // const doc = await this.firestore.collection(this.collectionName).doc(id).get();
     const doc = await this.firestore
       .collection(tenant_plan) // Selecciona la colección del tenant plan ('free' o 'standard')
       .doc(tenant_id) // Selecciona el documento del tenant
       .collection('parkings') // Accede a la subcolección de parkings
-      .doc(id) // Selecciona el documento específico del parking
+      .where('name', '==', id) // Filtra por el ID del parking
       .get();
 
-    if (!doc.exists) {
+    if (doc.empty) {
       throw new Error(`Parking with ID ${id} not found`);
     }
 
-    const data = doc.data();
+    const data = doc.docs[0].data();
     if (!data) {
       throw new Error(`Invalid data for Parking with ID ${id}`);
     }
@@ -107,8 +106,11 @@ class FirestoreParkingRepository implements IParkingRepository {
       throw new Error('Failed to register exit');
     }
   }
-  async findEntryByLicensePlate(license_plate: string, tenant_id: string): Promise<EntryOrExit | null> {
-    const snapshot = await this.firestore.collection(`${tenant_id}/entries`)
+  async findEntryByLicensePlate(license_plate: string, tenant_id: string, tenant_plan:string): Promise<EntryOrExit | null> {
+    const snapshot = await this.firestore
+      .collection(tenant_plan)
+      .doc(tenant_id)
+      .collection('entries')
       .where('license_plate', '==', license_plate)
       .get();
 

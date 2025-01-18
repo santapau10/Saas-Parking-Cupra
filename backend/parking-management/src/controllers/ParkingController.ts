@@ -35,7 +35,7 @@ class ParkingController {
               res.status(400).json({ message: 'Parking is full' });
               return;
           }
-          await parkingRepository.updateParkingCapacity(entry.parking_id, parking.capacity - 1);
+          // await parkingRepository.updateParkingCapacity(entry.parking_id, parking.capacity - 1);
           await parkingRepository.addEntry(entry, tenant_id, tenant_plan);
           res.status(200).json({ message: 'Entry registered successfully' });
         } catch (error) {
@@ -48,11 +48,11 @@ class ParkingController {
           const tenant_id = req.headers['tenant_id'] as string;
           const tenant_plan = req.headers['tenant_plan'] as string;
           const parking = await parkingRepository.getParkingById(tenant_id, tenant_plan,exit.parking_id);
-          if (parking.capacity >= parking.capacity) {
-              res.status(400).json({ message: 'Parking is empty' });
-              return;
-          }
-          await parkingRepository.updateParkingCapacity(exit.parking_id, parking.capacity + 1);
+          // if (parking.capacity >= parking.capacity) {
+          //     res.status(400).json({ message: 'Parking is empty' });
+          //     return;
+          // }
+          // await parkingRepository.updateParkingCapacity(exit.parking_id, parking.capacity + 1);
           await parkingRepository.addExit(exit ,tenant_id, tenant_plan);
           res.status(200).json({ message: 'Exit registered successfully' });
         } catch (error) {
@@ -67,8 +67,9 @@ class ParkingController {
           res.status(400).json({ message: 'Missing required fields' });
           return;
         }
-
-        const entry = await parkingRepository.findEntryByLicensePlate(license_plate, parkingId);
+        const tenant_id = req.headers['tenant_id'] as string;
+        const tenant_plan = req.headers['tenant_plan'] as string;
+        const entry = await parkingRepository.findEntryByLicensePlate(license_plate, tenant_id, tenant_plan);
 
         if (!entry) {
           res.status(404).json({ message: 'Entry not found for the provided license plate' });
@@ -82,8 +83,7 @@ class ParkingController {
 
         // Calcular el monto basado en la tarifa
         const amount = diffInHours * rate;
-        const tenant_id = req.headers['tenant_id'] as string;
-        const tenant_plan = req.headers['tenant_plan'] as string;
+       
         // Registrar el pago
         const payment = new Payment(parkingId, amount, license_plate);
         await parkingRepository.registerPayment(payment, tenant_id, tenant_plan);

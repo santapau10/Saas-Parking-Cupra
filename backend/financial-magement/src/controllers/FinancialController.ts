@@ -2,7 +2,7 @@
 import { Request, Response } from 'express';
 import FinancialRepositoryFactory from '../repositories/FinancialRepositoryFactory';
 
-const financialRepository = FinancialRepositoryFactory.createRepository();
+const financialRepository = new FinancialRepositoryFactory();
 
 class FinancialController {
   static async getEntriesFromParking(req: Request, res: Response): Promise<void> {
