@@ -119,16 +119,16 @@ class FirestoreParkingRepository implements IParkingRepository {
               .collection(tenant_plan) // `free` o `standard`
               .doc(tenant_id) // Documento del tenant (ej. `tenant1`)
               .collection('parkings') // Subcolección `parkings`
-              .doc(id) // Accede al parking por su ID
+              .where('name', '==', id) // Filtra por el ID del parking
               .get();
 
           // Verificar si el documento existe
-          if (!doc.exists) {
+          if (doc.empty) {
               throw new Error(`Parking with ID ${id} not found`);
           }
 
           // Obtener los datos del parking
-          const data = doc.data();
+          const data = doc.docs[0].data();
           if (!data) {
               throw new Error(`Invalid data for Parking with ID ${id}`);
           }
