@@ -78,7 +78,7 @@ class FirestoreParkingRepository implements IParkingRepository {
           const data = doc.data();
           const signedImageUrl = data.picture
             ? await FirestoreService.generateSignedUrl(
-                data.picture.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/${tenant_plan}/${tenant_id}/${this.collectionName}`, '')
+                data.picture.replace(`https://storage.googleapis.com/${process.env.GCP_BUCKET}/`, '')
               )
             : '';
 
