@@ -60,10 +60,9 @@ strong {
 }
 
 
-/* Styling for the Modify Background button */
 .modify-background-btn {
   display: inline-block;
-  margin-top: 20px;
+  margin: 10px;
   padding: 10px 20px;
   background-color: #007bff; /* Blue color */
   color: white;
@@ -85,6 +84,33 @@ strong {
 
 .modify-background-btn:active {
   background-color: #004494; /* Even darker blue when clicked */
+  transform: translateY(0); /* Reset lift on click */
+}
+
+.financial-btn {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #ffc107; /* Yellow color */
+  color: black;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for a professional look */
+}
+
+.financial-btn:hover {
+  background-color: #e0a800; /* Darker yellow on hover */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+.financial-btn:active {
+  background-color: #c69500; /* Even darker yellow when clicked */
   transform: translateY(0); /* Reset lift on click */
 }
 

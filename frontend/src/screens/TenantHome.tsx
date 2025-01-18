@@ -9,6 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import ParkingList from '../components/ParkingList';
 import "react-toastify/dist/ReactToastify.css";
 import '../styles/TenantHome.css';
+import { useNavigate } from 'react-router-dom';
 
 const TenantHome: React.FC = () => {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
@@ -20,6 +21,7 @@ const TenantHome: React.FC = () => {
   const [showCreateParkingModal, setShowCreateParkingModal] = useState<boolean>(false);
 
   const { user, setTheme, tenant, token } = useUser();
+  const navigate = useNavigate();
 
   const parseParkingData = (data: any[]): Parking[] => {
     return data.map((item) => ({
@@ -131,6 +133,14 @@ const TenantHome: React.FC = () => {
                 onClick={() => setShowBackgroundModal(true)}
               >
                 Modify Background
+              </button>
+            }
+            {(user._role === 'admin' || "financial") &&
+              <button
+                className="financial-btn"
+                onClick={() => navigate("/financial")}
+              >
+                View Financial info
               </button>
             }
           </div>
