@@ -143,9 +143,7 @@ const TenantHome: React.FC = () => {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-            {user._role === 'admin' &&
-              <ParkingList items={parkings} heading="Parking list" />
-            }
+            <ParkingList items={parkings} heading="Parking list" />
           </div>
           <div className="card-footer">
             {user._role === 'admin' &&

@@ -50,23 +50,18 @@ export default function App() {
     }));
 };
 
-
-  useEffect(() => {
-    const fetchParkingData = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/property-management/parkings/byName/${parkingName}`
-        );
-        const parsedData = parseSingleParkingData(response.data);
-        setParkingData(parsedData);
-      } catch (err: any) {
-        setError("Failed to load parking information. Please try again later.");
-        toast.error(err);
-      }
-    };
-
-    fetchParkingData();
-  }, [parkingName]);
+  const fetchParkingData = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/property-management/parkings/byName/${parkingName}`
+      );
+      const parsedData = parseSingleParkingData(response.data);
+      setParkingData(parsedData);
+    } catch (err: any) {
+      setError("Failed to load parking information. Please try again later.");
+      toast.error(err);
+    }
+  };
 
   const fetchDefects = async () => {
     try {
@@ -84,8 +79,14 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchDefects();
-  }, []);
+    fetchParkingData();
+  }, [parkingName]);
+
+  useEffect(() => {
+    if (parkingData) {
+      fetchDefects();
+    }
+  }, [parkingData]);
 
   const handleDefectSubmit = async (defect: FormData) => {
     try {
@@ -116,7 +117,7 @@ export default function App() {
   };
 
   const filterByStatus = async () => {
-    if (!statusFilter) {
+    if (!statusFilter && parkingData) {
       await fetchDefects();
       return;
     }

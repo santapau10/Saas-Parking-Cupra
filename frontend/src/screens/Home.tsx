@@ -43,10 +43,7 @@ const HomePage: React.FC = () => {
           console.log("Waiting for token to be available...");
           return;
         }
-  
-        console.log(token);
-        console.log(user);
-  
+        console.log("Token available!");
         const response = await axios.get(`${apiUrl}/property-management/parkings/all/${user._tenantId}`, {
           headers: {
             "tenant_plan": tenant?._plan,
@@ -56,9 +53,9 @@ const HomePage: React.FC = () => {
         const parsedData = parseParkingData(response.data.parkingList);
         setParkings(parsedData);
       } else {
-        // const response = await axios.get(`${apiUrl}/property-management/parkings/all/`);
-        // const parsedData = parseParkingData(response.data.parkingList);
-        // setParkings(parsedData);
+        const response = await axios.get(`${apiUrl}/property-management/parkings/all/`);
+        const parsedData = parseParkingData(response.data.parkingList);
+        setParkings(parsedData);
       }
     } catch (err: any) {
       setError("Failed to load parkings. Please try again later.");
