@@ -134,7 +134,6 @@ class ParkingController {
       const parkingId = req.params.parking;
       const tenant_id = req.params.tenant_id;
       const tenant_plan = req.headers['tenant_plan'] as string;
-
       const parking = await parkingRespository.getParkingById(tenant_id, tenant_plan, parkingId);
 
       const status = await parkingRespository.updateParkingStatus(tenant_id, tenant_plan, parkingId, parking.status);

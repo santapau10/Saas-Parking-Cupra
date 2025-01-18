@@ -112,25 +112,23 @@ class FirestoreParkingRepository implements IParkingRepository {
     console.log('Parking created with ID:', docRef.id);
     return docRef.id;
   }
-  async getParkingById(tenant_id: string, tenant_plan: string, id:string): Promise<Parking> {
+  async getParkingById(tenant_id: string, tenant_plan: string, parkingId:string): Promise<Parking> {
       try {
           // Accede a la subcolección `parkings` dentro de la colección principal y el documento del tenant
-          const doc = await this.firestore
+          const query = await this.firestore
               .collection(tenant_plan) // `free` o `standard`
               .doc(tenant_id) // Documento del tenant (ej. `tenant1`)
-              .collection('parkings') // Subcolección `parkings`
-              .where('name', '==', id) // Filtra por el ID del parking
+              .collection(this.collectionName) // Subcolección `parkings`
+              .where('name', '==', parkingId) // Filtra por el ID del parking
               .get();
-
-          // Verificar si el documento existe
-          if (doc.empty) {
-              throw new Error(`Parking with ID ${id} not found`);
+          if (query.empty) {
+              throw new Error(`Parking with ID ${parkingId} not found`);
           }
 
           // Obtener los datos del parking
-          const data = doc.docs[0].data();
+          const data = query.docs[0].data();
           if (!data) {
-              throw new Error(`Invalid data for Parking with ID ${id}`);
+              throw new Error(`Invalid data for Parking with ID ${parkingId}`);
           }
 
           // Retornar el parking como una instancia de la clase Parking
@@ -240,19 +238,17 @@ class FirestoreParkingRepository implements IParkingRepository {
     await parkingRef.update({ barriers: newBarriers });
   }
   async updateParkingStatus(tenant_id: string,plan: string, parkingId: string, status: string): Promise<string> {
-    const parkingRef = this.firestore
+    const parkingRef = await this.firestore
               .collection(plan) // `free` o `standard`
               .doc(tenant_id) // Documento del tenant (ej. `tenant1`)
               .collection('parkings') // Subcolección `parkings`
-              .doc(parkingId); // Documento del parking por su ID
+              .where('name', '==', parkingId) // Documento del parking por su ID
+              .get();
 
-    const doc = await parkingRef.get();
-    if (!doc.exists) {
-      throw new Error(`Parking with ID ${parkingId} not found`);
-    }
+    const doc = parkingRef.docs[0].ref;
     const newStatus = status === 'closed' ? 'open' : 'closed';
     
-    await parkingRef.update({ status: newStatus });
+    await doc.update({ status: newStatus });
     return newStatus
   }
   
