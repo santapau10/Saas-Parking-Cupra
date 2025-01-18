@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import '../styles/ParkingCreateModal.css';
 import defaultImage from "../assets/default_image.jpg"; // Import the default image
+import { useUser } from "../context/UserContext";
 
 interface ParkingCreateModalProps {
   onClose: () => void;
@@ -8,6 +9,8 @@ interface ParkingCreateModalProps {
 }
 
 const ParkingCreateModal: React.FC<ParkingCreateModalProps> = ({ onClose, onSubmit }) => {
+  const { tenant } = useUser();
+
   const [parking, setParking] = useState({
     _name: "",
     _address: "",
@@ -162,7 +165,9 @@ const ParkingCreateModal: React.FC<ParkingCreateModalProps> = ({ onClose, onSubm
               </select>
             </label>
           </div>
+          { tenant?._plan != "free" && 
           <div>
+            <div>
             <label>
               <strong>Picture:</strong>
               <input
@@ -180,7 +185,8 @@ const ParkingCreateModal: React.FC<ParkingCreateModalProps> = ({ onClose, onSubm
               className="modal-image"
             />
           </div>
-
+          </div>
+          }
           <div className="modal-button-container">
             <button
               type="submit"

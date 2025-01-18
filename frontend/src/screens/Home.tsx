@@ -95,6 +95,21 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const handleParkingEdit = async (parkingName: string) => {
+    try {
+      await axios.post(`${apiUrl}/property-management/parkings/setStatus/${tenant?._tenant_id}/${parkingName}`, {
+        headers: {
+          "tenant_plan": tenant?._plan,
+          "Authorization": `Bearer ${token}`
+        },
+      });
+      toast.success("Parking status toggled successfully!");
+      await fetchParkings();
+    } catch (err: any) {
+      toast.error(`Failed to toggle status of parking ${parkingName}. Please try again later.`);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -111,7 +126,7 @@ const HomePage: React.FC = () => {
         justifyContent: 'center',
         alignItems:'center'}}>
 
-        <ParkingList items={parkings} heading="Parking list" />  
+        <ParkingList items={parkings} heading="Parking list" onEdit={handleParkingEdit} />  
       </div>
     </div>
   );

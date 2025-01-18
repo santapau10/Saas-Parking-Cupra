@@ -1,5 +1,6 @@
 /* Remove bottom margin of the card */
 .parking-card {
+    position: relative;
     font-family: 'Arial', sans-serif;
     background-color: rgba(0, 0, 0, 0.05); /* Default background */
     border-radius: 10px;
@@ -93,4 +94,76 @@
 
 .parking-card.theme-high:hover {
     background-color: rgba(255, 255, 255, 0.7);
+}
+
+.edit-button {
+    background: none;
+    border: none;
+    color: #3679ff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: absolute; /* Position in the top right */
+    bottom: 15px;
+    right: 15px;
+    transition: color 0.3s ease;
+    z-index: 1000; /* Ensure it is above other card content */
+}
+
+.edit-button:hover {
+    color: #024de3;
+}
+
+/* Delete modal styles */
+.edit-modal {
+    position: absolute; /* Relative to the card */
+    top: 50%; /* Center vertically within the card */
+    left: 50%; /* Center horizontally within the card */
+    transform: translate(-50%, -50%); /* Center modal over the card */
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 100; /* Ensure it appears above everything else */
+    width: 90%;
+    max-width: 300px; /* Limit width for responsiveness */
+    text-align: center;
+}
+
+/* Modal text */
+.edit-modal p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Modal buttons */
+.edit-modal button {
+    padding: 8px 15px;
+    font-size: 1rem;
+    margin: 0 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cancel button */
+.edit-modal button:first-child {
+    background-color: #ccc;
+    color: #333;
+}
+
+.edit-modal button:first-child:hover {
+    background-color: #bbb;
+}
+
+/* Confirm button */
+.edit-modal button:last-child {
+    background-color: #3679ff;
+    color: white;
+}
+
+.edit-modal button:last-child:hover {
+    background-color: #024de3;
 }

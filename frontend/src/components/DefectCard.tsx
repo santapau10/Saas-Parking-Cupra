@@ -40,9 +40,7 @@ const DefectCard: React.FC<DefectCardProps> = ({defect, onDelete}) => {
   };
 
   return (
-    <div
-      className={`defect-card ${theme < 6 ? "" : "theme-high"}`}
-    >
+    <div className={`defect-card ${theme < 6 ? "" : "theme-high"}`}>
       <h2 className="defect-title">{defect._description}</h2>
       {user?._role == "admin" && <button
         className="delete-button"

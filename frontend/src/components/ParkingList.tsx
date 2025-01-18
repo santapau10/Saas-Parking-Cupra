@@ -7,15 +7,20 @@ import { useNavigate } from 'react-router-dom';
 interface Props {
   items: Parking[];
   heading: string;
+  onEdit: (parkingId: string) => void;
 }
 
-function ParkingList({ items, heading }: Props) {
+function ParkingList({ items, heading, onEdit }: Props) {
 
   const navigate = useNavigate();
 
   const handleDefectClick = (parking: Parking) => {
     navigate(`/parkings/${parking._name}`);
   };
+  const handleParkingEdit = (parkingName: string) => {
+    onEdit(parkingName); // Cierra el modal
+  };
+
 
   useEffect(() => {
       console.log(items); // Cargar defectos al montar el componente
@@ -29,7 +34,7 @@ function ParkingList({ items, heading }: Props) {
         {Array.isArray(items) && items.length > 0 ? (
           items.map((item) => (
             <div key={item._name} onClick={() => handleDefectClick(item)}>
-              <ParkingCard {...item} />
+              <ParkingCard parking={item} onEdit={handleParkingEdit}/>
             </div>
           ))
         ) : (

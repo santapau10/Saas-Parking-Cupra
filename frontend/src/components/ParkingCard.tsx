@@ -5,16 +5,27 @@ import {
   faDoorOpen,
   faBuilding,
   faFlag,
+  faToggleOff,
+  faToggleOn,
+  faDoorClosed,
+  faLock,
+  faLockOpen
 } from "@fortawesome/free-solid-svg-icons";
 import { Parking } from "../types/Parking";
 import "../styles/ParkingCard.css";
 import { useUser } from "../context/UserContext";
-
-// Import the default image from assets
+import { useState } from "react";
 import defaultImage from "../assets/cupra_logo.png";
 
-const ParkingCard = (parking: Parking) => {
-  const theme = useUser().tenant?._theme || 1;
+interface DefectCardProps {
+  parking: Parking;
+  onEdit: (parkingId: string) => void;
+}
+
+const ParkingCard: React.FC<DefectCardProps> = ({parking, onEdit}) => {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const { user, tenant } = useUser();
+  const theme = tenant?._theme || 1;
 
   // Get the status class based on the status
   const getStatusClass = (status: string) => {
@@ -67,7 +78,23 @@ const ParkingCard = (parking: Parking) => {
           <strong> Status:</strong>
           <span className={getStatusClass(parking._status)}> {parking._status}</span>
         </p>
+        {user?._role == "admin" && <button
+          className="edit-button"
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowEditModal(true);
+          }}
+        >
+          <FontAwesomeIcon icon={parking._status == "open" ? faLock: faLockOpen} />
+        </button>}
       </div>
+      {showEditModal && (
+        <div className="edit-modal">
+          <p>Are you sure you want to toggle the status?</p>
+          <button onClick={(event) => { event.stopPropagation(); setShowEditModal(false)} }>Cancel</button>
+          <button onClick={(event) => { event.stopPropagation(); onEdit(parking._name);} }>Toggle</button>
+        </div>
+      )}
     </div>
   );
 };
