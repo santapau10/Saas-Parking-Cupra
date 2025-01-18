@@ -106,7 +106,6 @@
     bottom: 15px;
     right: 15px;
     transition: color 0.3s ease;
-    z-index: 1000; /* Ensure it is above other card content */
 }
 
 .edit-button:hover {

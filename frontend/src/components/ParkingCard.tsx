@@ -92,7 +92,7 @@ const ParkingCard: React.FC<DefectCardProps> = ({parking, onEdit}) => {
         <div className="edit-modal">
           <p>Are you sure you want to toggle the status?</p>
           <button onClick={(event) => { event.stopPropagation(); setShowEditModal(false)} }>Cancel</button>
-          <button onClick={(event) => { event.stopPropagation(); onEdit(parking._name);} }>Toggle</button>
+          <button onClick={(event) => { event.stopPropagation(); onEdit(parking._name); setShowEditModal(false);} }>Toggle</button>
         </div>
       )}
     </div>

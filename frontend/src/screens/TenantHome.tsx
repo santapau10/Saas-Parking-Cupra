@@ -80,14 +80,18 @@ const TenantHome: React.FC = () => {
 
   const handleParkingEdit = async (parkingName: string) => {
     try {
-      await axios.post(`${apiUrl}/property-management/parkings/setStatus/${tenant?._tenant_id}/${parkingName}`, {
-        headers: {
-          "tenant_plan": tenant?._plan,
-          "Authorization": `Bearer ${token}`
-        },
-      });
+      await axios.post(
+        `${apiUrl}/property-management/parkings/setStatus/${tenant?._tenant_id}/${parkingName}`,
+        {},
+        {
+          headers: {
+            "tenant_plan": tenant?._plan || "free",
+            "Authorization": `Bearer ${token}`,
+          },
+        }
+      );
       toast.success("Parking status toggled successfully!");
-      await fetchParkings();
+      fetchParkings();
     } catch (err: any) {
       toast.error(`Failed to toggle status of parking ${parkingName}. Please try again later.`);
     }
