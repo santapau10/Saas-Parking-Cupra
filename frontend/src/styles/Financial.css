@@ -23,7 +23,8 @@
     font-weight: 700 !important;
     color: #00d037 !important;
     text-align: center !important;
-    margin-bottom: 40px !important;
+    margin-top: 25px !important;
+    margin-bottom: 35px !important;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   }
   
@@ -62,10 +63,38 @@
     color: #333 !important;
   }
   
+  #parking-financial-container .card-content-container {
+    display: flex;
+    padding: 10px;
+    gap: 20px;
+  }
+
   #parking-financial-container .card-content {
+    flex: 1;
     font-size: 1rem !important;
     color: #555 !important;
     line-height: 1.5 !important;
+  }
+
+  #parking-financial-container .card-graph {
+    flex: 2;
+    max-width: 600px;
+    font-size: 1rem !important;
+    color: #555 !important;
+    line-height: 1.5 !important;
+    background-color: #ffffff; /* White background for the chart area */
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd; /* Light border to distinguish the graph container */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #parking-financial-container .card-graph h2 {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: #333 !important;
+    justify-self: center;
+    margin: 20px;
   }
   
   #parking-financial-container .card-content p {

@@ -115,7 +115,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         tenantId: tenant._tenant_id,
         theme: newTheme
       }
-      await axios.post(`${apiUrl}/api-gateway/setTheme`, body);
+      await axios.post(`${apiUrl}/api-gateway/setTheme`, body, {
+        headers: {
+          "tenant_plan": tenant?._plan,
+          "Authorization": `Bearer ${token}`,
+        },
+      });
       localStorage.setItem('tenant', JSON.stringify(newTenant));
     } else {
       throw new Error("There is no current tenant");

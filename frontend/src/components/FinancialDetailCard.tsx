@@ -17,7 +17,6 @@ const FinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName }) => {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  // const apiUrl = "http://localhost:3001"
   const { tenant, token } = useUser(); // User context
 
   const parseEntries = (data: any[]): Entry[] => {
@@ -33,7 +32,8 @@ const FinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName }) => {
     return data.map((item) => ({
       _licensePlate: item.licensePlate ?? "",
       _amount: item.amount ?? 0,
-      _parkingName: item.parkingId ?? ""
+      _parkingName: item.parkingId ?? "",
+      _timestamp: item.timestamp ?? ""
     }));
   };
 
