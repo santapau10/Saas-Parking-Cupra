@@ -1,0 +1,58 @@
+/* Scoped styles for FinancialDetailCard */
+.financial-detail-card {
+    margin: 20px auto !important;
+    padding: 20px !important;
+    background-color: rgba(255, 255, 255, 0.9) !important; /* Slightly translucent background */
+    border-radius: 12px !important; /* Rounded corners */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2) !important; /* Soft shadow */
+    animation: fadeIn 0.5s ease-in-out !important; /* Ensure smooth fade-in */
+    max-width: 80% !important; /* Restricting max width */
+    overflow: hidden !important;
+    position: relative !important;
+  }
+  
+  .financial-detail-card h3 {
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+    margin-bottom: 20px !important;
+    color: #333 !important; /* Dark text color */
+    text-align: center !important;
+  }
+  
+  .financial-detail-card .card-content {
+    font-size: 1rem !important;
+    color: #555 !important;
+    line-height: 1.5 !important;
+  }
+  
+  .financial-detail-card .card-content p {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .financial-detail-card .card-content p strong {
+    margin-right: 12px !important;
+    font-weight: bold !important;
+  }
+  
+  /* Animation for card appearance */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Error message styling */
+  .financial-detail-card .error {
+    color: red !important;
+    font-size: 1rem !important;
+    margin-top: 10px !important;
+    text-align: center !important;
+  }
+  

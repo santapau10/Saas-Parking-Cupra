@@ -4,7 +4,9 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { Entry } from "../types/Entry";
 import { Payment } from "../types/Payment";
-import ParkingFinancialDetailCard from "../components/ParkingFinancialDetailCard";
+import FinancialDetailCard from "../components/FinancialDetailCard";
+import "../styles/Financial.css"
+
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,7 +19,8 @@ const Financial: React.FC = () => {
   const [selectedParking, setSelectedParking] = useState<string | null>(null);
 
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-
+  const apiUrl2 = "http://localhost:3001";
+  
   const { user, tenant, token } = useUser();
 
   const parseEntries = (data: any[]): Entry[] => {
@@ -32,7 +35,7 @@ const Financial: React.FC = () => {
   const parsePayments = (data: any[]): Payment[] => {
     return data.map((item) => ({
       _licensePlate: item.licensePlate ?? "",
-      _amount: item.amount ?? 0, // Assuming amount is a number
+      _amount: item.amount ?? 0,
       _parkingName: item.parkingId ?? "",
     }));
   };
@@ -85,8 +88,7 @@ const Financial: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const url = `/property-management/parkings/all/${user?._tenantId}`;
-      const response = await axios.get(`${apiUrl}${url}`, {
+      const response = await axios.get(`${apiUrl}/property-management/parkings/all/${user?._tenantId}`, {
         headers: {
           tenant_plan: tenant?._plan,
           Authorization: `Bearer ${token}`,
@@ -95,32 +97,42 @@ const Financial: React.FC = () => {
       const parsedData = parseParkingData(response.data.parkingList);
       setParkings(parsedData);
     } catch (err: any) {
-      const message = err.response?.data?.message || "Failed to load parkings.";
-      setError(message);
-      toast.error(message);
+      setError("Failed to load parkings.");
+      toast.error("Failed to load parkings.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (user) fetchParkings();
+    if (user) {
+      fetchParkings();
+      fetchEntries();
+      fetchPayments();
+    }
   }, [user]);
 
-  // Calculate the total amount from payments
   const totalAmount = payments.reduce((acc, payment) => acc + payment._amount, 0);
-
-  // Entry count
   const entryCount = entries.length;
 
   if (loading) return <div>Loading...</div>;
   if (!tenant) return <div style={{ margin: 20 }}>Sorry, the tenant has not been correctly fetched.</div>;
 
   return (
-    <div>
-      <h1>Parking Financial</h1>
-
-      {/* Parking Selection Dropdown */}
+    <div id="parking-financial-container">
+      <h1>Financial Information Summary</h1>
+      
+      <div className="card">
+        <h3>Financial Summary</h3>
+        <div className="card-content">
+          <p>
+            <strong>Number of Entries:</strong> {entryCount}
+          </p>
+          <p>
+            <strong>Total Amount Recollected:</strong> {totalAmount.toFixed(2)}€
+          </p>
+        </div>
+      </div>
       <div>
         <label htmlFor="parking-select">Select a Parking:</label>
         <select
@@ -138,20 +150,9 @@ const Financial: React.FC = () => {
           ))}
         </select>
       </div>
-
-      {/* Financial Information Card */}
-      <div className="card">
-        <h3>Financial Summary</h3>
-        <div className="card-content">
-          <p><strong>Number of Entries:</strong> {entryCount}</p>
-          <p><strong>Total Amount Recollected:</strong> ${totalAmount.toFixed(2)}</p>
-        </div>
-      </div>
-
-      {/* Parking Financial Detail Card */}
-      {selectedParking && <ParkingFinancialDetailCard parkingName={selectedParking} />}
+      {selectedParking && <FinancialDetailCard parkingName={selectedParking} />}
     </div>
   );
-};
+}  
 
 export default Financial;

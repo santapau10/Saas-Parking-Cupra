@@ -45,7 +45,7 @@ class FinancialRepositoryFactory implements IFinancialRepository {
       const snapshot = await this.firestore
       .collection(tenant_plan)
       .doc(tenant_id)
-      .collection(this.entriesCollectionName)
+      .collection(this.paymentsCollectionName)
       .get();
   
       if (snapshot.empty) return [];

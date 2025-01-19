@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/LandingCard.css';
 import { Entry } from '../types/Entry';
 import { Payment } from '../types/Payment';
 import { ToastContainer, toast } from "react-toastify";
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 import "react-toastify/dist/ReactToastify.css";
-
+import "../styles/FinancialDetailCard.css"
 
 interface LandingCardProps {
-  parkingName: string
+  parkingName: string;
 }
 
-const ParkingFinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName }) => {
+const FinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-
-  const { tenant, token } = useUser();
+  // const apiUrl = "http://localhost:3001"
+  const { tenant, token } = useUser(); // User context
 
   const parseEntries = (data: any[]): Entry[] => {
     return data.map((item) => ({
@@ -33,7 +32,7 @@ const ParkingFinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName })
   const parsePayments = (data: any[]): Payment[] => {
     return data.map((item) => ({
       _licensePlate: item.licensePlate ?? "",
-      _amount: item.amount ?? 0,  // Assuming amount is a number
+      _amount: item.amount ?? 0,
       _parkingName: item.parkingId ?? ""
     }));
   };
@@ -57,7 +56,7 @@ const ParkingFinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName })
       setLoading(false);
     }
   };
-  
+
   const fetchPayments = async () => {
     try {
       setLoading(true);
@@ -92,7 +91,7 @@ const ParkingFinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName })
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="card">
+    <div className="financial-detail-card">
       <h3>Financial Information for {parkingName}</h3>
       {error && <div className="error">{error}</div>}
 
@@ -108,4 +107,4 @@ const ParkingFinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName })
   );
 };
 
-export default ParkingFinancialDetailCard;
+export default FinancialDetailCard;

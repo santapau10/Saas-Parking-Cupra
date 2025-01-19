@@ -15,7 +15,7 @@ export class AuthMiddleware {
 
       const token = authHeader.split(' ')[1];
 
-      const decoded = jwt.verify(token, this.JWT_SECRET) as JwtPayload;
+      const decoded = jwt.verify(token, AuthMiddleware.JWT_SECRET) as JwtPayload;
 
       req.body.authData = decoded;
 

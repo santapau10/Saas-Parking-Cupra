@@ -25,5 +25,5 @@ app.get('/financial-management/health', (req, res) => {
 });
 
 app.listen(process.env.PORT, () => {
-    console.log(`El servicio de financial esta activado 🚀`);
+    console.log(`El servicio de financial esta activado 🚀 in port ${process.env.PORT}`);
 });
