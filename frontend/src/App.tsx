@@ -7,10 +7,13 @@ import Layout from "./screens/Layout";
 import NoPage from "./screens/NoPage";
 import TenantHome from "./screens/TenantHome";
 import { UserProvider } from './context/UserContext'; // Import the UserProvider
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   return (
-    <UserProvider> {/* Wrap the app with the UserProvider */}
+    <UserProvider>
+      <ToastContainer />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>

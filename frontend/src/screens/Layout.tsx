@@ -1,4 +1,4 @@
- import { Outlet, useLocation } from 'react-router-dom';
+ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
  import Header from '../components/Header';
  import Footer from '../components/Footer';
  import React, { useState, useEffect } from 'react';
@@ -9,21 +9,22 @@
  import "react-toastify/dist/ReactToastify.css";
  import "../styles/GlobalReset.css"; 
  import { User } from "../types/User";
- import { jwtDecode } from "jwt-decode";
  import { useUser } from '../context/UserContext';
  import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
- import { auth } from "../../firebaseConfig"; // Import your Firebase configuration
+ import { auth } from "../../firebaseConfig";
  
 
     
 const Layout: React.FC = () => {
     const [showUserModal, setShowUserModal] = useState(false);
     const [backgroundImage, setBackgroundImage] = useState(null);
+    const [key, setKey] = useState(0);
     const setShowUserModalToTrue = () => setShowUserModal(true);
     const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-    const {user, setUser, tenant} = useUser(); // Access the user data from the context
+    const {user, setUser, tenant} = useUser();
     const location = useLocation();
     const path = location.pathname;
+    const navigate = useNavigate();
 
     useEffect(() => {
       const loadBackground = async () => {
@@ -76,47 +77,15 @@ const handleToken = async (token: string) => {
               return 'Tenant Home Page';
           default:
             if (path.startsWith('/parkings/')) {
-              const parkingName = path.split('/parkings/')[1]; // Extract parking name
+              const parkingName = path.split('/parkings/')[1];
               return `Parking: ${parkingName}`;
           }
           return '404';
         }
       };
     
-      const handleRegister = async (userData: User) => {
-        try {
-          await axios.post(`${apiUrl}/users/register`, userData);
-          //setShowUserRegisterModal(false)
-          toast.success(`Register successful. Welcome, ${userData._username}!`, {
-            position: "top-right",
-            autoClose: 3000, // 3 seconds
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-          setUser(userData)
-        } catch (err: any) {
-          console.log(err.response.data);
-          //setShowUserRegisterModal(false)
-          toast.error("Failed to register, please try again. Make sure the username doesn't already exist.", {
-            position: "top-right",
-            autoClose: 3000, // 3 seconds
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-        }
-      }
-    
       const handleLogout = async () => {
         try {
-          /*await axios.post(`${apiUrl}/users/logout`);*/
           setShowUserModal(false)
           toast.success(`Log out  successful. Bye!`, {
             position: "top-right",
@@ -129,7 +98,7 @@ const handleToken = async (token: string) => {
             theme: "colored",
           });
           setUser(null)
-          //localStorage.removeItem('google_token');
+          navigate("/")
         } catch (err: any) {
           console.log(err.response.data);
           setShowUserModal(false)
@@ -145,7 +114,6 @@ const handleToken = async (token: string) => {
           });
         }
       }
-
       
       return (
         <div

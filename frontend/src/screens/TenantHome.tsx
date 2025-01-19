@@ -114,7 +114,6 @@ const TenantHome: React.FC = () => {
 
   return (
     <div className="card">
-      <ToastContainer />
       {user ? (
         <>
           {showBackgroundModal && (

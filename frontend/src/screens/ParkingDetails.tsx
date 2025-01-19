@@ -149,8 +149,6 @@ export default function App() {
         />
       )}
 
-      <ToastContainer />
-
       {/* Display Parking Details */}
       {parkingData && (
         <div

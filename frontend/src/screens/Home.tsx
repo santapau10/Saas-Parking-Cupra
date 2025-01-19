@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { tenant, token } = useUser();
+  const { user, tenant, token } = useUser();
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
   const parseParkingData = (data: any[]): Parking[] => {
@@ -31,15 +31,23 @@ const HomePage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${apiUrl}/property-management/parkings/all/${tenant?._tenant_id}`,{
-          headers: {
-            'tenant_plan': tenant?._plan,
-            'Authorization': `Bearer ${token}`,
-          },
+      if (parkings.length == 0) {
+        if (user || tenant || token) {
+        const response = await axios.get(`${apiUrl}/property-management/parkings/all/${tenant?._tenant_id}`,{
+            headers: {
+              'tenant_plan': tenant?._plan,
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+        );
+        const parsedData = parseParkingData(response.data.parkingList);
+        setParkings(parsedData);
+        } else if (!localStorage.getItem('user') && !localStorage.getItem('tenant') && !localStorage.getItem('token')) {
+          const response = await axios.get(`${apiUrl}/property-management/parkings/all`);
+          const parsedData = parseParkingData(response.data.parkingList);
+          setParkings(parsedData);
         }
-      );
-      const parsedData = parseParkingData(response.data.parkingList);
-      setParkings(parsedData);
+      }
     } catch (err: any) {
       const message = err.response?.data?.message || 'Failed to load parkings.';
       setError(message);
@@ -50,10 +58,9 @@ const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (tenant?._tenant_id && token) {
       fetchParkings();
-    }
-  }, [tenant?._tenant_id, token]);
+  }, []);
+
 
   const handleParkingEdit = async (parkingName: string) => {
     try {
@@ -75,48 +82,44 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <ToastContainer />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <LandingCard
+          onSubmit={async (formData) => {
+            try {
+              const tenantObject: Record<string, any> = {};
+              formData.forEach((value, key) => {
+                tenantObject[key] = value;
+              });
+              await axios.post(`${apiUrl}/api-gateway/registerTenant`, tenantObject, {
+                headers: {
+                  'tenant_plan': tenant?._plan,
+                  'Authorization': `Bearer ${token}`,
+                },
+              });
+              toast.success('Tenant created successfully!');
+            } catch {
+              toast.error('Failed to create tenant. Please try again later.');
+            }
+          }}
+        />
+      </div>
       {loading ? (
-        <div>Loading...</div>
+    <div style={{display:'flex' , justifyContent: 'center'}}><p>Loading parkings...</p></div>
       ) : (
-        <>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <LandingCard
-              onSubmit={async (formData) => {
-                try {
-                  const tenantObject: Record<string, any> = {};
-                  formData.forEach((value, key) => {
-                    tenantObject[key] = value;
-                  });
-                  await axios.post(`${apiUrl}/api-gateway/registerTenant`, tenantObject, {
-                    headers: {
-                      'tenant_plan': tenant?._plan,
-                      'Authorization': `Bearer ${token}`,
-                    },
-                  });
-                  toast.success('Tenant created successfully!');
-                } catch {
-                  toast.error('Failed to create tenant. Please try again later.');
-                }
-              }}
-            />
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              flexWrap: 'wrap',
-              gap: '16px',
-              padding: '16px',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <ParkingList items={parkings} heading="Parking List" onEdit={handleParkingEdit} />
-          </div>
-        </>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexWrap: 'wrap',
+          gap: '16px',
+          padding: '16px',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <ParkingList items={parkings} heading="Parking List" onEdit={handleParkingEdit} />
+      </div>
       )}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };

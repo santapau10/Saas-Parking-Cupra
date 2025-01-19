@@ -93,7 +93,6 @@ const ParkingFinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName })
 
   return (
     <div className="card">
-      <ToastContainer />
       <h3>Financial Information for {parkingName}</h3>
       {error && <div className="error">{error}</div>}
 
