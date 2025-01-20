@@ -17,7 +17,7 @@ class DefectController {
     const tenant_plan = await defectRepository.getTenantPlan(tenant_id);
     const defects = await defectRepository.getFromParking(tenant_id, tenant_plan, parking);
     res.status(200).json(defects);
-  } 
+  }  
 
   static async getByStatus(req: Request, res: Response): Promise<void> {
     const { status } = req.params;

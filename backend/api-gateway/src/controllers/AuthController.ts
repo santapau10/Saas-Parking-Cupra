@@ -20,7 +20,7 @@ class AuthController {
     } catch (error) {
       res.status(500).json({ message: 'Registration failed', error: error });
     }
-  } 
+  }  
 static async registerTenant(req: Request, res: Response): Promise<void> {
   try {
     const tenant = await tenantRepository.create(req.body.name, req.body.plan);

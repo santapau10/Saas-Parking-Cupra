@@ -54,10 +54,12 @@ jobs:
       - name: Detect changed directories
         id: changes
         run: |
-          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F"/" '{print $2}' | sort -u)
-          echo "Change $CHANGED_DIRS"
-          echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
+          # Detecta los directorios modificados
+          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F"/" '{print $2}' | sort -u | tr '\n' ' ')
+          echo "Changed directories: $CHANGED_DIRS"
 
+          # Exporta los directorios modificados como una variable de entorno
+          echo "changed_dirs=$CHANGED_DIRS" >> $GITHUB_ENV
       - name: Build, push
         run: |
           # Primer bucle: Construir y empujar imágenes Docker para los servicios modificados

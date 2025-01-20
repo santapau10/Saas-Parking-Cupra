@@ -6,7 +6,7 @@ const financialRepository = new FinancialRepositoryFactory();
 
 class FinancialController {
   static async getEntriesFromParking(req: Request, res: Response): Promise<void> {
-    const { parking } = req.params;
+    const { parking } = req.params; 
     const tenant_id = req.params.tenant_id as string;
     const tenant_plan = req.headers.tenant_plan as string;
     const entries = await financialRepository.getEntriesFromParking(tenant_id, tenant_plan, parking);
