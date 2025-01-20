@@ -1,4 +1,4 @@
-name: Backend CI/CD
+name: Backend CI/CD frontend
 
 on:
   push:
@@ -58,7 +58,7 @@ jobs:
           docker build --platform=linux/amd64 -t $IMAGE_NAME frontend
 
           # Empujar la imagen Docker
-          docker push frontend
+          docker push $IMAGE_NAME
 
       - name: Get Credentials
         run: |
