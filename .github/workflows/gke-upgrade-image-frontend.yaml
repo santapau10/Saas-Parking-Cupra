@@ -49,13 +49,6 @@ jobs:
       - name: Authenticate Docker
         run: gcloud auth configure-docker gcr.io
 
-      - name: Get Credentials
-        run: |
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-            --zone us-central1 \
-            --project ${{ secrets.GCP_PROJECT_ID }}
-
-      # Build, push Docker images and deploy using Helm
       - name: Build, push, and deploy
         run: |
           echo "Processing service: $service"
@@ -67,6 +60,15 @@ jobs:
           # Empujar la imagen Docker
           docker push frontend
 
+      - name: Get Credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+            --zone us-central1 \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+
+      # Build, push Docker images and deploy using Helm
+      - name: Build, push, and deploy
+        run: |
           echo "Processing Helm deployment for release: $release"
           # Desplegar con Helm (Upgrade o Install)
           RELEASE_NAME="frontend"

@@ -18,7 +18,7 @@ export class Tenant {
     this._theme = theme;
     this._userUid = userUid;
   }
-
+ 
   public get name(): string {
     return this._name;
   }

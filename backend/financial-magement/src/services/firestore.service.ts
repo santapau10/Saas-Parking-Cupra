@@ -53,7 +53,7 @@ static async generateSignedUrl(fileName: string): Promise<string> {
     version: 'v4',
     action: 'read',
     expires: Date.now() + 15 * 60 * 1000, // 15 minutos
-  };
+  }; 
   try {
     const [url] = await storage
     .bucket(process.env.GCP_BUCKET!)

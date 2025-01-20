@@ -10,7 +10,7 @@ import { PubSub } from '@google-cloud/pubsub';
 
 
 const parkingRepository = new FirestoreParkingRepository();
-
+ 
 class ParkingController {
   static async getParkingCapacity(req: Request, res: Response): Promise<void> {
     try {
