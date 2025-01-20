@@ -8,9 +8,24 @@ import FinancialDetailCard from "../components/FinancialDetailCard";
 import { Bar } from "react-chartjs-2";
 import "../styles/Financial.css";
 import "react-toastify/dist/ReactToastify.css";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Financial: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,12 +64,15 @@ const Financial: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${apiUrl}/financial-management/entriesFromTenant/${tenant?._tenant_id}`, {
-        headers: {
-          "tenant_plan": tenant?._plan,
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${apiUrl}/financial-management/entriesFromTenant/${tenant?._tenant_id}`,
+        {
+          headers: {
+            tenant_plan: tenant?._plan,
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const parsedEntries = parseEntries(response.data);
       setEntries(parsedEntries);
     } catch (err: any) {
@@ -69,12 +87,15 @@ const Financial: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${apiUrl}/financial-management/paymentsFromTenant/${tenant?._tenant_id}`, {
-        headers: {
-          "tenant_plan": tenant?._plan,
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${apiUrl}/financial-management/paymentsFromTenant/${tenant?._tenant_id}`,
+        {
+          headers: {
+            tenant_plan: tenant?._plan,
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const parsedPayments = parsePayments(response.data);
       setPayments(parsedPayments);
     } catch (err: any) {
@@ -93,12 +114,15 @@ const Financial: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${apiUrl}/property-management/parkings/all/${user?._tenantId}`, {
-        headers: {
-          tenant_plan: tenant?._plan,
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${apiUrl}/property-management/parkings/all/${user?._tenantId}`,
+        {
+          headers: {
+            tenant_plan: tenant?._plan,
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const parsedData = parseParkingData(response.data.parkingList);
       setParkings(parsedData);
     } catch (err: any) {
@@ -167,7 +191,10 @@ const Financial: React.FC = () => {
     }
   }, [payments]);
 
-  const totalAmount = payments.reduce((acc, payment) => acc + payment._amount, 0);
+  const totalAmount = payments.reduce(
+    (acc, payment) => acc + payment._amount,
+    0
+  );
   const entryCount = entries.length;
 
   const chartOptions = {
@@ -220,7 +247,12 @@ const Financial: React.FC = () => {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (!tenant) return <div style={{ margin: 20 }}>Sorry, the tenant has not been correctly fetched.</div>;
+  if (!tenant)
+    return (
+      <div style={{ margin: 20 }}>
+        Sorry, the tenant has not been correctly fetched.
+      </div>
+    );
 
   return (
     <div id="parking-financial-container">
@@ -233,13 +265,23 @@ const Financial: React.FC = () => {
               <strong>Number of Entries:</strong> {entryCount}
             </p>
             <p>
-              <strong>Total Amount Recollected:</strong> {totalAmount.toFixed(2)}€
+              <strong>Total Amount Recollected:</strong>{" "}
+              {totalAmount.toFixed(2)}€
             </p>
           </div>
           <div className="card-graph">
             <h2>Entries per Month</h2>
             {monthlyEntryData.length > 0 ? (
-              <Bar data={entryChartData} options={{ ...chartOptions, plugins: { ...chartOptions.plugins, title: { text: "Entries per Month" } } }} />
+              <Bar
+                data={entryChartData}
+                options={{
+                  ...chartOptions,
+                  plugins: {
+                    ...chartOptions.plugins,
+                    title: { text: "Entries per Month" },
+                  },
+                }}
+              />
             ) : (
               <p>Loading chart data...</p>
             )}
@@ -247,7 +289,16 @@ const Financial: React.FC = () => {
           <div className="card-graph">
             <h2>Amount Collected per Month</h2>
             {monthlyPaymentData.length > 0 ? (
-              <Bar data={paymentChartData} options={{ ...chartOptions, plugins: { ...chartOptions.plugins, title: { text: "Amount Collected per Month" } } }} />
+              <Bar
+                data={paymentChartData}
+                options={{
+                  ...chartOptions,
+                  plugins: {
+                    ...chartOptions.plugins,
+                    title: { text: "Amount Collected per Month" },
+                  },
+                }}
+              />
             ) : (
               <p>Loading chart data...</p>
             )}
