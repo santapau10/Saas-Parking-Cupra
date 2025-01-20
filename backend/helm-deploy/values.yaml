@@ -14,6 +14,20 @@ services:
     env:
       - name: PORT
         value: "8080"
+      - name: GCP_PROJECT_ID
+        value: "cupra-cad"
+      - name: GCP_BUCKET
+        value: "cupra-bucket"
+      - name: GCP_ENV
+        value: "prod"
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: "/var/keys/service-account.json"
+    volumes:
+      - name: service-account-key
+        mountPath: /var/keys
+        readOnly: true
+        secret:
+          secretName: service-account-key
   property-management:
     name: property-management
     image: "gcr.io/cupra-cad/property-management:latest"
@@ -28,6 +42,21 @@ services:
     env:
       - name: PORT
         value: "8080"
+      - name: GCP_PROJECT_ID
+        value: "cupra-cad"
+      - name: GCP_BUCKET
+        value: "cupra-bucket"
+      - name: GCP_ENV
+        value: "prod"
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: "/var/keys/service-account.json"
+    volumes:
+      - name: service-account-key
+        mountPath: /var/keys
+        readOnly: true
+        secret:
+          secretName: service-account-key
+
   parking-management:
     name: parking-management
     image: "gcr.io/cupra-cad/parking-management:latest"
@@ -42,6 +71,21 @@ services:
     env:
       - name: PORT
         value: "8080"
+      - name: GCP_PROJECT_ID
+        value: "cupra-cad"
+      - name: GCP_BUCKET
+        value: "cupra-bucket"
+      - name: GCP_ENV
+        value: "prod"
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: "/var/keys/service-account.json"
+    volumes:
+      - name: service-account-key
+        mountPath: /var/keys
+        readOnly: true
+        secret:
+          secretName: service-account-key
+
   financial-management:
     name: financial-management
     image: "gcr.io/cupra-cad/financial-management:latest"
@@ -56,3 +100,17 @@ services:
     env:
       - name: PORT
         value: "8080"
+      - name: GCP_PROJECT_ID
+        value: "cupra-cad"
+      - name: GCP_BUCKET
+        value: "cupra-bucket"
+      - name: GCP_ENV
+        value: "prod"
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: "/var/keys/service-account.json"
+    volumes:
+      - name: service-account-key
+        mountPath: /var/keys
+        readOnly: true
+        secret:
+          secretName: service-account-key

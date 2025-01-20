@@ -34,6 +34,22 @@ spec:
               value: "{{ .value }}"
             {{- end }}
             {{- end }}
+          volumeMounts:
+            {{- if .volumes }}
+            {{- range .volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath | default "/var/keys" }}
+              readOnly: {{ .readOnly | default true }}
+            {{- end }}
+            {{- end }}
+      volumes:
+        {{- if .volumes }}
+        {{- range .volumes }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secret.secretName }}
+        {{- end }}
+        {{- end }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

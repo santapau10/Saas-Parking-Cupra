@@ -77,7 +77,7 @@ jobs:
       - name: Get Credentials
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-            --zone us-central1 \
+            --zone us-central1-a \
             --project ${{ secrets.GCP_PROJECT_ID }}
 
       # Build, push Docker images and deploy using Helm

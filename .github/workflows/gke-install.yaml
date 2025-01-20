@@ -47,7 +47,7 @@ jobs:
       - name: Get Credentials
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-            --zone us-central1 \
+            --zone us-central1-a \
             --project ${{ secrets.GCP_PROJECT_ID }}
 
       # Create Namespace in GKE
@@ -55,6 +55,14 @@ jobs:
         run: |
           kubectl create namespace ${{ github.event.inputs.namespace }} || echo "Namespace ${{ github.event.inputs.namespace }} already exists"
 
+      - name: Crear archivo service-account.json
+        run: |
+          mkdir -p ./keys
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > ./keys/service-account.json
+
+      - name: Crear secret
+        run: |
+          kubectl create secret generic service-account --from-file=./keys/service-account.json -n ${{ github.event.inputs.namespace }}
       # Deploy the Docker image to the GKE cluster using Helm
       - name: Deploy
         run: |

@@ -21,6 +21,6 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: API_BASE_URL
-              value: "http://34.117.174.199"
+            - name: VITE_REACT_APP_API_URL
+              value: "http://34.54.53.55"
 ---
