@@ -1,0 +1,2 @@
+namespace: frontend-namespace
+frontendImage: ":latest"

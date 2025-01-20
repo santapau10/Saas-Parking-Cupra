@@ -4,6 +4,9 @@ services:
     name: api-gateway
     image: "gcr.io/cupra-cad/api-gateway:latest"
     replicas: 1
+    minReplicas: 1
+    maxReplicas: 5
+    cpuTargetUtilization: 70
     nodePort: 30000
     port: 5000
     ports:
@@ -15,6 +18,9 @@ services:
     name: property-management
     image: "gcr.io/cupra-cad/property-management:latest"
     replicas: 1
+    minReplicas: 1
+    maxReplicas: 5
+    cpuTargetUtilization: 75
     nodePort: 30001
     port: 5001
     ports:
@@ -22,25 +28,31 @@ services:
     env:
       - name: PORT
         value: "8080"
-  parking-management: 
+  parking-management:
     name: parking-management
     image: "gcr.io/cupra-cad/parking-management:latest"
     replicas: 1
+    minReplicas: 1
+    maxReplicas: 6
+    cpuTargetUtilization: 65
     nodePort: 30002
     port: 5002
     ports:
       - containerPort: 8080
     env:
       - name: PORT
-        value: 8080
-  financial-management:  
+        value: "8080"
+  financial-management:
     name: financial-management
     image: "gcr.io/cupra-cad/financial-management:latest"
     replicas: 1
+    minReplicas: 1
+    maxReplicas: 4
+    cpuTargetUtilization: 60
     nodePort: 30003
     port: 5003
     ports:
       - containerPort: 8080
-    env: 
+    env:
       - name: PORT
-        value: 8080
+        value: "8080"

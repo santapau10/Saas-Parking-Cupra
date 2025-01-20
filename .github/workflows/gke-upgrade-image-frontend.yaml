@@ -1,0 +1,76 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - frontend/**
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: cupra # Establecer directamente a 'cupra-dev' para la rama dev
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS_JSON }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GKE_CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
+      GCR_REPOSITORY: gcr.io/cupra-cad
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
+      - name: Configure Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
+      # Install GKE auth plugin
+      - name: Install GKE gcloud auth plugin
+        run: |
+          gcloud components update
+          gcloud components install gke-gcloud-auth-plugin
+
+      # Install Helm
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Authenticate Docker
+        run: gcloud auth configure-docker gcr.io
+
+      - name: Get Credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+            --zone us-central1 \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+
+      # Build, push Docker images and deploy using Helm
+      - name: Build, push, and deploy
+        run: |
+          echo "Processing service: $service"
+          IMAGE_NAME="gcr.io/cupra-cad/frontend:latest"
+
+          # Construir la imagen Docker
+          docker build --platform=linux/amd64 -t $IMAGE_NAME frontend
+
+          # Empujar la imagen Docker
+          docker push frontend
+
+          echo "Processing Helm deployment for release: $release"
+          # Desplegar con Helm (Upgrade o Install)
+          RELEASE_NAME="frontend"
+          NAMESPACE="frontend"
+          echo "Deploying $release to namespace frontend"
+          helm upgrade --install $RELEASE_NAME backend/helm-deploy --set namespace=$NAMESPACE
+          kubectl rollout restart deployment $RELEASE_NAME --namespace $NAMESPACE
