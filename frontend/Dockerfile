@@ -30,4 +30,4 @@ RUN npm run build
 EXPOSE 8080
 
 # Comando para ejecutar la aplicación
-CMD ["serve", "-s", "dist"]
+CMD ["serve", "-s", "dist", "-l", "8080"]

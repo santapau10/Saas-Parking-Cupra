@@ -19,8 +19,8 @@ spec:
         - name: frontend
           image: {{ .Values.frontendImage | default "tu-registro/imagen-frontend:latest" }}
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: API_BASE_URL
-              value: "http://api-backend.namespace.svc.cluster.local"
+              value: "http://34.117.174.199"
 ---

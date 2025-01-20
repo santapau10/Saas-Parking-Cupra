@@ -1,2 +1,2 @@
-namespace: frontend-namespace
-frontendImage: ":latest"
+namespace: frontend
+frontendImage: "gcr.io/cupra-cad/frontend:latest"
