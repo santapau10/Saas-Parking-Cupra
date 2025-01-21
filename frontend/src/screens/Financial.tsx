@@ -38,9 +38,7 @@ const Financial: React.FC = () => {
 
   const [selectedParking, setSelectedParking] = useState<string | null>(null);
 
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-
-  const { user, tenant, token } = useUser();
+  const { user, tenant, token, apiUrl } = useUser();
 
   const parseEntries = (data: any[]): Entry[] => {
     return data.map((item) => ({

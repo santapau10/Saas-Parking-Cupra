@@ -11,8 +11,6 @@ import { useLocation } from "react-router-dom";
 import { Parking } from "../types/Parking";
 
 export default function App() {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  // const apiUrl = "http://localhost:3001"
   const [showModal, setShowModal] = useState(false);
   const [defects, setDefects] = useState<Defect[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +18,7 @@ export default function App() {
   const [statusFilter, setStatusFilter] = useState("");
   const [parkingData, setParkingData] = useState<Parking | null>(null);
 
-  const { tenant, token } = useUser();
+  const { tenant, token, apiUrl } = useUser();
   const location = useLocation();
   const parkingName = location?.pathname.replace("/parkings/", "") || "parkingA";
 

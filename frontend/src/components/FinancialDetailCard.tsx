@@ -16,8 +16,7 @@ const FinancialDetailCard: React.FC<LandingCardProps> = ({ parkingName }) => {
   const [error, setError] = useState<string | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  const { tenant, token } = useUser(); // User context
+  const { tenant, token, apiUrl } = useUser(); // User context
 
   const parseEntries = (data: any[]): Entry[] => {
     return data.map((item) => ({
