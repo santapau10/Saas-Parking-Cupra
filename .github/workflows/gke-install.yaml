@@ -67,7 +67,7 @@ jobs:
 
       - name: Crear secret
         run: |
-          kubectl create secret generic service-account --from-file=./keys/service-account.json -n ${{ github.event.inputs.namespace }}
+          kubectl create secret generic service-account --from-literal=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }} -n ${{ github.event.inputs.namespace }}
 
       - name: Crear secret para token
         run: |
