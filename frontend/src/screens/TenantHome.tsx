@@ -12,15 +12,13 @@ import '../styles/TenantHome.css';
 import { useNavigate } from 'react-router-dom';
 
 const TenantHome: React.FC = () => {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  // const apiUrl = "http://localhost:3001"
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateParkingModal, setShowCreateParkingModal] = useState<boolean>(false);
 
-  const { user, setTheme, tenant, token } = useUser();
+  const { user, setTheme, tenant, token, apiUrl } = useUser();
   const navigate = useNavigate();
 
   const parseParkingData = (data: any[]): Parking[] => {

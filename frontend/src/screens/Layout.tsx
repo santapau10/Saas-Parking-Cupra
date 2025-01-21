@@ -18,8 +18,7 @@ const Layout: React.FC = () => {
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [key, setKey] = useState(0);
   const setShowUserModalToTrue = () => setShowUserModal(true);
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  const { user, setUser, tenant } = useUser();
+  const { user, setUser, tenant, apiUrl } = useUser();
   const location = useLocation();
   const path = location.pathname;
   const navigate = useNavigate();
