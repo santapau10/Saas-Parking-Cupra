@@ -22,6 +22,11 @@ services:
         value: "prod"
       - name: GOOGLE_APPLICATION_CREDENTIALS
         value: "/var/keys/service-account.json"
+      - name: GITHUB_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: github-token
+            key: GITHUB_TOKEN
     volumes:
       - name: service-account-key
         mountPath: /var/keys
@@ -50,6 +55,11 @@ services:
         value: "prod"
       - name: GOOGLE_APPLICATION_CREDENTIALS
         value: "/var/keys/service-account.json"
+      - name: GITHUB_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: github-token
+            key: GITHUB_TOKEN
     volumes:
       - name: service-account-key
         mountPath: /var/keys
@@ -79,6 +89,11 @@ services:
         value: "prod"
       - name: GOOGLE_APPLICATION_CREDENTIALS
         value: "/var/keys/service-account.json"
+      - name: GITHUB_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: github-token
+            key: GITHUB_TOKEN
     volumes:
       - name: service-account-key
         mountPath: /var/keys
@@ -108,6 +123,11 @@ services:
         value: "prod"
       - name: GOOGLE_APPLICATION_CREDENTIALS
         value: "/var/keys/service-account.json"
+      - name: GITHUB_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: github-token
+            key: GITHUB_TOKEN
     volumes:
       - name: service-account-key
         mountPath: /var/keys
