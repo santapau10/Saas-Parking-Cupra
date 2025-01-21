@@ -60,14 +60,12 @@ jobs:
         run: |
           mkdir -p ./keys
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > ./keys/service-account.json
-
       - name: Verificar archivo service-account.json
         run: |
           cat ./keys/service-account.json
-
       - name: Crear secret
         run: |
-          kubectl create secret generic service-account --from-literal=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }} -n ${{ github.event.inputs.namespace }}
+          kubectl create secret generic service-account --from-file=./keys/service-account.json -n ${{ github.event.inputs.namespace }}
 
       - name: Crear secret para token
         run: |
