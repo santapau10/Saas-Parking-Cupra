@@ -42,7 +42,7 @@ static async registerTenant(req: Request, res: Response): Promise<void> {
       });
 
 
-      console.log(`GitHub Action triggered for tenant: ${req.body.name}`);
+      console.log(`GitHub Action triggered for tenant: ${req.body.name}`);//
     }
 
     // Responder con el éxito
