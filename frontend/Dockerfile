@@ -13,8 +13,12 @@ COPY package.json .
 RUN npm install
 
 ARG VITE_REACT_APP_API_URL
+ARG VITE_GOOGLE_API_KEY
 # Establecer la variable de entorno a partir del argumento
 ENV VITE_REACT_APP_API_URL=${VITE_REACT_APP_API_URL}
+ENV VITE_GOOGLE_API_KEY=${VITE_GOOGLE_API_KEY}
+
+
 
 # Asegúrate de instalar serve
 RUN npm install -g serve
