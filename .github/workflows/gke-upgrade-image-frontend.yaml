@@ -57,7 +57,11 @@ jobs:
           IMAGE_NAME="gcr.io/cupra-cad/frontend:latest"
 
           # Construir la imagen Docker
-          docker build --platform=linux/amd64 --build-arg VITE_REACT_APP_API_URL=${{ secrets.BACKEND_URL }} --build-arg VITE_GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}-t $IMAGE_NAME frontend
+          docker build --platform=linux/amd64 \
+          --build-arg VITE_REACT_APP_API_URL=${{ secrets.BACKEND_URL }} \
+          --build-arg VITE_GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} \
+          -t $IMAGE_NAME frontend
+
 
           # Empujar la imagen Docker
           docker push $IMAGE_NAME
