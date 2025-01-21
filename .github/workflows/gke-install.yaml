@@ -69,6 +69,10 @@ jobs:
         run: |
           kubectl create secret generic github-token --from-literal=GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }} -n ${{ github.event.inputs.namespace }}
 
+      - name: Ver contenido de service-account.json
+        run: |
+          kubectl get secret service-account -n ${{ github.event.inputs.namespace }} -o jsonpath="{.data.service-account\.json}" | base64 --decode
+
       # Deploy the Docker image to the GKE cluster using Helm
       - name: Deploy
         run: |
