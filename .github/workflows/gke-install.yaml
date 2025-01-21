@@ -80,7 +80,6 @@ jobs:
           helm install ${{ github.event.inputs.namespace }}-microservices ./backend/helm-deploy \
             --set namespace=${{ github.event.inputs.namespace }} \
             --wait
-            --timeout 10
 
       - name: Wait for Ingress IP
         id: ingress_ip
