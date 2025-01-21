@@ -12,7 +12,6 @@ router.post('/registerTenant', AuthController.registerTenant);
 router.post('/registerUser', AuthMiddleware.verifyToken,AuthController.registerUser);
 router.post('/logout', AuthController.logout);
 
-router.get('/test', AuthController.test);
 
 router.get('/getTenantInfo/:tenantId', AuthController.getTenantInfo);
 

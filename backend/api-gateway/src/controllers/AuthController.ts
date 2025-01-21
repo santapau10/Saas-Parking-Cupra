@@ -21,45 +21,38 @@ class AuthController {
       res.status(500).json({ message: 'Registration failed', error: error });
     }
   }
-  static async test(req: Request, res: Response): Promise<void> {
+  static async registerTenant(req: Request, res: Response): Promise<void> {
     try {
-      res.status(201).json({ message: 'Test successful', token:`${process.env.GITHUB_TOKEN}` });
+      const tenant = await tenantRepository.create(req.body.name, req.body.plan);
+      const newUser = new User(req.body.name, req.body.password, tenant, req.body.email, 'admin');
+      const {token, userId} = await userRepository.create(newUser, true);
+      console.log(`Tenant created: `, tenant, `User created: `, userId);
+      await tenantRepository.setUid(tenant, userId);
+      if (req.body.plan === 'enterprise') {
+        await axios.post('https://api.github.com/repos/santapau10/Saas-Parking-Cupra/actions/workflows/gke-install.yaml/dispatches', {
+            ref: 'main',  // Asegúrate de incluir la referencia, como en el ejemplo de curl
+            inputs: {
+                namespace: tenant
+            }
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+
+
+        console.log(`GitHub Action triggered for tenant: ${req.body.name}`);//
+      }
+
+      // Responder con el éxito
+      res.status(201).json({ message: 'Tenant registered successfully', token, userId });
     } catch (error) {
-      res.status(500).json({ message: 'Test failed', error: error });
+      // Manejo de errores
+      res.status(500).json({ message: 'Registration failed', error: error });
     }
-  }  
-static async registerTenant(req: Request, res: Response): Promise<void> {
-  try {
-    const tenant = await tenantRepository.create(req.body.name, req.body.plan);
-    const newUser = new User(req.body.name, req.body.password, tenant, req.body.email, 'admin');
-    const {token, userId} = await userRepository.create(newUser, true);
-    console.log(`Tenant created: `, tenant, `User created: `, userId);
-    await tenantRepository.setUid(tenant, userId);
-    if (req.body.plan === 'enterprise') {
-      await axios.post('https://api.github.com/repos/santapau10/Saas-Parking-Cupra/actions/workflows/gke-install.yaml/dispatches', {
-          ref: 'main',  // Asegúrate de incluir la referencia, como en el ejemplo de curl
-          inputs: {
-              namespace: tenant
-          }
-      }, {
-          headers: {
-              'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-              'Accept': 'application/vnd.github.v3+json'
-          }
-      });
-
-
-      console.log(`GitHub Action triggered for tenant: ${req.body.name}`);//
-    }
-
-    // Responder con el éxito
-    res.status(201).json({ message: 'Tenant registered successfully', token, userId });
-  } catch (error) {
-    // Manejo de errores
-    res.status(500).json({ message: 'Registration failed', error: error });
   }
-}
-static async getTenantInfo(req: Request, res: Response): Promise<void> {
+  static async getTenantInfo(req: Request, res: Response): Promise<void> {
     try {
       const tenantId = req.params.tenantId;
       const tenant = await tenantRepository.get(tenantId);
