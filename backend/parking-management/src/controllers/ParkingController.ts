@@ -7,6 +7,7 @@ import FirestoreService from '../services/firestore.service';
 import Payment from '../models/payment.model';
 import { EntryOrExit } from '../models/entry.model';
 import { PubSub } from '@google-cloud/pubsub';
+import axios from 'axios';
 
 
 const parkingRepository = new FirestoreParkingRepository();
@@ -37,6 +38,21 @@ class ParkingController {
           }
           // await parkingRepository.updateParkingCapacity(entry.parking_id, parking.capacity - 1);
           await parkingRepository.addEntry(entry, tenant_id, tenant_plan);
+          try {
+            const cloudFunctionResponse = await axios.post(
+                'https://us-central1-cupra-cad.cloudfunctions.net/changeCapacity', // Reemplaza con la URL de tu función
+                {
+                    plan: tenant_plan,
+                    tenant_id: tenant_id,
+                    parking: parking.name,
+                    entry: "true",
+                }
+            );
+            console.log('Cloud Function Response:', cloudFunctionResponse.data);
+        } catch (functionError) {
+            console.error('Error calling Cloud Function:', functionError);
+            // Opcional: Puedes devolver un error al cliente si consideras crítico el fallo de la función
+        }
           res.status(200).json({ message: 'Entry registered successfully' });
         } catch (error) {
           res.status(500).json({ message: 'Entry registration failed', error: error });
@@ -51,6 +67,21 @@ class ParkingController {
           
           // await parkingRepository.updateParkingCapacity(exit.parking_id, parking.capacity + 1);
           await parkingRepository.addExit(exit ,tenant_id, tenant_plan);
+          try {
+            const cloudFunctionResponse = await axios.post(
+                'https://us-central1-cupra-cad.cloudfunctions.net/changeCapacity', // Reemplaza con la URL de tu función
+                {
+                    plan: tenant_plan,
+                    tenant_id: tenant_id,
+                    parking: parking.name,
+                    entry: "false",
+                }
+            );
+            console.log('Cloud Function Response:', cloudFunctionResponse.data);
+        } catch (functionError) {
+            console.error('Error calling Cloud Function:', functionError);
+            // Opcional: Puedes devolver un error al cliente si consideras crítico el fallo de la función
+        }
           res.status(200).json({ message: 'Exit registered successfully' });
         } catch (error) {
         res.status(500).json({ message: 'Exit registration failed', error: error });

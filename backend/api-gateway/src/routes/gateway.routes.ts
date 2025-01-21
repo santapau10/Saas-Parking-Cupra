@@ -21,7 +21,7 @@ router.get('/getUser/:userId', AuthController.getUser);
 
 router.post('/setTheme', AuthMiddleware.verifyToken,AuthController.setTheme);
 
-router.get('/api/:tenantId', IpController.getIp);
+router.get('/api/:tenantId', IpController.getIp);//
 
 
 router.post('/getToken', AuthController.getToken);
