@@ -4,6 +4,7 @@ import { Tenant } from '../models/tenant.model';
 import {admin} from '../services/firestore.service';
 
 class FirebaseTenantRepository implements ITenantRepository {
+  
   private firestore = FirestoreService.getFirestoreInstance();
   private collectionName = process.env.GCP_ENV === 'dev' ? 'tenants-dev' : 'tenants';
 
