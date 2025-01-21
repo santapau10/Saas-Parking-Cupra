@@ -12,7 +12,7 @@ export class Tenant {
     theme: string,
     userUid: string
   ) { 
-    this._name = name;
+    this._name = name;//
     this._tenant_id = tenant_id;
     this._plan = plan;
     this._theme = theme;

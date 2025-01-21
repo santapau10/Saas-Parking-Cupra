@@ -84,7 +84,7 @@ jobs:
       - name: Build, push, and deploy
         run: |
           # Segundo bucle: Iterar sobre los releases y sus namespaces para hacer el despliegue con Helm
-          RELEASES=$(helm list -q)  # Obtener la lista de releases desde Helm
+          RELEASES=$(helm list -q | grep -v '^frontend$')  # Obtener la lista de releases desde Helm
           for release in $RELEASES; do
             echo "Processing Helm deployment for release: $release"
             
