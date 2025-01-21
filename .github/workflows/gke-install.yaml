@@ -59,10 +59,13 @@ jobs:
       - name: Crear archivo service-account.json
         run: |
           mkdir -p ./keys
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > ./keys/service-account.json
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" | base64 --decode > ./keys/service-account.json
+
       - name: Verificar archivo service-account.json
         run: |
           cat ./keys/service-account.json
+          echo "Longitud del archivo: $(wc -c < ./keys/service-account.json)"
+
       - name: Crear secret
         run: |
           kubectl create secret generic service-account --from-file=./keys/service-account.json -n ${{ github.event.inputs.namespace }}
