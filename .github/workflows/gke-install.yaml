@@ -19,6 +19,7 @@ jobs:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_APPLICATION_CREDENTIALS_JSON }}
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GKE_CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
+      TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -63,6 +64,11 @@ jobs:
       - name: Crear secret
         run: |
           kubectl create secret generic service-account --from-file=./keys/service-account.json -n ${{ github.event.inputs.namespace }}
+
+      - name: Crear secret para token
+        run: |
+          kubectl create secret generic github-token --from-literal=GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }} -n ${{ github.event.inputs.namespace }}
+
       # Deploy the Docker image to the GKE cluster using Helm
       - name: Deploy
         run: |

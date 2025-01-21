@@ -32,7 +32,7 @@ services:
         mountPath: /var/keys
         readOnly: true
         secret:
-          secretName: service-account-key
+          secretName: service-account
   property-management:
     name: property-management
     image: "gcr.io/cupra-cad/property-management:latest"
@@ -65,7 +65,7 @@ services:
         mountPath: /var/keys
         readOnly: true
         secret:
-          secretName: service-account-key
+          secretName: service-account
 
   parking-management:
     name: parking-management
@@ -99,7 +99,7 @@ services:
         mountPath: /var/keys
         readOnly: true
         secret:
-          secretName: service-account-key
+          secretName: service-account
 
   financial-management:
     name: financial-management
@@ -133,4 +133,4 @@ services:
         mountPath: /var/keys
         readOnly: true
         secret:
-          secretName: service-account-key
+          secretName: service-account
