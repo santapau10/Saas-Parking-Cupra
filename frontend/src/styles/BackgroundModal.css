@@ -40,7 +40,6 @@ h2 {
   cursor: pointer;
   overflow: hidden;
   transition: transform 0.2s, border-color 0.2s;
-  height: 150px; /* You can adjust the height based on your design */
 }
 
 .background-item img {
