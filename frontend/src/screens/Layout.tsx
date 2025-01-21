@@ -70,6 +70,7 @@ const Layout: React.FC = () => {
     switch (path) {
       case "/":
         return "Home Page";
+        // return "Test header";
       case "/defects":
         return "Defects";
       case "/financial":

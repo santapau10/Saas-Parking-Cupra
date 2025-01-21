@@ -30,7 +30,6 @@ const HomePage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      if (parkings.length == 0) {
         if (user || tenant || token) {
         const response = await axios.get(`${apiUrl}/property-management/parkings/all/${tenant?._tenant_id}`,{
             headers: {
@@ -41,12 +40,11 @@ const HomePage: React.FC = () => {
         );
         const parsedData = parseParkingData(response.data.parkingList);
         setParkings(parsedData);
-        } else if (!localStorage.getItem('user') && !localStorage.getItem('tenant') && !localStorage.getItem('token')) {
+        } else if (!localStorage.getItem('user') && !localStorage.getItem('tenant') && !localStorage.getItem('token') && parkings.length == 0) {
           const response = await axios.get(`${apiUrl}/property-management/parkings/all`);
           const parsedData = parseParkingData(response.data.parkingList);
           setParkings(parsedData);
         }
-      }
     } catch (err: any) {
       const message = err.response?.data?.message || 'Failed to load parkings.';
       setError(message);
