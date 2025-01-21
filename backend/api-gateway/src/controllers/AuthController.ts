@@ -25,7 +25,7 @@ class AuthController {
     try {
       res.status(201).json({ message: 'Test successful', token:`${process.env.GITHUB_TOKEN}` });
     } catch (error) {
-      res.status(500).json({ message: 'Test failed', error: error });//
+      res.status(500).json({ message: 'Test failed', error: error });
     }
   }  
 static async registerTenant(req: Request, res: Response): Promise<void> {

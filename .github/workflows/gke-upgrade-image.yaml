@@ -55,7 +55,7 @@ jobs:
         id: changes
         run: |
           # Detecta los directorios modificados
-          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F"/" '{print $2}' | sort -u | grep -v '^helm-deploy$' | tr '\n' ' ')
+          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F"/" '{print $2}' | sort -u | grep -v '^helm-deploy$'| grep -v '^workflows$' | tr '\n' ' ')
           echo "Changed directories: $CHANGED_DIRS"
 
           # Exporta los directorios modificados como una variable de entorno
