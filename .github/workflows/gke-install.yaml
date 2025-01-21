@@ -61,6 +61,10 @@ jobs:
           mkdir -p ./keys
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > ./keys/service-account.json
 
+      - name: Verificar archivo service-account.json
+        run: |
+          cat ./keys/service-account.json
+
       - name: Crear secret
         run: |
           kubectl create secret generic service-account --from-file=./keys/service-account.json -n ${{ github.event.inputs.namespace }}
@@ -68,10 +72,6 @@ jobs:
       - name: Crear secret para token
         run: |
           kubectl create secret generic github-token --from-literal=GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }} -n ${{ github.event.inputs.namespace }}
-
-      - name: Ver contenido de service-account.json
-        run: |
-          kubectl get secret service-account -n ${{ github.event.inputs.namespace }} -o jsonpath="{.data.service-account\.json}" | base64 --decode
 
       # Deploy the Docker image to the GKE cluster using Helm
       - name: Deploy
