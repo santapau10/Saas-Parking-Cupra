@@ -11,7 +11,7 @@ export class Tenant {
     plan: string,
     theme: string,
     userUid: string
-  ) {
+  ) { 
     this._name = name;
     this._tenant_id = tenant_id;
     this._plan = plan;
