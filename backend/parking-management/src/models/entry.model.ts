@@ -4,7 +4,7 @@ export class EntryOrExit {
     timestamp: string;
     type: string;
 
-  constructor(
+  constructor(//
     license_plate: string,
     parking_id: string,
     timestamp: string,
