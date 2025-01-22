@@ -69,8 +69,8 @@ const Layout: React.FC = () => {
   const getHeaderText = () => {
     switch (path) {
       case "/":
-        return "Home Page";
-        // return "Test header";
+        // return "Home Page";
+        return "Test header";
       case "/defects":
         return "Defects";
       case "/financial":
