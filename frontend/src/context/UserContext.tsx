@@ -4,6 +4,7 @@ import { User } from '../types/User';  // Import User type from types folder
 import { Tenant } from '../types/Tenant';
 import axios from 'axios';
 import { ToastContainer, toast } from "react-toastify";
+import { setuid } from 'process';
 
 // Create the UserContext with User type
 interface UserContextType {
@@ -39,6 +40,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const storedUser = localStorage.getItem('user');
     const storedTenant = localStorage.getItem('tenant');
     const storedToken = localStorage.getItem('token');
+    const storedUrl = localStorage.getItem('url');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -51,6 +53,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (storedToken) {
       setToken(storedToken);
     }
+    if (storedUrl) {
+      setApiUrl(storedUrl);
+    }
   }, []);
 
   const handleSetIp = async (tenant: Tenant) => {
@@ -58,6 +63,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await axios.get(`${apiUrl}/api-gateway/api/${tenant._plan}/${tenant._tenant_id}`);
       const newUrl = "http://" + response.data.ip;
       setApiUrl(newUrl);
+      localStorage.setItem('url', newUrl);
     } catch (err: any) {
       toast.error("Failed to fetch ip from tenant.");
     }
@@ -75,6 +81,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         newUser._tenantId = tenant!._tenant_id; // Update newUser's _tenantId
       } else {
         try {
+        console.log(newUser)
         const response = await axios.get(`${apiUrl}/api-gateway/getTenantFromUser/${newUser._userId}`);
         const newTenant: Tenant = {
           _name: response.data.tenant.name,
@@ -119,6 +126,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setTenant(null);
       localStorage.removeItem('token');
       setToken(null);
+      localStorage.removeItem('url');
+      setApiUrl(originalApiUrl);
     }
     setUser(newUser);
   };
