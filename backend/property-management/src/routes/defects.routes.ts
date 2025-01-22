@@ -18,8 +18,8 @@ router.get('/filteredByStatus/:parking/:status', AuthMiddleware.verifyToken, Def
 router.post('/:tenant_id', upload.single('image'), DefectController.create);
 
 
+router.delete('/:tenant_id/:tenant_plan/:id', DefectController.delete);
 
 router.put('/:id', AuthMiddleware.verifyToken,DefectController.update);
-router.delete('/:id', AuthMiddleware.verifyToken,DefectController.delete);
 
 export default router;

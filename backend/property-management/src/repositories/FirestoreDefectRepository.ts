@@ -134,9 +134,32 @@ class FirestoreDefectRepository implements IDefectRepository {
       : null;
   }
 
-  async delete(id: string): Promise<void> {
-    await this.firestore.collection(this.collectionName).doc(id).delete();
+  async delete(tenant_id: string, tenant_plan: string, id: string): Promise<void> {
+  if (!tenant_id || !tenant_plan || !id) {
+    throw new Error('Los parámetros tenant_id, tenant_plan e id son obligatorios.');
   }
+
+  try {
+    const docRef = this.firestore
+      .collection(tenant_plan)
+      .doc(tenant_id)
+      .collection(this.collectionName)
+      .doc(id);
+
+    const doc = await docRef.get();
+    if (!doc.exists) {
+      throw new Error('El documento no existe, no se puede eliminar.');
+    }
+
+    await docRef.delete();
+    console.log('Defecto eliminado correctamente:', id);
+  } catch (error) {
+    console.error('Error al eliminar el defecto del parking:', error);
+    throw new Error('No se pudo eliminar el defecto del parking.');
+  }
+}
+
+
   async getTenantPlan(tenant_id: string): Promise<string> {
     const doc = await this.firestore.collection('tenants').where('tenantId', '==', tenant_id).get();
     if (doc.empty) {

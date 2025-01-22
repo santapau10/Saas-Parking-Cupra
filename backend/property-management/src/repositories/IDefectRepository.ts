@@ -8,6 +8,6 @@ export interface IDefectRepository {
   getById(id: string): Promise<any | null>;
   create(tenant_id:string, tenant_plan:string,defectData: any): Promise<string>;
   update(id: string, defectData: Partial<Defect>): Promise<Defect | null>; // Debe retornar Defect | null
-  delete(id: string): Promise<void>;
+  delete(tenant_id: string, tenant_plan: string, id: string): Promise<void>;
 }
 
