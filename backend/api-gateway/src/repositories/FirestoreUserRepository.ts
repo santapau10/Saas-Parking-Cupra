@@ -55,7 +55,7 @@ class FirestoreUserRepository implements IUserRepository {
     try {
       // Buscar el documento en la colección tenants donde el uid sea igual a userId
       const tenantSnapshot = await this.firestore
-        .collection('tenants')
+        .collection('users')
         .where('uid', '==', userId)
         .limit(1)
         .get();
