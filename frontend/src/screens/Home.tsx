@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ParkingList from '../components/ParkingList';
 import { useUser } from '../context/UserContext';
 import LandingCard from '../components/LandingCard';
+import { Tenant } from '../types/Tenant';
 
 const HomePage: React.FC = () => {
   const [parkings, setParkings] = useState<Parking[]>([]);
@@ -30,17 +31,19 @@ const HomePage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-        if (user || tenant || token) {
-        const response = await axios.get(`${apiUrl}/property-management/parkings/all/${tenant?._tenant_id}`,{
+      const fetchedTenant = localStorage.getItem('tenant')
+        if (fetchedTenant) {
+        const parsedFetchedTenant : Tenant = JSON.parse(fetchedTenant)
+        const response = await axios.get(`${apiUrl}/property-management/parkings/all/${parsedFetchedTenant._tenant_id}`,{
             headers: {
-              'tenant_plan': tenant?._plan,
-              'Authorization': `Bearer ${token}`,
+              'tenant_plan': parsedFetchedTenant._plan,
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
           }
         );
         const parsedData = parseParkingData(response.data.parkingList);
         setParkings(parsedData);
-        } else if (!localStorage.getItem('user') && !localStorage.getItem('tenant') && !localStorage.getItem('token') && parkings.length == 0) {
+        } else {
           const response = await axios.get(`${apiUrl}/property-management/parkings/all`);
           const parsedData = parseParkingData(response.data.parkingList);
           setParkings(parsedData);
@@ -56,7 +59,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
       fetchParkings();
-  }, []);
+  }, [user]);
 
 
   const handleParkingEdit = async (parkingName: string) => {
