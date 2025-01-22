@@ -102,7 +102,7 @@ export default function App() {
 
   const handleDefectDelete = async (defectId: string) => {
     try {
-      await axios.delete(`${apiUrl}/property-management/defects/${defectId}`, {
+      await axios.delete(`${apiUrl}/property-management/defects/${tenant?._tenant_id}/${tenant?._plan}/${defectId}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         },

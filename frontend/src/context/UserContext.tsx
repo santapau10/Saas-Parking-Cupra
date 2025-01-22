@@ -44,8 +44,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     if (storedTenant) {
       setTenant(JSON.parse(storedTenant));
-      if (tenant?._plan == 'enterprise') {
-        handleSetIp(tenant._plan);
+      if (tenant?._plan == 'enterprise' || tenant?._plan == 'standard') {
+        handleSetIp(tenant);
       }
     }
     if (storedToken) {
@@ -53,9 +53,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const handleSetIp = async (tenantId: string) => {
+  const handleSetIp = async (tenant: Tenant) => {
     try {
-      const response = await axios.get(`${apiUrl}/api-gateway/api/${tenantId}`);
+      const response = await axios.get(`${apiUrl}/api-gateway/api/${tenant._plan}/${tenant._tenant_id}`);
       const newUrl = "http://" + response.data.ip;
       setApiUrl(newUrl);
     } catch (err: any) {
@@ -69,8 +69,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const storedTenant = localStorage.getItem('tenant');
       if (storedTenant) {
         setTenant(JSON.parse(storedTenant))
-        if (tenant?._plan == 'enterprise') {
-          handleSetIp(tenant._tenant_id);
+        if (tenant?._plan == 'enterprise' || tenant?._plan == 'standard') {
+          handleSetIp(tenant);
         }
         newUser._tenantId = tenant!._tenant_id; // Update newUser's _tenantId
       } else {
@@ -83,8 +83,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           _theme: Number(response.data.tenant.theme)
         }
         setTenant(newTenant)
-        if (newTenant._plan == 'enterprise') {
-          handleSetIp(newTenant._tenant_id);
+        if (newTenant._plan == 'enterprise' || tenant?._plan == 'standard') {
+          handleSetIp(newTenant);
         }
         localStorage.setItem('tenant', JSON.stringify(newTenant));
         newUser._tenantId = newTenant._tenant_id;
