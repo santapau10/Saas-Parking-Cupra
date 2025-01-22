@@ -63,7 +63,10 @@ class DefectController {
 
   static async delete(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
-    await defectRepository.delete(id);
+    const tenant_id = req.params.tenant_id;
+    const tenant_plan = req.params.tenant_plan;
+    
+    await defectRepository.delete(tenant_id,tenant_plan, id);
     res.status(204).json({ message: 'Defecto eliminado' });
   }
 }
