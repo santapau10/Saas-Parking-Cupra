@@ -4,7 +4,7 @@ export class User {
   private _password: string;
   private _tenant_id: string;
   private _role: string;
-
+//
   constructor(
     username: string, 
     password: string, 

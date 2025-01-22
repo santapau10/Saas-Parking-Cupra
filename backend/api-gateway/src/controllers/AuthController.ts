@@ -26,6 +26,13 @@ class AuthController {
       const tenant = await tenantRepository.create(req.body.name, req.body.plan);
       const newUser = new User(req.body.name, req.body.password, tenant, req.body.email, 'admin');
       const {token, userId} = await userRepository.create(newUser, true);
+      const payload = {
+        tenant,
+        role:'admin',
+        issuedAt: new Date().toISOString(),
+      };
+      const newToken = jwt.sign(payload, AuthController.JWT_SECRET, { expiresIn: '2h' });
+
       console.log(`Tenant created: `, tenant, `User created: `, userId);
       await tenantRepository.setUid(tenant, userId);
       if (req.body.plan === 'enterprise') {
@@ -46,7 +53,7 @@ class AuthController {
       }
 
       // Responder con el éxito
-      res.status(201).json({ message: 'Tenant registered successfully', token, userId });
+      res.status(201).json({ message: 'Tenant registered successfully', newToken, userId });
     } catch (error) {
       // Manejo de errores
       res.status(500).json({ message: 'Registration failed', error: error });
