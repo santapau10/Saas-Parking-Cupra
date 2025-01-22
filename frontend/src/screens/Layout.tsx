@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "../styles/GlobalReset.css";
 import { User } from "../types/User";
 import { useUser } from "../context/UserContext";
-import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import { GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 
 const Layout: React.FC = () => {
@@ -38,12 +38,12 @@ const Layout: React.FC = () => {
     loadBackground();
   }, [tenant]);
 
-  const handleToken = async (token: string) => {
+  const handleCredentials = async (email: string, password: string, tenantId: string) => {
     try {
-      // Create a Firebase credential with the Google ID Token
-      const credential = GoogleAuthProvider.credential(token);
+      auth.tenantId = tenantId;
       // Sign in to Firebase using the credential
-      const result = await signInWithCredential(auth, credential);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log(result);
       // Extract user information from the result
       const user = result.user;
       const fetchedUser = await axios.get(
@@ -58,7 +58,6 @@ const Layout: React.FC = () => {
         _tenantId: "",
       };
       setUser(userData); //here we fetch the tenant and update tenantId value
-      console.log("User fetched and set successfully:", userData);
     } catch (err: any) {
       toast.error("Failed to fetch user information.");
       console.error("Firebase Auth Error:", err.message);
@@ -135,7 +134,7 @@ const Layout: React.FC = () => {
           user={user}
           onClose={() => setShowUserModal(false)}
           onLogout={handleLogout}
-          onTokenReceived={handleToken}
+          onLogin={handleCredentials}
         />
       )}
       {/* Shared Header */}

@@ -54,6 +54,7 @@ const HomePage: React.FC = () => {
       toast.error(message);
     } finally {
       setLoading(false);
+      console.log(apiUrl);
     }
   };
 
@@ -90,12 +91,8 @@ const HomePage: React.FC = () => {
               formData.forEach((value, key) => {
                 tenantObject[key] = value;
               });
-              await axios.post(`${apiUrl}/api-gateway/registerTenant`, tenantObject, {
-                headers: {
-                  'tenant_plan': tenant?._plan,
-                  'Authorization': `Bearer ${token}`,
-                },
-              });
+              console.log(tenantObject);
+              await axios.post(`${apiUrl}/api-gateway/registerTenant`, tenantObject);
               toast.success('Tenant created successfully!');
             } catch {
               toast.error('Failed to create tenant. Please try again later.');

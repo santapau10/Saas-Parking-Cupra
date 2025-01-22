@@ -47,6 +47,7 @@ const TenantHome: React.FC = () => {
       });
       const parsedData = parseParkingData(response.data.parkingList);
       setParkings(parsedData);
+      console.log(apiUrl)
     } catch (err: any) {
       const message = err.response?.data?.message || "Failed to load parkings.";
       setError(message);
@@ -143,7 +144,7 @@ const TenantHome: React.FC = () => {
             </div>
           </div>
           <div className="card-footer">
-            {user._role === 'admin' &&
+            {user._role === 'admin' && tenant?._plan == 'enterprise' &&
               <button
                 className="modify-background-btn"
                 onClick={() => setShowBackgroundModal(true)}
